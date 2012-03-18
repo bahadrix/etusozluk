@@ -1,0 +1,28 @@
+({
+    "items": [
+	{
+		"id": "1234",
+		"baslik": "Birinci baslik bu",
+		"bugun": "5",
+		"total": "200",
+	},
+    {
+		"id": "1236",
+		"baslik": "İkinci baslik bu",
+		"bugun": "2",
+		"total": "100",
+	},
+	{
+		"id": "98978",
+		"baslik": "Üçüncü baslik bu",
+		"bugun": "2",
+		"total": "400",
+	},
+	{
+		"id": "12345",
+		"baslik": "Dördüncü baslik bu",
+		"bugun": "10",
+		"total": "467",
+	}
+]
+})

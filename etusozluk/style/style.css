@@ -1,0 +1,464 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #1f1f1f;
+  font-size: 9pt;
+  text-align:center;
+  color: #999;
+}
+
+body, td, th, h1, h2, h3, h4 {font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;}
+
+a, a:link, a:visited {
+  color: #fff;
+  text-decoration: none;
+}
+
+#entries {
+  margin:0;
+  text-align:left;
+  float:left;
+  position:relative;
+  width:780px;
+}
+
+li.girdi {
+  padding-bottom:30px;
+  color:#fff;
+}
+
+.yazarinfo {
+  position:relative;
+  float:right;
+  margin-top:10px;
+  font-size:8pt;
+  color:#0081c6;
+}
+
+#yazarminiinfo,#sharebox {
+  position:absolute;
+  z-index:1;
+  display:none;
+  text-align:center;
+  background: #000000;
+  border:2px solid #333;
+  font-size:8pt;
+  width: 250px;
+  height: auto;
+  padding: 10px 0 10px 0;
+  -moz-border-radius-topright:20px;
+  -webkit-border-top-right-radius:20px;
+  -moz-border-radius-bottomright:20px;
+  -webkit-border-bottom-right-radius:20px;
+  -moz-border-radius-topleft:20px;
+  -webkit-border-top-left-radius:20px;
+  -moz-border-radius-bottomleft:20px;
+  -webkit-border-bottom-left-radius:20px;
+  box-shadow:3px 3px 4px #000;
+}
+.kapat {
+	background:#000 url(../img/kapat.png) 85% 55% no-repeat;
+	position:absolute;
+	float:right;
+	top:1px;
+	right:10px;
+	width:16px;
+	height:16px;
+	cursor:pointer;
+}
+.ymore {
+  display:none;
+  margin:0;
+}
+
+ul#menu {
+  position: fixed;
+  margin: 0px;
+  padding: 0px;
+  top: 0px;
+  right: 5%;
+  list-style: none;
+  z-index:101;
+  width:900px;
+}
+
+ul#menu li {
+  width: 125px;
+  display:inline;
+  float:left;;
+}
+
+ul#menu li a {
+  display: block;
+  float: left;
+  margin-top: -2px;
+  width: 120px;
+  height: 25px;
+  background-color: #000;
+  border: 1px solid #777;
+  text-decoration: none;
+  text-align: center;
+  -moz-border-radius-bottomright:10px;
+  -webkit-border-bottom-right-radius:10px;
+  -moz-border-radius-bottomleft:10px;
+  -webkit-border-bottom-left-radius:10px
+
+}
+
+ul#menu li a:hover{
+  background-color:#222;
+  font-weight:bold;
+}
+
+ul#menu li a span{
+ letter-spacing:2px;
+  font-size:11px;
+  color:#ddd;
+}
+
+ul#menu li a:hover span{
+ letter-spacing:2px;
+ font-size:11px;
+ color:#fecc00;
+}
+
+a:active, a:hover, a:focus {
+  text-decoration: underline;
+  color: #fecc00;
+  outline: none;
+}
+
+hr {
+  height: 0;
+  border: dotted #000 0;
+  border-top-width: 2px;
+  margin:0;
+}
+
+hr.lg{
+  height: 0;
+  border: solid #222 0;
+  border-top-width: 1px;
+  margin:0;
+  margin-top:5px;
+  margin-bottom:5px;
+}
+
+img{border: 0 none;}
+
+input {
+  background-color:#222;
+  margin-right: 0px;
+  border: 1px solid #333;
+  color: #fecc00;
+  font-weight:bold;
+}
+
+input.login {
+  background-color:#222;
+  margin-right: 0px;
+  border: 1px solid #333;
+  color: #fecc00;
+  font-weight:bold;
+  width:100px;
+}
+
+.submit, button {
+  background-color:#222;
+  margin-right: 0px;
+  border: 1px solid #333;
+  color: #fecc00;
+  font-weight:bold;
+}
+
+button {
+  background-color:#333;
+  margin-right: 0px;
+  border: 2px solid #333;
+  color: #fecc00;
+  font-weight:bold;
+}
+
+input.sikayet {
+  background-color:#222;
+  margin-right: 0px;
+  border: 1px solid #333;
+  color: #fecc00;
+  font-weight:bold;
+  width:250px;
+}
+
+input.ara {
+  background-color:#222;
+  margin-right: 0px;
+  border: 1px solid #333;
+  color: #fecc00;
+  font-weight:bold;
+  width:150px;
+}
+
+textarea.sikayet {
+  background-color:#222;
+  margin-right: 0px;
+  border: 1px solid #333;
+  color: #fecc00;
+  font-weight:bold;
+  width: 250px;
+  height: 150px;
+  position:relative;
+  display:block;
+}
+
+input:hover, input.login:hover, textarea:hover, button:hover {
+  background-color:#555;
+}
+
+button:active {
+  background-color:#000;
+}
+
+button.minib {
+	font-size:8pt;
+	height:20px;
+	margin-top:1px;
+}
+
+select.sayfa{
+  background-color:#000;
+  margin-right: 0px;
+  border: 1px solid #333;
+  color: #fecc00;
+  font-weight:bold;
+}
+
+#logo {
+  width: %100;
+  height: 90px;
+  margin-left: 10%;
+  text-align:center;
+  background: url(../img/etusozlukbanner.png) 0 0 no-repeat;
+}
+
+#header {
+  width: %100;
+  min-height: 20px;
+  margin:auto;
+  background-color:#000;
+  position:relative;
+  border:none;
+}
+
+
+#loginbox {
+  position: absolute;
+  z-index:1;
+  display:none;
+  text-align:center;
+  top:0;
+  margin-top:30px;
+  background: #000000;
+  border:1px solid #333;
+  width: 270px;
+  height: auto;
+  padding: 10px 0 10px 0;
+}
+
+.lgbaslik {
+  font-size:8pt;
+  font-weight:bold;
+  color:#fecc00;
+  text-align:center;
+  padding-top:0;
+  margin-top:0;
+}
+
+#loginboxx {
+  position: absolute;
+  z-index:1;
+  display:none;
+  text-align:center;
+  top:0;
+  margin-top:60px;
+  background: #000000;
+  border:1px solid #333;
+  width: 270px;
+  height: auto;
+  padding: 10px 0 10px 0;
+}
+
+#basliklar {
+  margin:0;
+}
+
+#gizlimenu {
+  background-color: #000;
+  color: #FFF;
+  position: fixed;
+  width:160px;
+  margin-top:30px;
+  font-size: 0.8em;
+  padding-bottom:2px;
+  text-align: center;
+  display: none;
+  z-index: 2;
+  -moz-border-radius-topright:20px;
+  -webkit-border-top-right-radius:20px;
+  -moz-border-radius-bottomright:20px;
+  -webkit-border-bottom-right-radius:20px;
+  -moz-border-radius-topleft:20px;
+  -webkit-border-top-left-radius:20px;
+  -moz-border-radius-bottomleft:20px;
+  -webkit-border-bottom-left-radius:20px;
+}
+
+#main {
+  width:1200px;
+  margin:auto;
+  position:relative;
+  text-align:center;
+}
+
+#mainleft {
+  float:left;
+  width:800px; 
+  margin-top:5px;
+}
+
+#mainright {
+  float:right;
+  width:395px;
+  margin-top:5px;
+}
+
+
+ul.b {   
+  margin:0px;
+  list-style-type:none;
+}
+
+
+li.b {  
+  text-align: left;
+  text-indent: 5px;
+  margin: 0px;
+  list-style-type:none;
+}
+
+#paginator{padding-left:17px;text-align:center;}
+
+.aramenupanel, .sikayetmenupanel {
+  position: fixed;
+  top: 100px;
+  left: 1px;
+  display: none;
+  background: #000000;
+  color: #fff;
+  border:1px solid #111111;
+  border-left:none;
+  -moz-border-radius-topright: 20px;
+  -webkit-border-top-right-radius: 20px;
+  -moz-border-radius-bottomright: 20px;
+  -webkit-border-bottom-right-radius: 20px;
+  width: 270px;
+  height: auto;
+  padding: 30px 30px 30px 100px;
+  filter: alpha(opacity=95);
+  opacity: .95;
+}
+
+
+
+.aramenupanel a, .aramenupanel a:visited, .sikayetmenupanel a, .sikayetmenupanel a:visited {
+  margin:0;
+  padding:0;
+  color:#0081c6;
+  text-decoration:none;
+}
+
+.aramenupanel a:hover, .aramenupanel a:visited:hover, .sikayetmenupanel a:hover, .sikayetmenupanel a:visited:hover {
+  margin:0;
+  padding:0;
+  color: #fecc00;
+  text-decoration:none;
+  border-bottom: 1px solid #fecc00;
+}
+
+h3 {
+  font-size:12px;
+  letter-spacing:0px;
+  color:#fecc00;
+  font-weight:700;
+  margin:0;
+  padding:8px 0 5px 0;
+}
+
+
+a.aramenu, a.sikayetmenu {
+  position:fixed;
+  text-decoration:none;
+  top:110px;
+  left:0px;
+  font-size: 0.8em;
+  letter-spacing:-1px;
+  color:#fff;
+  padding:20px 30px 20px 15px;
+  font-weight:700;
+  background:#333333 url(../img/plus.png) 85% 55% no-repeat;
+  border:1px solid #444444;
+  -moz-border-radius-topright:20px;
+  -webkit-border-top-right-radius:20px;
+  -moz-border-radius-bottomright:20px;
+  -webkit-border-bottom-right-radius:20px;
+  display:block;
+}
+
+a.aramenu:hover, a.sikayetmenu:hover {
+  position:fixed;
+  text-decoration:none;
+  top:110px;
+  left:0px;
+  font-size: 0.8em;
+  letter-spacing:-1px;
+  color:#e2001a;
+  padding:20px 40px 20px 20px;
+  font-weight:700;
+  background:#222222 url(../img/plus.png) 85% 55% no-repeat;
+  border:1px solid #444444;
+  -moz-border-radius-topright:20px;
+  -webkit-border-top-right-radius:20px;
+  -moz-border-radius-bottomright:20px;
+  -webkit-border-bottom-right-radius:20px;
+  display:block;
+}
+
+a.active.aramenu, a.active.sikayetmenu {
+  background:#333333 url(../img/minus.png) 85% 55% no-repeat;
+  color:#e2001a;
+}
+
+a.pagor {
+	height:15px;
+	padding-left:4px;
+	padding-right:4px;
+	display:block;
+	float:left;
+	border:1px solid #777;
+	color: #fecc00;
+	background-color:#000;
+	margin-right:4px;
+	margin-top:5px;
+	text-decoration:none;
+	text-align:center;
+}
+
+a.pagor:hover {
+	background:#333;
+	color:white;
+	font-weight:bold;
+	text-decoration:none;
+}
+
+a.selected {
+	background:#777;
+	border:1px solid #ccc;
+}
