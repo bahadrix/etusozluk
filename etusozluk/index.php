@@ -1,14 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="tr-tr" lang="tr-tr" dir="ltr" >
 <head>
-		<title>ETU Sözlük</title>
+		<title>ETÜ Sözlük</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
 		<script type="text/javascript" src="js/jquery-ui-1.8.18.custom.min.js"></script>
 		<script type="text/javascript" src="js/pae.js"></script>
-		<!--<script type="text/javascript" src="js/jquery.vegas.js"></script>-->
 		<link type="text/css" href="style/jquery-ui-1.8.18.custom.css" rel="stylesheet" />	
-		<!--<link type="text/css" href="style/jquery-vegas.css" rel="stylesheet" />-->
 		<link type="text/css" href="style/style.css" rel="stylesheet" />
 	</head>
 	<body>
@@ -61,7 +59,7 @@ aynı adamın mantığına göre bir yerlerde bir yanlış varsa onu düzeltmek 
 
 onlar duyarsızdı, suçluydu zarttı zurttu; e sen yap görevini, sen sağla adaleti. yok "onlar adil değildi, ben niye adil olayım, bana niye adil ol diyorsun" diye sızlanıyor adam. yaşananların vahşilik, suç vs. olduğunu düşünmesine rağmen başbakanın çıkıp "sivas davası milletimize hayırlı olsun" demesinin sebebi budur. böyle dediği için başbakana bir şey denilmemelidir bu adamın mantığına göre.
 
-sonuç olarak ilkokul çocuğu düzeyinde bir mantığa sahip olan bir adamın yazdığı, yine o mantığa sahip olanların da ayar sandığı yazıdır.<div class="yazarinfo">(<a href="goster.php?baslik=tahrik+eden+cisim" id="yazar" rel="12345">tahrik eden cisim</a>, 17.03.2012 12:47)<div class="ymore"><a href="goster.php?eid=1234" id="entryid">@1234</a><button type="button" value="entry id" class="minib">iyuf</button><button type="button" value="entry id" class="minib">ı ıh</button></div><div id="yazarmini"></div></div></li><br /></ol><br /><div style="text-align:center;"><button type="button" value="Başlık ID">Hepsi Gelsin</button></div></div></div>
+sonuç olarak ilkokul çocuğu düzeyinde bir mantığa sahip olan bir adamın yazdığı, yine o mantığa sahip olanların da ayar sandığı yazıdır.<div class="yazarinfo">(<a href="goster.php?baslik=tahrik+eden+cisim" id="yazar" rel="12345">tahrik eden cisim</a>, 17.03.2012 12:47)<div class="ymore"><a href="goster.php?eid=1234" id="entryid">@1234</a>&nbsp;<button type="button" value="entry id" class="minib">iyuf</button>&nbsp;<button type="button" value="entry id" class="minib">ı ıh</button></div><div id="yazarmini"></div></div></li><br /></ol><br /><div style="text-align:center;"><button type="button" value="Başlık ID">Hepsi Gelsin</button></div></div></div>
 					</td>
 					<td valign=top width=400>
 						<div id="mainright"><div id="basliklar" style="text-align:left;"></div><input type="hidden" name="page_count" id="page_count" /></div>

@@ -366,15 +366,6 @@ function generateRows(selected, opt) {
 		$("#page_count").val(Math.ceil(c / 3));
 		generateRows(1,0);
 		
-		/*$.vegas({
-		src:'js/images/background.jpg'
-		});
-		$.vegas('overlay', {
-		src:'js/overlays/13.png',
-		opacity: '0.50'
-		});*/
-
-		
 		$("#txt1").maxlength({slider: true, maxCharacters: 255} );
 		
 		$(".aramenu").click(function() {
