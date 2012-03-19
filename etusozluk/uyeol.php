@@ -73,7 +73,7 @@
 		</script>
 	</head>
 	<body>
-		<div id="logo"><a href="index.htm" style="width: 200px; height: 90px; display: block;" title="Etü Sözlük"></a></div>
+		<div id="logo"><a href="index.php" style="width: 200px; height: 90px; display: block;" title="Etü Sözlük"></a></div>
 		<ul id="menu">
 		<div id="loginbox">
 				<p class="lgbaslik">Giriş</p>
