@@ -303,7 +303,7 @@ function generateRows(selected, opt) {
 
 					error: function (request, status, error) {
 						alert(request.responseText);
-						$("#basliklar").empty().append('Birader yazmamışsınız daha, hadi gari!');
+						$("#basliklar").empty().append('Hata oluştu lütfen tekrar deneyin.');
 					}
 				});
 		}
