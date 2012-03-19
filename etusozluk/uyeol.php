@@ -7,13 +7,17 @@
 		<script type="text/javascript" src="js/pae.js"></script>
 		<link type="text/css" href="style/jquery-ui-1.8.18.custom.css" rel="stylesheet" />	
 		<link type="text/css" href="style/style.css" rel="stylesheet" />
-		<script>
+		<script type="text/javascript">
+		jQuery.validator.addMethod("nkontrol", function(value, element) {
+		return this.optional(element) || /^([a-z]+\s?)*$/.test(value);
+		}, " Sadece küçük harf ve boşluk geçerli");
 		$(document).ready(function() {
 			$("#register").validate({
 				rules: {
 					nick: {
 						required:true,
-						minlength:3
+						rangelength: [3,40],
+						nkontrol: true
 					},
 					sifre: {
 						required:true,
@@ -27,23 +31,25 @@
 					email: {
 						required:true,
 						email:true,
-						minlength:5
+						minlength:6
 					},
 					ad : "required",
 					soyad : "required",
 					gun : "required",
 					ay : "required",
-					yil : "required"
+					yil : "required",
+					cinsiyet : "required"
 				},
 			messages: {
 				ad: " Adınızı girin",
 				soyad: " Soyadınızı girin",
-				gun : " Gün seçilmesi zorunludur",
-				ay : " Ay seçilmesi zorunludur",
-				yil : " Yıl seçilmesi zorunludur",
+				gun : " *",
+				ay : " *",
+				yil : " *",
+				cinsiyet : " *",
 				nick: {
 					required: " Kod adı girin",
-					minlength: jQuery.format(" En az {0} karakter gerekli")
+					rangelength: jQuery.format(" Nick {0}-{1} karakter olmalı")
 				},
 				sifre: {
 					required: " Şifre girin",
@@ -59,7 +65,9 @@
 					minlength: " Geçerli bir email adresi girin",
 					email: " Geçerli bir email adresi girin"
 				}
-		}
+		}, submitHandler: function(form){
+			$('form input[type=submit]').attr('disabled', 'disabled');
+			form.submit(); }
 			});
 		});
 		</script>
@@ -99,9 +107,9 @@
 		</ul>
 		<div id="header"></div>
 		<div id="main">
-			<table cellspacing="0" cellpadding="0">
+			<table cellspacing=0 cellpadding=0>
 				<tr>
-					<td valign="top" width="800" style="border-right:1px dotted #666;">
+					<td valign=top width=800 style="border-right:1px dotted #666;">
 						<div id="mainleft"><div id="entries"><h3 style="text-align:left; margin-left:40px;">Üye Olma Aparatı</h3>
 						<ol style="color:#fff">
 						<li>18 yaşından küçüklerin etü sözlük üyesi olması yasaktır.</li><li>3 ay boyunca kullanılmayan çaylak hesapları şişip doymayalım diye silinir.</li><li>e-mail adresinize aktivasyon maili gideceği için aktif bir email adresi girmelisiniz.</li><li>sözlüğe üye olan herkesin sözlük kurallarını bildiği farz edilmektedir. bu kurallara üye girişi yaptıktan sonra "panel" bölümünden ulaşabilirsiniz.</li><li>etü sözlük kullanıcılarından aldığı bilgileri sadece sistemin daha iyi işlemesi için kullanır. üçüncü kişilerle paylaşmaz. sadece hukuki durumlarda bu bilgiler gerekli mercilerle paylaşılır.</li><li>gerçek dışı kişisel bilgiler, türkiye cumhuriyeti yasalarına aykırı davranışlar, sözlük altyapısına yönelen saldırılar hesabınızın silinmesine yol açabilir.</li><li>aparatta istenen kişisel bilgiler hesabınızın başına bir şey gelmesi durumunda ilgili hesabın size ait olduğunu kanıtlamak için kullanılır.</li>
@@ -112,7 +120,7 @@
 								<legend style="font-family: Arial, sans-serif; font-size: 1.3em; font-weight:bold; color:#fff;">&nbsp;artık aparata geçelim&nbsp;</legend>
 								<table style="width:800px, border:1px solid white; font-size:8pt">
 									<tr>
-										<td style="width:200px; text-align:right;">Nick:<em></em></td>
+										<td style="width:200px; text-align:right;">Nick:</td>
 										<td style="width:600px;"><input id="nick" name="nick" size="40" maxlength="40" type="text" /></td>
 									</tr>
 									<tr>
