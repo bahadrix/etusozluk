@@ -61,8 +61,8 @@
 					equalTo: " Şifre ile aynı olmalı"
 				},
 				email: {
-					required: " Email adresinizi girin",
-					minlength: " Geçerli bir email adresi girin",
+					required: "Email adresinizi girin",
+					minlength: "Geçerli bir email adresi girin",
 					email: " Geçerli bir email adresi girin"
 				}
 		}, submitHandler: function(form){
@@ -103,9 +103,9 @@
 			<li id="rastgele"><a href="javascript:void(0);"><span>Rastgele</span></a><div id="gizlimenu">Rastgele 50 başlık</div></li>
 			<li id="hot"><a href="javascript:void(0);"><span>Hot</span></a><div id="gizlimenu">Sıcak sıcak yeni çıktı</div></li>
 			<li id="iyuf"><a href="javascript:void(0);"><span>İyuf</span></a><div id="gizlimenu">Yok böyle girdi</div></li>
-			<li id="da-fuq"><a href="javascript:void(0);"><span>Da-FAQ</span></a><div id="gizlimenu">Aga bu nedir?</div></li>
+			<li id="da-ara"><a href="javascript:void(0);" class="aramenu"><span>Ara</span></a></li>
 		</ul>
-		<div id="header"></div>
+		<div id="header"><form name="baslikara" action="ara.php?op=baslikara"><input type="text" value="Başlık Getir" id="titlea" name="title" size="30" maxlength="70" />&nbsp;<input type="submit" value="ara" /></form></div>
 		<div id="main">
 			<table cellspacing=0 cellpadding=0>
 				<tr>
@@ -225,11 +225,10 @@
 					<td style="margin-left:0;"><textarea id="txt1" name="sikayet" class="sikayet"></textarea></td>
 					</tr>
 					<tr>
-					<td style="text-align:center;"><input type="submit" name="gonder" value="Gönder" class="login" /></td>
+					<td style="text-align:center;"><input type="submit" name="gonder" value="Gönder" class="login"/></td>
 					</tr>
 			</table></form><font style="font-size:10px; margin-top:0px;">* Hatasız kul olmaz.</font>
 		</div>
-		<a class="aramenu" href="#">&nbsp;&nbsp;Ara&nbsp;</a>
 		<a class="sikayetmenu" href="#">İstek</a>
 	</body>
 </html> 

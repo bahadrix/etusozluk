@@ -214,7 +214,7 @@ input:hover, input.login:hover, textarea:hover, button:hover {
   background-color:#555;
 }
 
-button:active, input:active {
+button:active, input:active, input.login:active {
   background-color:#000;
 }
 
@@ -244,7 +244,8 @@ select.sayfa{
 #header {
   width: %100;
   min-height: 20px;
-  margin:auto;
+  margin:0;
+  text-align:center;
   background-color:#000;
   position:relative;
   border:none;
@@ -348,9 +349,9 @@ li.b {
 
 #paginator{padding-left:17px;text-align:center;}
 
-.aramenupanel, .sikayetmenupanel {
+.sikayetmenupanel {
   position: fixed;
-  top: 100px;
+  top: 150px;
   left: 1px;
   display: none;
   background: #000000;
@@ -364,8 +365,33 @@ li.b {
   width: 270px;
   height: auto;
   padding: 30px 30px 30px 100px;
-  filter: alpha(opacity=95);
-  opacity: .95;
+  filter: alpha(opacity=40);
+  opacity: .40;
+}
+
+.aramenupanel {
+  position: absolute;
+  top: 30px;
+  right:30px;
+  display: none;
+  background: #000000;
+  color: #fff;
+  border:1px solid #111111;
+  border-left:none;
+  -moz-border-radius: 20px;
+  -webkit-border-radius: 20px;
+  -khtml-border-radius: 20px;
+  border-radius: 20px;
+  width: 250px;
+  height: auto;
+  padding: 30px 30px 30px 30px;
+  filter: alpha(opacity=40);
+  opacity: .40;
+}
+
+.aramenupanel:hover, .sikayetmenupanel:hover {
+  filter: alpha(opacity=100);
+  opacity: 1;
 }
 
 
@@ -395,10 +421,10 @@ h3 {
 }
 
 
-a.aramenu, a.sikayetmenu {
+a.sikayetmenu {
   position:fixed;
   text-decoration:none;
-  top:110px;
+  top:165px;
   left:0px;
   font-size: 0.8em;
   letter-spacing:-1px;
@@ -414,10 +440,10 @@ a.aramenu, a.sikayetmenu {
   display:block;
 }
 
-a.aramenu:hover, a.sikayetmenu:hover {
+a.sikayetmenu:hover {
   position:fixed;
   text-decoration:none;
-  top:110px;
+  top:165px;
   left:0px;
   font-size: 0.8em;
   letter-spacing:-1px;
@@ -433,7 +459,7 @@ a.aramenu:hover, a.sikayetmenu:hover {
   display:block;
 }
 
-a.active.aramenu, a.active.sikayetmenu {
+a.active.sikayetmenu {
   background:#333333 url(../img/minus.png) 85% 55% no-repeat;
   color:#e2001a;
 }
