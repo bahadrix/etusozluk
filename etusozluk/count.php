@@ -1,23 +1,24 @@
 <?php
-include 'common.php';
+include 'data/core/db.php';
 
-$say = $_GET['say'] or die("parametre giriniz");
+$say = isset ($_GET['say']) ? $_GET['say'] : die("parametre giriniz");
 
 $db = getPDO();
 
 switch ($say) {
     
+    case 'dun':
+        $date_condition = "entries.Tarih BETWEEN ADDDATE(CURDATE(), INTERVAL - 1 DAY) AND CURDATE()";
+        break;
     case 'bugun':
-        //$date_condition
-    break;
+        $date_condition = "entries.Tarih BETWEEN CURDATE() AND ADDDATE(CURDATE(), INTERVAL  1 DAY)";
+        break;
     default:
-        die('bilinmeyen tarih');
-    
+        die('bilinmeyen tarih');    
 }
 
+$sayi = $db->query("SELECT COUNT(E_ID) AS sayi FROM entries WHERE $date_condition")->fetch();
+echo $sayi['sayi'];
 
-if ($say=="bugun")
-echo 6;
-else if ($say=="dun")
-echo 8;
+
 ?>

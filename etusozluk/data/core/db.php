@@ -23,10 +23,11 @@ function getPDO() {
     
     
     if (DEBUG_MODE) {
-        FB::log("Debug mod açık", "Veritabanı");
+        FB::log("AÇIK", "Veritabanı Debug Modu:");
         return new LoggedPDO( "mysql:host=$dbhost;dbname=$db;charset=utf8", $dbuser, $dbpass, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
         
     } else {
+        FB::log("Kapalı", "Veritabanı Debug Modu:");
         return new PDO( "mysql:host=$dbhost;dbname=$db;charset=utf8", $dbuser, $dbpass, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT));
     }
     

@@ -1,8 +1,12 @@
 <?php
+/**
+ * http://www.coderholic.com/php-database-query-logging-with-pdo/ adresindeki kod
+ * esas alınarak düzeltilmiş ve geliştirilmiştir.
+ */
+
 
 /**
-* Extends PDO and logs all queries that are executed and how long
-* they take, including queries issued via prepared statements
+* PDO sınıfını extend ederek bütün log bilgilerini FirePHP konsoluna basar.
 */
 class LoggedPDO extends PDO
 {
@@ -15,9 +19,8 @@ class LoggedPDO extends PDO
     }
     
     /**
-     * Print out the log when we're destructed. I'm assuming this will
-     * be at the end of the page. If not you might want to remove this
-     * destructor and manually call LoggedPDO::printLog();
+     * Sınıf kaldırılana kadarki kaydedilen bütün sorgular loglanır. 
+     * Sınıf kaldırıldığındaki eldeki loglar konsola basılır.
      */
     public function __destruct() {
         self::printLog();
