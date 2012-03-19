@@ -214,7 +214,7 @@ input:hover, input.login:hover, textarea:hover, button:hover {
   background-color:#555;
 }
 
-button:active {
+button:active, input:active {
   background-color:#000;
 }
 
