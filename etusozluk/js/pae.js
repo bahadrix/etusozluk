@@ -303,7 +303,7 @@ function generateRows(selected, opt) {
 
 					error: function (request, status, error) {
 						alert(request.responseText);
-						$("#basliklar").empty().append('Birader yazmamışsınız daha, hadi gari!');
+						$("#basliklar").empty().append('Hata oluştu lütfen tekrar deneyin.');
 					}
 				});
 		}
@@ -334,6 +334,7 @@ function generateRows(selected, opt) {
 		function yazarinfo(id,posX,posY) {
 			$("#sharebox").remove();
 			$("#yazarminiinfo").remove();
+			$("#fbtw").remove();
 			var bilgi="";
 			$.post("yazarmini.php", {yid:id}, function(data) {
 				bilgi += '<div id="yazarminiinfo">' + data + '<div class="kapat"></div></div>';
@@ -349,8 +350,10 @@ function generateRows(selected, opt) {
 		function sharebox(eid,posX,posY) {
 			$("#yazarminiinfo").remove();
 			$("#sharebox").remove();
+			$("#fbtw").remove();
 			var bilgi="";
-			bilgi += '<div id="sharebox"><input type="text" name="eadres" id="eadres" value="http://www.etusozluk.com/goster.php?eid='+eid+'"/><br />Facebookta Paylaş<br />Twitterda Paylaş<div class="kapat"></div></div>';
+			bilgi += '<div id="sharebox"><input type="text" name="eadres" id="eadres" value="http://www.etusozluk.com/goster.php?eid='+eid+'"/><br /><div style="position:relative; left:50px; top:2px; text-align:left; background-color:#000; width:50px;"><a type="button" name="fb_share" share_url="http://www.etusozluk.com/goster.php?eid='+eid+'">Paylaş</a></div><div style="position:relative; left:50px; top:5px; text-align:left; background-color:#000; width:50px;"><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.etusozluk.com/goster.php?eid='+eid+'" data-via="etusozluk" data-lang="tr" data-count="none"></a><br /></div><div class="kapat"></div></div>';
+			$('body').append('<div id="fbtw"><script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" type="text/javascript"></script><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script></div>');
 			$("body").append(bilgi);
 			$("#sharebox").css({top: posY+10+"px", left: posX+10+"px"});
 			$("#sharebox").show();
@@ -379,9 +382,9 @@ function generateRows(selected, opt) {
 			return false;
 
 			});
+			
 		$("textarea").css({resize: "none"});
-		$(".sikayetmenu, .sikayetmenu:hover").css({ top: "165px" });
-		$(".sikayetmenupanel").css({ top: "150px" });
+		
 		$(".sikayetmenu").click(function() {
 
 			if ($(".aramenupanel:visible").length>0) {
@@ -405,7 +408,7 @@ function generateRows(selected, opt) {
 				$("#gizlimenu").hide();
 			});
 
-			$("#bugun, #dun, #rastgele, #hot, #yeni, #ark, #da-fuq, #iyuf,").hover(function(){
+			$("#bugun, #dun, #rastgele, #hot, #yeni, #ark, #iyuf,").hover(function(){
 				if ($("#loginbox:visible").length>0) {
 					$("#gizlimenu").hide();
 				}
@@ -447,6 +450,14 @@ function generateRows(selected, opt) {
 				$cur = $(this);
 				ytimer = setTimeout(function() {yazarinfo($cur.attr("rel"),$cur.offset().left,$cur.offset().top);},500);
 			}).mouseleave(function() { clearTimeout(ytimer); });
+			
+			$("#titlea").click(function() {
+				$("#titlea").focus().val("");
+			});
+			
+			$("#titlea").blur(function() {
+				$(this).val("Başlık Getir");
+			});
 	});
 
 /* ETU SOZLUK KISMI BITIS */
