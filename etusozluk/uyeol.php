@@ -55,8 +55,8 @@
 					equalTo: " Şifre ile aynı olmalı"
 				},
 				email: {
-					required: " Email adresinizi girin",
-					minlength: " Geçerli bir email adresi girin",
+					required: "Email adresinizi girin",
+					minlength: "Geçerli bir email adresi girin",
 					email: " Geçerli bir email adresi girin"
 				}
 		}
