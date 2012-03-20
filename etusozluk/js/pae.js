@@ -172,7 +172,7 @@ function generateRows(selected, opt) {
 	
 	if (opt == "dun")
 		op = "dun";
-	else if(isFinite(opt) && opt.length == 8)
+	else if(isFinite(opt) && $.isNumeric(opt) && opt.length == 8)
 		 op = opt;
 	else 
 		op = "bugun";
@@ -274,7 +274,7 @@ function generateRows(selected, opt) {
 			
 			if (gun == "dun")
 			  uza = "g=dun";
-			else if(isFinite(gun) && gun.length == 8)
+			else if(isFinite(gun) && $.isNumeric(gun) && gun.length == 8)
 			  uza= "g=gun&gun="+gun.substr(0,2)+"&ay="+gun.substr(2,2)+"&yil="+gun.substr(4);
 			else 
 			  uza = "g=bugun";
@@ -302,7 +302,7 @@ function generateRows(selected, opt) {
 				},
 
 					error: function (request, status, error) {
-						alert(request.responseText);
+						//alert(request.responseText);
 						$("#basliklar").empty().append('Hata oluştu lütfen tekrar deneyin.');
 					}
 				});
@@ -313,7 +313,7 @@ function generateRows(selected, opt) {
 			var uza = null;
 			if (opt == "dun")
 			  uza = "?say=dun";
-			else if(isFinite(opt) && opt.length == 8)
+			else if(isFinite(opt) && $.isNumeric(opt) && opt.length == 8)
 			  uza= "?say=gun&gun="+opt.substr(0,2)+"&ay="+opt.substr(2,2)+"&yil="+opt.substr(4);
 			else 
 			  uza = "?say=bugun";
