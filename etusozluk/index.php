@@ -22,7 +22,7 @@
 					<td>&nbsp;</td>
 					</tr>
 					<tr>
-					<td style="padding-right: 2px;"><input type="text" name="username" size="15" maxlength="40" value="" class="login" /></td>
+					<td style="padding-right: 2px;"><input type="text" name="username" size="15" maxlength="25" value="" class="login" /></td>
 					<td style="padding-right: 2px;"><input type="password" name="password" size="15" maxlength="32" value="" class="login" /></td>
 					<td style="text-align:left;"><input type="submit" name="login" value="Gir" class="submit" /></td>
 					</tr>
