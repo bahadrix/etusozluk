@@ -268,6 +268,90 @@ function generateRows(selected, opt) {
 /* Pager bitti */
 
 /* ETU SOZLUK KISMI */
+
+			/*$.fn.insertAtCaret = function (tagName) {
+			return this.each(function(){
+				if (document.selection) {
+					//IE support
+					this.focus();
+					sel = document.selection.createRange();
+					sel.text = tagName;
+					this.focus();
+				}else if (this.selectionStart || this.selectionStart == '0') {
+					//MOZILLA/NETSCAPE support
+					startPos = this.selectionStart;
+					endPos = this.selectionEnd;
+					scrollTop = this.scrollTop;
+					this.value = this.value.substring(0, startPos) + tagName + this.value.substring(endPos,this.value.length);
+					this.focus();
+					this.selectionStart = startPos + tagName.length;
+					this.selectionEnd = startPos + tagName.length;
+					this.scrollTop = scrollTop;
+				} else {
+					this.value += tagName;
+					this.focus();
+				}
+			});
+		};*/
+		
+		function isURL(a) {
+			return /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(a)
+		}
+		
+		$.fn.tae = function (tagName, tag) {
+			return this.each(function(){
+				if (tagName === "bkz") {
+					strStart = '(bkz: ';
+					strEnd = ')';
+				} else if (tagName === "spoiler") {
+					strStart = '\n\r [spoiler] \n\r';
+					strEnd = '\n\r [/spoiler] \n\r';
+				} else if (tagName === "gizli") {
+					strStart = '`';
+					strEnd = '`';
+				} else if (tagName === "url") {
+					strStart = '['+tag+' ';
+					strEnd = ']';
+				}else {
+					strStart = '['+tagName+']';
+					strEnd = '[/'+tagName+']';
+				}
+				if (document.selection) {
+					//IE support
+					stringBefore = this.value;
+					this.focus();
+					sel = document.selection.createRange();
+					insertstring = sel.text;
+					fullinsertstring = strStart + sel.text + strEnd;
+					sel.text = fullinsertstring;
+					document.selection.empty();
+					this.focus();
+					stringAfter = this.value;
+					i = stringAfter.lastIndexOf(fullinsertstring);
+					range = this.createTextRange();
+					numlines = stringBefore.substring(0,i).split("\n").length;
+					i = i+3-numlines+tagName.length;
+					j = insertstring.length;
+					range.move("character",i);
+					range.moveEnd("character",j);
+					range.select();
+				}else if (this.selectionStart || this.selectionStart == '0') {
+					//rest
+					startPos = this.selectionStart;
+					endPos = this.selectionEnd;
+					scrollTop = this.scrollTop;
+					this.value = this.value.substring(0, startPos) + strStart + this.value.substring(startPos,endPos) + strEnd + this.value.substring(endPos,this.value.length);
+					this.focus();
+					this.selectionStart = startPos + strStart.length ;
+					this.selectionEnd = endPos + strStart.length;
+					this.scrollTop = scrollTop;
+				} else {
+					this.value += strStart + strEnd;
+					this.focus();
+				}
+			});
+		};
+
 		function gungetir(gun, i) {
 			var loading = 'Başlıklar yükleniyor... <br /><img src="img/1.gif">';
 			var uza='';
@@ -357,8 +441,8 @@ function generateRows(selected, opt) {
 			$("body").append(bilgi);
 			$("#sharebox").css({top: posY+10+"px", left: posX+10+"px"});
 			$("#sharebox").show();
-			$(".kapat").click(function() { $("#sharebox").fadeOut(300, function() { $("#sharebox").remove() ;}) });
-			$(document).one("click", function() { $("#sharebox").fadeOut(300, function() { $("#sharebox").remove(); }); });
+			$(".kapat").click(function() { $("#sharebox").fadeOut(300, function() { $("#sharebox").remove(); $("#fbtw").remove(); }) });
+			$(document).one("click", function() { $("#sharebox").fadeOut(300, function() { $("#sharebox").remove(); $("#fbtw").remove(); }); });
 			$("#sharebox").click(function(e){ e.stopPropagation(); });
 			
 		}
@@ -457,6 +541,18 @@ function generateRows(selected, opt) {
 			
 			$("#titlea").blur(function() {
 				$(this).val("Başlık Getir");
+			});
+			
+			$("#bkz").click(function() {
+				$("#entrytextarea").tae("bkz");
+			});
+			
+			$("#gizlibkz").click(function() {
+				$("#entrytextarea").tae("gizli");
+			});
+			
+			$("#spoiler").click(function() {
+				$("#entrytextarea").tae("spoiler");
 			});
 	});
 

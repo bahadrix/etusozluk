@@ -22,7 +22,7 @@
 					<td>&nbsp;</td>
 					</tr>
 					<tr>
-					<td style="padding-right: 2px;"><input type="text" name="username" size="15" maxlength="25" value="" class="login" /></td>
+					<td style="padding-right: 2px;"><input type="text" name="username" size="15" maxlength="40" value="" class="login" /></td>
 					<td style="padding-right: 2px;"><input type="password" name="password" size="15" maxlength="32" value="" class="login" /></td>
 					<td style="text-align:left;"><input type="submit" name="login" value="Gir" class="submit" /></td>
 					</tr>
@@ -57,7 +57,10 @@ aynı adamın mantığına göre bir yerlerde bir yanlış varsa onu düzeltmek 
 
 onlar duyarsızdı, suçluydu zarttı zurttu; e sen yap görevini, sen sağla adaleti. yok "onlar adil değildi, ben niye adil olayım, bana niye adil ol diyorsun" diye sızlanıyor adam. yaşananların vahşilik, suç vs. olduğunu düşünmesine rağmen başbakanın çıkıp "sivas davası milletimize hayırlı olsun" demesinin sebebi budur. böyle dediği için başbakana bir şey denilmemelidir bu adamın mantığına göre.
 
-sonuç olarak ilkokul çocuğu düzeyinde bir mantığa sahip olan bir adamın yazdığı, yine o mantığa sahip olanların da ayar sandığı yazıdır.<div class="yazarinfo">(<a href="goster.php?baslik=tahrik+eden+cisim" id="yazar" rel="12345">tahrik eden cisim</a>, 17.03.2012 12:47)<div class="ymore"><a href="goster.php?eid=1234" id="entryid">@1234</a>&nbsp;<button type="button" value="entry id" class="minib">iyuf</button>&nbsp;<button type="button" value="entry id" class="minib">ı ıh</button></div><div id="yazarmini"></div></div></li><br /></ol><br /><div style="text-align:center;"><button type="button" value="Başlık ID">Hepsi Gelsin</button></div></div></div>
+sonuç olarak ilkokul çocuğu düzeyinde bir mantığa sahip olan bir adamın yazdığı, yine o mantığa sahip olanların da ayar sandığı yazıdır.<div class="yazarinfo">(<a href="goster.php?baslik=tahrik+eden+cisim" id="yazar" rel="12345">tahrik eden cisim</a>, 17.03.2012 12:47)<div class="ymore"><a href="goster.php?eid=1234" id="entryid">@1234</a>&nbsp;<button type="button" value="entry id" class="minib">iyuf</button>&nbsp;<button type="button" value="entry id" class="minib">ı ıh</button></div><div id="yazarmini"></div></div></li><br /></ol>
+						<br /><div style="text-align:center;"><button type="button" value="Başlık ID">Hepsi Gelsin</button>
+						<div style="text-align:left; padding-top:10px; padding-left:25px;">"Random Başlık" hakkında söylemek istediklerim var diyorsan hadi durma:
+						<form action="ekle.php" method="post" id="yenigirdi"><input type="hidden" name="t" value="random başlık" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt('link: (başında http:// olmalı)', 'http://');if(isURL(a))$('#entrytextarea').tae('url',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi"></textarea><input type="submit" value="böyle olur" class="ebut" /><input type="submit" value="bunu sonra gönderirim" class="ebut" name="kaydet" /></form></div></div></div></div>
 					</td>
 					<td valign=top width=400>
 						<div id="mainright"><div id="basliklar" style="text-align:left;"></div><input type="hidden" name="page_count" id="page_count" /></div>
