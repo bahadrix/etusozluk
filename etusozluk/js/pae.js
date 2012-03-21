@@ -536,11 +536,13 @@ function generateRows(selected, opt) {
 			}).mouseleave(function() { clearTimeout(ytimer); });
 			
 			$("#titlea").click(function() {
-				$("#titlea").focus().val("");
+				if ($("#titlea").val() === "" || $("#titlea").val() === "Başlık Getir") 
+					$("#titlea").focus().val("");
 			});
 			
 			$("#titlea").blur(function() {
-				$(this).val("Başlık Getir");
+				if ($("#titlea").val() === "" || $("#titlea").val() === "Başlık Getir") 
+					$(this).val("Başlık Getir");
 			});
 			
 			$("#bkz").click(function() {
