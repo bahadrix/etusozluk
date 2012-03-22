@@ -29,7 +29,7 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 			echo 'Ad 3-20 karakter arası olmalı';
 		else if (!preg_match("/^([a-zŞşÇçÜüİıÖöĞğ]+\s?)*$/i", $ad))
 			echo 'Ad sadece harf ve boşluk içerebilir';
-		else if (strlen($soyad)<3 || strlen($soyad)>25)
+		else if (strlen($soyad)<2 || strlen($soyad)>25)
 			echo 'Soyad 3-25 karakter arası olmalı';
 		else if (!preg_match("/^[a-zŞşÇçÜüİıÖöĞğ]+$/i", $soyad))
 			echo 'Soyad sadece harf içerebilir';
@@ -60,9 +60,9 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 						echo 'true';
 					else
 						echo 'Hata oluştu. Lütfen tekrar deneyin.';
-					mysql_close();
 				}
 			}
+			mysql_close();
 		}							
 	} else 
 		echo 'Geçersiz';
@@ -125,7 +125,7 @@ else {
 					soyad : {
 						required:true,
 						lettersonly:true,
-						rangelength: [3,25]
+						rangelength: [2,25]
 					},
 					gun : "required",
 					ay : "required",
@@ -171,7 +171,7 @@ else {
 			e.preventDefault();
 			$('#registersub').attr("disabled", "disabled");
 			$('#registersub').addClass('disabled');
-			setTimeout('enableButton()', 5000);
+			setTimeout('enableButton()', 7500);
 			$.ajax({
 			type: "POST",
 			url: "uyeol.php",
@@ -264,7 +264,7 @@ else {
 									echo 'Ad 3-20 karakter arası olmalı';
 								else if (!preg_match("/^([a-zŞşÇçÜüİıÖöĞğ]+\s?)*$/i", $ad))
 									echo 'Ad sadece harf ve boşluk içerebilir';
-								else if (strlen($soyad)<3 || strlen($soyad)>25)
+								else if (strlen($soyad)<2 || strlen($soyad)>25)
 									echo 'Soyad 3-25 karakter arası olmalı';
 								else if (!preg_match("/^[a-zŞşÇçÜüİıÖöĞğ]+$/i", $soyad))
 									echo 'Soyad sadece harf içerebilir';
@@ -295,9 +295,9 @@ else {
 												echo 'Üyeliğiniz açıldı. Lütfen email adresinize gönderdiğimiz aktivasyon mailini onaylayıp giriş yapınız.';
 											else
 												echo 'Hata oluştu. Lütfen tekrar deneyin';
-											mysql_close();
 										}
 									}
+									mysql_close();
 								}							
 							}
 							else {
