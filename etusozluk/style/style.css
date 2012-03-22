@@ -481,6 +481,10 @@ a.sikayetmenu:hover {
   display:block;
 }
 
+.disabled {
+  background-color:#000;
+}
+
 a.active.sikayetmenu {
   background:#333333 url(../img/minus.png) 85% 55% no-repeat;
   color:#e2001a;
