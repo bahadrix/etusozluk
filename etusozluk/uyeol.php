@@ -30,7 +30,7 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 		else if (!preg_match("/^([a-zŞşÇçÜüİıÖöĞğ]+\s?)*$/i", $ad))
 			echo 'Ad sadece harf ve boşluk içerebilir';
 		else if (strlen($soyad)<2 || strlen($soyad)>25)
-			echo 'Soyad 3-25 karakter arası olmalı';
+			echo 'Soyad 2-25 karakter arası olmalı';
 		else if (!preg_match("/^[a-zŞşÇçÜüİıÖöĞğ]+$/i", $soyad))
 			echo 'Soyad sadece harf içerebilir';
 		else {
@@ -265,7 +265,7 @@ else {
 								else if (!preg_match("/^([a-zŞşÇçÜüİıÖöĞğ]+\s?)*$/i", $ad))
 									echo 'Ad sadece harf ve boşluk içerebilir';
 								else if (strlen($soyad)<2 || strlen($soyad)>25)
-									echo 'Soyad 3-25 karakter arası olmalı';
+									echo 'Soyad 2-25 karakter arası olmalı';
 								else if (!preg_match("/^[a-zŞşÇçÜüİıÖöĞğ]+$/i", $soyad))
 									echo 'Soyad sadece harf içerebilir';
 								else {
