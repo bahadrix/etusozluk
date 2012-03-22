@@ -3,7 +3,7 @@
 <head>
 		<title>ETÜ Sözlük</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 		<script type="text/javascript" src="js/jquery-ui-1.8.18.custom.min.js"></script>
 		<script type="text/javascript" src="js/pae.js"></script>
 		<link type="text/css" href="style/jquery-ui-1.8.18.custom.css" rel="stylesheet" />	

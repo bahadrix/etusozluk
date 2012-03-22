@@ -1,17 +1,100 @@
+<?php
+if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+	if (!empty($_POST['nick']) && !empty($_POST['sifre']) && !empty($_POST['sifret']) && !empty($_POST['email']) && !empty($_POST['ad']) && !empty($_POST['soyad']) && !empty($_POST['cinsiyet']) && !empty($_POST['gun']) && !empty($_POST['ay']) && !empty($_POST['yil']) && !empty($_POST['sehir'])) {
+		$nick = strtolower($_POST['nick']);
+		$sifre = $_POST['sifre'];
+		$sifret = $_POST['sifret'];
+		$email = $_POST['email'];
+		$ad = $_POST['ad'];
+		$soyad = $_POST['soyad'];
+		$cinsiyet = $_POST['cinsiyet'];
+		$gun = $_POST['gun'];
+		$ay = $_POST['ay'];
+		$yil = $_POST['yil'];
+		$sehir = $_POST['sehir'];
+							
+		if ($sifret != $sifre)
+			echo 'Şifreler aynı olmalı';
+		else if (!checkdate($ay, $gun, $yil))
+			echo 'Geçersiz tarih'; //gereksiz kontrol
+		else if (strlen($nick)<3 || strlen($nick)>25)
+			echo 'Nick 3-25 karakter arası olmalı';
+		else if (!preg_match("/^([a-zŞşÇçÜüİıÖöĞğ]+\s?)*$/", $nick))
+			echo 'Nick sadece a-z ve boşluk içerebilir';
+		else if (!filter_var($email,FILTER_VALIDATE_EMAIL))
+			echo 'Geçersiz email adresi';
+		else if (strlen($sifre)<3 || strlen($sifre)>20)
+			echo 'Şifre 3-20 karakter arası olmalı';
+		else if (strlen($ad)<3 || strlen($ad)>20)
+			echo 'Ad 3-20 karakter arası olmalı';
+		else if (!preg_match("/^([a-zŞşÇçÜüİıÖöĞğ]+\s?)*$/i", $ad))
+			echo 'Ad sadece harf ve boşluk içerebilir';
+		else if (strlen($soyad)<3 || strlen($soyad)>25)
+			echo 'Soyad 3-25 karakter arası olmalı';
+		else if (!preg_match("/^[a-zŞşÇçÜüİıÖöĞğ]+$/i", $soyad))
+			echo 'Soyad sadece harf içerebilir';
+		else {
+			//bağlan
+			$link = mysql_connect('127.0.0.1', 'root', 'esozluk') or die(mysql_error());
+			$dbname = "bahadir_etusozluk";
+			mysql_select_db($dbname) or die(mysql_error());
+						
+			$nick = mysql_real_escape_string($nick);
+			$nickkontrol = mysql_query("SELECT Nick FROM members WHERE Nick ='".$nick."'");
+			if (mysql_num_rows($nickkontrol)>0)
+				echo 'Bu kullanıcı adı daha önceden alınmış.';
+			else {
+				$email = mysql_real_escape_string($email);
+				$emailkontrol = mysql_query("SELECT Email FROM members WHERE Email = '".$email."'");
+				if (mysql_num_rows($emailkontrol)>0)
+					echo 'Bu email adresi daha önceden alınmış.';
+				else {
+					$ad = mysql_real_escape_string(strtoupper(substr($ad,0,1)) . strtolower(substr($ad,1)));
+					$soyad = mysql_real_escape_string(strtoupper(substr($soyad,0,1)) . strtolower(substr($soyad,1)));
+					$sifre = mysql_real_escape_string($sifre);
+					$tarih = "{$yil}-{$ay}-{$gun}";
+					$cinsiyet = mysql_real_escape_string(strtoupper($cinsiyet));
+					$sehir = mysql_real_escape_string($sehir);
+					$uyeet = mysql_query("INSERT INTO members (Nick,Sifre,Ad,Soyad,Email,Cinsiyet,D_Tarihi,Uyelik_Tarihi,Sehir) VALUES ('".$nick."','".$sifre."','".$ad."','".$soyad."','".$email."','".$cinsiyet."','".$tarih."',NOW(),'".$sehir."')");
+					if ($uyeet)
+						echo 'true';
+					else
+						echo 'Hata oluştu. Lütfen tekrar deneyin.';
+					mysql_close();
+				}
+			}
+		}							
+	} else 
+		echo 'Geçersiz';
+}
+else {
+?>
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="tr-tr" lang="tr-tr" dir="ltr" >
 <head>
 		<title>ETÜ Sözlük</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 		<script type="text/javascript" src="js/jquery.validate.min.js"></script>
 		<script type="text/javascript" src="js/pae.js"></script>
 		<link type="text/css" href="style/jquery-ui-1.8.18.custom.css" rel="stylesheet" />	
 		<link type="text/css" href="style/style.css" rel="stylesheet" />
 		<script type="text/javascript">
 		jQuery.validator.addMethod("nkontrol", function(value, element) {
-		return this.optional(element) || /^([a-z]+\s?)*$/.test(value);
+		return this.optional(element) || /^([a-zŞşÇçÜüİıÖöĞğ]+\s?)*$/.test(value);
 		}, " Sadece küçük harf ve boşluk geçerli");
+		jQuery.validator.addMethod("akontrol", function(value, element) {
+		return this.optional(element) || /^([a-zŞşÇçÜüİıÖöĞğ]+\s?)*$/i.test(value);
+		}, " Sadece harf ve boşluk geçerli");
+		jQuery.validator.addMethod("lettersonly", function(value, element) {
+		return this.optional(element) || /^[a-zŞşÇçÜüİıÖöĞğ]+$/i.test(value);
+		}, "Sadece harf geçerli");	
+		function enableButton(){
+		$('#registersub').removeAttr('disabled');
+		$('#registersub').removeClass('disabled');
+		};
 		$(document).ready(function() {
 			$("#register").validate({
 				rules: {
@@ -34,20 +117,36 @@
 						email:true,
 						minlength:6
 					},
-					ad : "required",
-					soyad : "required",
+					ad : {
+						required:true,
+						akontrol:true,
+						rangelength: [3,20]
+					},
+					soyad : {
+						required:true,
+						lettersonly:true,
+						rangelength: [3,25]
+					},
 					gun : "required",
 					ay : "required",
 					yil : "required",
-					cinsiyet : "required"
+					cinsiyet : "required",
+					sehir : "required"
 				},
 			messages: {
-				ad: " Adınızı girin",
-				soyad: " Soyadınızı girin",
+				ad: {
+					required: " Adınızı girin",
+					rangelength: jQuery.format(" Ad {0}-{1} karakter olmalı")
+				},
+				soyad: {
+					required: " Soyadınızı girin",
+					rangelength: jQuery.format(" Soyad {0}-{1} karakter olmalı")
+				},
 				gun : " *",
 				ay : " *",
 				yil : " *",
 				cinsiyet : " *",
+				sehir : " *",
 				nick: {
 					required: " Kod adı girin",
 					rangelength: jQuery.format(" Nick {0}-{1} karakter olmalı")
@@ -66,11 +165,31 @@
 					minlength: "Geçerli bir email adresi girin",
 					email: " Geçerli bir email adresi girin"
 				}
-		}, submitHandler: function(form){
-			$('form input[type=submit]').attr('disabled', 'disabled');
-			form.submit(); }
-			});
+			}
 		});
+		$("#register").submit(function(e){
+			e.preventDefault();
+			$('#registersub').attr("disabled", "disabled");
+			$('#registersub').addClass('disabled');
+			setTimeout('enableButton()', 5000);
+			$.ajax({
+			type: "POST",
+			url: "uyeol.php",
+			data: $("#register").serialize(),
+			success: function(data) {
+				if (data==="true") {
+					$("#register").remove();
+					$("#ek").remove();
+					$("p:last").append("Üyeliğiniz açıldı. Lütfen email adresinize gönderdiğimiz aktivasyon mailini onaylayıp giriş yapınız.");
+				}
+				else {
+					$("#ek").remove();
+					$("p:last").append("<p style='color:#e2001a' id='ek'>"+data+"</p>");
+				}
+			}
+			});
+			});
+	});
 		</script>
 	</head>
 	<body>
@@ -113,10 +232,78 @@
 					<td valign=top width=800 style="border-right:1px dotted #666;">
 						<div id="mainleft"><div id="entries"><h3 style="text-align:left; margin-left:40px;">Üye Olma Aparatı</h3>
 						<ol style="color:#fff">
-						<li>18 yaşından küçüklerin etü sözlük üyesi olması yasaktır.</li><li>3 ay boyunca kullanılmayan çaylak hesapları şişip doymayalım diye silinir.</li><li>e-mail adresinize aktivasyon maili gideceği için aktif bir email adresi girmelisiniz.</li><li>sözlüğe üye olan herkesin sözlük kurallarını bildiği farz edilmektedir. bu kurallara üye girişi yaptıktan sonra "panel" bölümünden ulaşabilirsiniz.</li><li>etü sözlük kullanıcılarından aldığı bilgileri sadece sistemin daha iyi işlemesi için kullanır. üçüncü kişilerle paylaşmaz. sadece hukuki durumlarda bu bilgiler gerekli mercilerle paylaşılır.</li><li>gerçek dışı kişisel bilgiler, türkiye cumhuriyeti yasalarına aykırı davranışlar, sözlük altyapısına yönelen saldırılar hesabınızın silinmesine yol açabilir.</li><li>aparatta istenen kişisel bilgiler hesabınızın başına bir şey gelmesi durumunda ilgili hesabın size ait olduğunu kanıtlamak için kullanılır.</li><li>ülke ve şehir bilgisi hariç bütün alanların doldurulması zorunludur</li>
+						<li>18 yaşından küçüklerin etü sözlük üyesi olması yasaktır.</li><li>3 ay boyunca kullanılmayan çaylak hesapları şişip doymayalım diye silinir.</li><li>e-mail adresinize aktivasyon maili gideceği için aktif bir email adresi girmelisiniz.</li><li>sözlüğe üye olan herkesin sözlük kurallarını bildiği farz edilmektedir. bu kurallara üye girişi yaptıktan sonra "panel" bölümünden ulaşabilirsiniz.</li><li>etü sözlük kullanıcılarından aldığı bilgileri sadece sistemin daha iyi işlemesi için kullanır. üçüncü kişilerle paylaşmaz. sadece hukuki durumlarda bu bilgiler gerekli mercilerle paylaşılır.</li><li>gerçek dışı kişisel bilgiler, türkiye cumhuriyeti yasalarına aykırı davranışlar, sözlük altyapısına yönelen saldırılar hesabınızın silinmesine yol açabilir.</li><li>aparatta istenen kişisel bilgiler hesabınızın başına bir şey gelmesi durumunda ilgili hesabın size ait olduğunu kanıtlamak için kullanılır.</li><li>aşağıdaki bütün alanların doldurulması zorunludur.</li>
 						</ol>
+						<?php
+							if (!empty($_POST['nick']) && !empty($_POST['sifre']) && !empty($_POST['sifret']) && !empty($_POST['email']) && !empty($_POST['ad']) && !empty($_POST['soyad']) && !empty($_POST['cinsiyet']) && !empty($_POST['gun']) && !empty($_POST['ay']) && !empty($_POST['yil']) && !empty($_POST['sehir'])) {
+								$nick = strtolower($_POST['nick']);
+								$sifre = $_POST['sifre'];
+								$sifret = $_POST['sifret'];
+								$email = $_POST['email'];
+								$ad = $_POST['ad'];
+								$soyad = $_POST['soyad'];
+								$cinsiyet = $_POST['cinsiyet'];
+								$gun = $_POST['gun'];
+								$ay = $_POST['ay'];
+								$yil = $_POST['yil'];
+								$sehir = $_POST['sehir'];
+							
+								if ($sifret != $sifre)
+									echo 'Şifreler aynı olmalı';
+								else if (!checkdate($ay, $gun, $yil))
+									echo 'Geçersiz tarih'; //gereksiz kontrol
+								else if (strlen($nick)<3 || strlen($nick)>25)
+									echo 'Nick 3-25 karakter arası olmalı';
+								else if (!preg_match("/^([a-zŞşÇçÜüİıÖöĞğ]+\s?)*$/", $nick))
+									echo 'Nick sadece a-z ve boşluk içerebilir';
+								else if (!filter_var($email,FILTER_VALIDATE_EMAIL))
+									echo 'Geçersiz email adresi';
+								else if (strlen($sifre)<3 || strlen($sifre)>20)
+									echo 'Şifre 3-20 karakter arası olmalı';
+								else if (strlen($ad)<3 || strlen($ad)>20)
+									echo 'Ad 3-20 karakter arası olmalı';
+								else if (!preg_match("/^([a-zŞşÇçÜüİıÖöĞğ]+\s?)*$/i", $ad))
+									echo 'Ad sadece harf ve boşluk içerebilir';
+								else if (strlen($soyad)<3 || strlen($soyad)>25)
+									echo 'Soyad 3-25 karakter arası olmalı';
+								else if (!preg_match("/^[a-zŞşÇçÜüİıÖöĞğ]+$/i", $soyad))
+									echo 'Soyad sadece harf içerebilir';
+								else {
+									//bağlan
+									$link = mysql_connect('127.0.0.1', 'root', 'esozluk') or die(mysql_error());
+									$dbname = "bahadir_etusozluk";
+									mysql_select_db($dbname) or die(mysql_error());
+									
+									$nick = mysql_real_escape_string($nick);
+									$nickkontrol = mysql_query("SELECT Nick FROM members WHERE Nick ='".$nick."'");
+									if (mysql_num_rows($nickkontrol)>0)
+										echo $nick.' kullanıcı adı daha önceden alınmış.';
+									else {
+										$email = mysql_real_escape_string($email);
+										$emailkontrol = mysql_query("SELECT Email FROM members WHERE Email = '".$email."'");
+										if (mysql_num_rows($emailkontrol)>0)
+											echo $email.' email adresi daha önceden alınmış.';
+										else {
+											$ad = mysql_real_escape_string(strtoupper(substr($ad,0,1)) . strtolower(substr($ad,1)));
+											$soyad = mysql_real_escape_string(strtoupper(substr($soyad,0,1)) . strtolower(substr($soyad,1)));
+											$sifre = mysql_real_escape_string($sifre);
+											$tarih = "{$yil}-{$ay}-{$gun}";
+											$cinsiyet = mysql_real_escape_string(strtoupper($cinsiyet));
+											$sehir = mysql_real_escape_string($sehir);
+											$uyeet = mysql_query("INSERT INTO members (Nick,Sifre,Ad,Soyad,Email,Cinsiyet,D_Tarihi,Uyelik_Tarihi,Sehir) VALUES ('".$nick."','".$sifre."','".$ad."','".$soyad."','".$email."','".$cinsiyet."','".$tarih."',NOW(),'".$sehir."')");
+											if ($uyeet)
+												echo 'Üyeliğiniz açıldı. Lütfen email adresinize gönderdiğimiz aktivasyon mailini onaylayıp giriş yapınız.';
+											else
+												echo 'Hata oluştu. Lütfen tekrar deneyin';
+											mysql_close();
+										}
+									}
+								}							
+							}
+							else {
+						?>
 						<p style="color:#fff; margin-left:40px;">aşağıdaki formu doldurarak bu şartları kabul etmiş olursunuz.</p><br />
-						<form action="uyeol.php?ol=true" id="register" method="post">
+						<form action="uyeol.php" id="register" method="post">
 							<fieldset style="border:1px solid #ccc; -moz-border-radius: 10px; -webkit-border-radius: 10px; -khtml-border-radius: 10px; border-radius: 10px;">
 								<legend style="font-family: Arial, sans-serif; font-size: 1.3em; font-weight:bold; color:#fff;">&nbsp;artık aparata geçelim&nbsp;</legend>
 								<table style="width:800px, border:1px solid white; font-size:8pt">
@@ -138,11 +325,11 @@
 									</tr>
 									<tr>
 										<td style="width:200px; text-align:right;">Ad:</td>
-										<td style="width:600px;"><input type="text" id="ad" name="ad" size="40" maxlength="30"/></td>
+										<td style="width:600px;"><input type="text" id="ad" name="ad" size="40" maxlength="20"/></td>
 									</tr>
 									<tr>
 										<td style="width:200px; text-align:right;">Soyad:</td>
-										<td style="width:600px;"><input type="text" id="soyad" name="soyad" size="40" maxlength="30"/></td>
+										<td style="width:600px;"><input type="text" id="soyad" name="soyad" size="40" maxlength="25"/></td>
 									</tr>
 									<tr>
 										<td style="width:200px; text-align:right;">Cinsiyet:</td>
@@ -153,19 +340,18 @@
 										<td style="width:600px"><select name="gun" id="gun" style="background-color:#222;border:1px solid #333;color:#fecc00;"><option value=""></option><option value='1'>1</option><option value='2'>2</option><option value='3'>3</option><option value='4'>4</option><option value='5'>5</option><option value='6'>6</option><option value='7'>7</option><option value='8'>8</option><option value='9'>9</option><option value='10'>10</option><option value='11'>11</option><option value='12'>12</option><option value='13'>13</option><option value='14'>14</option><option value='15'>15</option><option value='16'>16</option><option value='17'>17</option><option value='18'>18</option><option value='19'>19</option><option value='20'>20</option><option value='21'>21</option><option value='22'>22</option><option value='23'>23</option><option value='24'>24</option><option value='25'>25</option><option value='26'>26</option><option value='27'>27</option><option value='28'>28</option><option value='29'>29</option><option value='30'>30</option><option value='31'>31</option></select><select id="ay" name="ay" style="background-color:#222;border:1px solid #333;color:#fecc00;"><option value=""></option><option value='1'>ocak</option><option value='2'>şubat</option><option value='3'>mart</option><option value='4'>nisan</option><option value='5'>mayıs</option><option value='6'>haziran</option><option value='7'>temmuz</option><option value='8'>ağustos</option><option value='9'>eylül</option><option value='10'>ekim</option><option value='11'>kasım</option><option value='12'>aralık</option></select><select id="yil" name="yil" style="background-color:#222;border:1px solid #333;color:#fecc00;"><option value=""></option><?php $yil=date("Y"); for ($i=$yil;$i>$yil-70;$i-=1) { echo "<option value='$i'>$i</option>"; }?></select></td>
 									</tr>
 									<tr>
-										<td style="width:200px; text-align:right;">Ülke:</td>
-										<td style="width:600px"><input type="text" name="ulke" size="40" maxlength="20"/></td>
-									</tr>
-									<tr>
 										<td style="width:200px; text-align:right;">Şehir:</td>
-										<td style="width:600px;"><select name="sehir" style="background-color:#222;border:1px solid #333;color:#fecc00;"><option value=""></option><option value="adana">adana</option><option value="adıyaman">adıyaman</option><option value="afyon">afyon</option><option value="ağrı">ağrı</option><option value="aksaray">aksaray</option><option value="amasya">amasya</option><option value="ankara">ankara</option><option value="antalya">antalya</option><option value="ardahan">ardahan</option><option value="artvin">artvin</option><option value="aydın">aydın</option><option value="balıkesir">balıkesir</option><option value="bartın">bartın</option><option value="batman">batman</option><option value="bayburt">bayburt</option><option value="bilecik">bilecik</option><option value="bingöl">bingöl</option><option value="bitlis">bitlis</option><option value="bolu">bolu</option><option value="burdur">burdur</option><option value="bursa">bursa</option><option value="çanakkale">çanakkale</option><option value="çankırı">çankırı</option><option value="çorum">çorum</option><option value="denizli">denizli</option><option value="diyarbakır">diyarbakır</option><option value="düzce">düzce</option><option value="edirne">edirne</option><option value="elazığ">elazığ</option><option value="erzincan">erzincan</option><option value="erzurum">erzurum</option><option value="eskişehir">eskişehir</option><option value="gaziantep">gaziantep</option><option value="giresun">giresun</option><option value="gümüşhane">gümüşhane</option><option value="hakkari">hakkari</option><option value="hatay">hatay</option><option value="iğdır">iğdır</option><option value="isparta">isparta</option><option value="içel">içel</option><option value="istanbul">istanbul</option><option value="izmir">izmir</option><option value="kahramanmaraş">kahramanmaraş</option><option value="karabük">karabük</option><option value="karaman">karaman</option><option value="kars">kars</option><option value="kastamonu">kastamonu</option><option value="kayseri">kayseri</option><option value="kırıkkale">kırıkkale</option><option value="kırklareli">kırklareli</option><option value="kırşehir">kırşehir</option><option value="kilis">kilis</option><option value="kilis">kocaeli</option><option value="konya">konya</option><option value="kütahya">kütahya</option><option value="malatya">malatya</option><option value="manisa">manisa</option><option value="mardin">mardin</option><option value="muğla">muğla</option><option value="muş">muş</option><option value="nevşehir">nevşehir</option><option value="niğde">niğde</option><option value="ordu">ordu</option><option value="osmaniye">osmaniye</option><option value="rize">rize</option><option value="sakarya">sakarya</option><option value="samsun">samsun</option><option value="siirt">siirt</option><option value="sinop">sinop</option><option value="sivas">sivas</option><option value="şanlıurfa">şanlıurfa</option><option value="şırnak">şırnak</option><option value="tekirdağ">tekirdağ</option><option value="tokat">tokat</option><option value="trabzon">trabzon</option><option value="tunceli">tunceli</option><option value="uşak">uşak</option><option value="van">van</option><option value="yalova">yalova</option><option value="yozgat">yozgat</option><option value="zonguldak">zonguldak</option></select></td></tr>
+										<td style="width:600px;"><select name="sehir" style="background-color:#222;border:1px solid #333;color:#fecc00;"><option value=""></option><option value="yurt dışı">yurt dışı</option><option value="adana">adana</option><option value="adıyaman">adıyaman</option><option value="afyon">afyon</option><option value="ağrı">ağrı</option><option value="aksaray">aksaray</option><option value="amasya">amasya</option><option value="ankara">ankara</option><option value="antalya">antalya</option><option value="ardahan">ardahan</option><option value="artvin">artvin</option><option value="aydın">aydın</option><option value="balıkesir">balıkesir</option><option value="bartın">bartın</option><option value="batman">batman</option><option value="bayburt">bayburt</option><option value="bilecik">bilecik</option><option value="bingöl">bingöl</option><option value="bitlis">bitlis</option><option value="bolu">bolu</option><option value="burdur">burdur</option><option value="bursa">bursa</option><option value="çanakkale">çanakkale</option><option value="çankırı">çankırı</option><option value="çorum">çorum</option><option value="denizli">denizli</option><option value="diyarbakır">diyarbakır</option><option value="düzce">düzce</option><option value="edirne">edirne</option><option value="elazığ">elazığ</option><option value="erzincan">erzincan</option><option value="erzurum">erzurum</option><option value="eskişehir">eskişehir</option><option value="gaziantep">gaziantep</option><option value="giresun">giresun</option><option value="gümüşhane">gümüşhane</option><option value="hakkari">hakkari</option><option value="hatay">hatay</option><option value="iğdır">iğdır</option><option value="isparta">isparta</option><option value="içel">içel</option><option value="istanbul">istanbul</option><option value="izmir">izmir</option><option value="kahramanmaraş">kahramanmaraş</option><option value="karabük">karabük</option><option value="karaman">karaman</option><option value="kars">kars</option><option value="kastamonu">kastamonu</option><option value="kayseri">kayseri</option><option value="kırıkkale">kırıkkale</option><option value="kırklareli">kırklareli</option><option value="kırşehir">kırşehir</option><option value="kilis">kilis</option><option value="kilis">kocaeli</option><option value="konya">konya</option><option value="kütahya">kütahya</option><option value="malatya">malatya</option><option value="manisa">manisa</option><option value="mardin">mardin</option><option value="muğla">muğla</option><option value="muş">muş</option><option value="nevşehir">nevşehir</option><option value="niğde">niğde</option><option value="ordu">ordu</option><option value="osmaniye">osmaniye</option><option value="rize">rize</option><option value="sakarya">sakarya</option><option value="samsun">samsun</option><option value="siirt">siirt</option><option value="sinop">sinop</option><option value="sivas">sivas</option><option value="şanlıurfa">şanlıurfa</option><option value="şırnak">şırnak</option><option value="tekirdağ">tekirdağ</option><option value="tokat">tokat</option><option value="trabzon">trabzon</option><option value="tunceli">tunceli</option><option value="uşak">uşak</option><option value="van">van</option><option value="yalova">yalova</option><option value="yozgat">yozgat</option><option value="zonguldak">zonguldak</option></select></td></tr>
 									<tr>
 										<td style="width:200px; text-align:right;">&nbsp;</td>
-										<td style="width:600px"><input type="submit" class="submit" value="Üye Ol"/></td>
+										<td style="width:600px"><input id="registersub" type="submit" class="submit" value="Üye Ol"/></td>
 									</tr>
 								</table>
 							</fieldset>
 						</form>
+						<?php 
+						}
+						?>
 						</div></div>
 					</td>
 					<td valign="top" width="400">
@@ -232,3 +418,6 @@
 		<a class="sikayetmenu" href="#">İstek</a>
 	</body>
 </html> 
+<?php
+}
+?>
