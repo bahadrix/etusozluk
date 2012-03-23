@@ -19,8 +19,8 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 			echo 'Geçersiz tarih'; //gereksiz kontrol
 		else if (strlen($nick)<3 || strlen($nick)>25)
 			echo 'Nick 3-25 karakter arası olmalı';
-		else if (!preg_match("/^([a-zŞşÇçÜüİıÖöĞğ]+\s?)*$/", $nick))
-			echo 'Nick sadece a-z ve boşluk içerebilir';
+		else if (!preg_match("/^([a-zşçüıöğ0-9]+\s?)*$/", $nick))
+			echo 'Nick sadece a-z0-9 ve boşluk içerebilir';
 		else if (!filter_var($email,FILTER_VALIDATE_EMAIL))
 			echo 'Geçersiz email adresi';
 		else if (strlen($sifre)<3 || strlen($sifre)>20)
@@ -34,35 +34,48 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 		else if (!preg_match("/^[a-zŞşÇçÜüİıÖöĞğ]+$/i", $soyad))
 			echo 'Soyad sadece harf içerebilir';
 		else {
-			//bağlan
-			$link = mysql_connect('127.0.0.1', 'root', 'esozluk') or die(mysql_error());
-			$dbname = "bahadir_etusozluk";
-			mysql_select_db($dbname) or die(mysql_error());
-						
-			$nick = mysql_real_escape_string($nick);
-			$nickkontrol = mysql_query("SELECT Nick FROM members WHERE Nick ='".$nick."'");
-			if (mysql_num_rows($nickkontrol)>0)
-				echo 'Bu kullanıcı adı daha önceden alınmış.';
-			else {
-				$email = mysql_real_escape_string($email);
-				$emailkontrol = mysql_query("SELECT Email FROM members WHERE Email = '".$email."'");
-				if (mysql_num_rows($emailkontrol)>0)
-					echo 'Bu email adresi daha önceden alınmış.';
+			try {
+				$u = "root";
+				$p = "esozluk";
+				$link = new PDO("mysql:host=localhost;dbname=bahadir_etusozluk", $u,$p);
+				$nickkontrol = $link->prepare("SELECT Nick FROM members WHERE Nick = :nick");
+				$nickkontrol->bindParam(':nick',$nick,PDO::PARAM_STR);
+				$nickkontrol->execute();
+				if ($nickkontrol->rowCount() > 0)
+					echo 'Bu kullanıcı adı daha önceden alınmış.';
 				else {
-					$ad = mysql_real_escape_string(strtoupper(substr($ad,0,1)) . strtolower(substr($ad,1)));
-					$soyad = mysql_real_escape_string(strtoupper(substr($soyad,0,1)) . strtolower(substr($soyad,1)));
-					$sifre = mysql_real_escape_string($sifre);
-					$tarih = "{$yil}-{$ay}-{$gun}";
-					$cinsiyet = mysql_real_escape_string(strtoupper($cinsiyet));
-					$sehir = mysql_real_escape_string($sehir);
-					$uyeet = mysql_query("INSERT INTO members (Nick,Sifre,Ad,Soyad,Email,Cinsiyet,D_Tarihi,Uyelik_Tarihi,Sehir) VALUES ('".$nick."','".$sifre."','".$ad."','".$soyad."','".$email."','".$cinsiyet."','".$tarih."',NOW(),'".$sehir."')");
-					if ($uyeet)
-						echo 'true';
-					else
-						echo 'Hata oluştu. Lütfen tekrar deneyin.';
+					$emailkontrol = $link->prepare("SELECT Email FROM members WHERE Email = :email");
+					$emailkontrol->bindParam(":email",$email,PDO::PARAM_STR);
+					$emailkontrol->execute();
+					if ($emailkontrol->rowCount() > 0)
+						echo 'Bu email adresi daha önceden alınmış.';
+					else {
+						$ad = strtoupper(substr($ad,0,1)).strtolower(substr($ad,1));
+						$soyad = strtoupper(substr($soyad,0,1)).strtolower(substr($soyad,1));
+						$tarih = "{$yil}-{$ay}-{$gun}";
+						$uyeet = $link->prepare("INSERT INTO members (Nick,Sifre,Ad,Soyad,Email,Cinsiyet,D_Tarihi,Uyelik_Tarihi,Sehir) VALUES (:nick,:sifre,:ad,:soyad,:email,:cinsiyet,:tarih,NOW(),:sehir)");
+						$uyeet->bindParam(":nick",$nick);
+						$uyeet->bindParam(":sifre",$sifre);
+						$uyeet->bindParam(":ad",$ad);
+						$uyeet->bindParam(":soyad",$soyad);
+						$uyeet->bindParam(":email",$email);
+						$uyeet->bindParam(":cinsiyet",$cinsiyet);
+						$uyeet->bindParam(":tarih",$tarih);
+						$uyeet->bindParam(":sehir",$sehir);
+						if ($uyeet->execute())
+							echo "true";
+						else {
+							echo "Hata oluştu, <br />";
+							$arr = $uyeet->errorInfo();
+							print_r($arr);
+						}
+					}
 				}
+				$link = null;
+			} catch (PDOException $e) {
+				echo "Hata: ". $e->getMessage();
+				die();
 			}
-			mysql_close();
 		}							
 	} else 
 		echo 'Geçersiz';
@@ -82,15 +95,6 @@ else {
 		<link type="text/css" href="style/jquery-ui-1.8.18.custom.css" rel="stylesheet" />	
 		<link type="text/css" href="style/style.css" rel="stylesheet" />
 		<script type="text/javascript">
-		jQuery.validator.addMethod("nkontrol", function(value, element) {
-		return this.optional(element) || /^([a-zŞşÇçÜüİıÖöĞğ]+\s?)*$/.test(value);
-		}, " Sadece küçük harf ve boşluk geçerli");
-		jQuery.validator.addMethod("akontrol", function(value, element) {
-		return this.optional(element) || /^([a-zŞşÇçÜüİıÖöĞğ]+\s?)*$/i.test(value);
-		}, " Sadece harf ve boşluk geçerli");
-		jQuery.validator.addMethod("lettersonly", function(value, element) {
-		return this.optional(element) || /^[a-zŞşÇçÜüİıÖöĞğ]+$/i.test(value);
-		}, "Sadece harf geçerli");	
 		function enableButton(){
 		$('#registersub').removeAttr('disabled');
 		$('#registersub').removeClass('disabled');
@@ -180,7 +184,7 @@ else {
 				if (data==="true") {
 					$("#register").remove();
 					$("#ek").remove();
-					$("p:last").append("Üyeliğiniz açıldı. Lütfen email adresinize gönderdiğimiz aktivasyon mailini onaylayıp giriş yapınız.");
+					$("p:last").append("<p style='color:#fecc00>Üyeliğiniz açıldı. Lütfen email adresinize gönderdiğimiz aktivasyon mailini onaylayıp giriş yapınız.</p>");
 				}
 				else {
 					$("#ek").remove();
@@ -254,8 +258,8 @@ else {
 									echo 'Geçersiz tarih'; //gereksiz kontrol
 								else if (strlen($nick)<3 || strlen($nick)>25)
 									echo 'Nick 3-25 karakter arası olmalı';
-								else if (!preg_match("/^([a-zŞşÇçÜüİıÖöĞğ]+\s?)*$/", $nick))
-									echo 'Nick sadece a-z ve boşluk içerebilir';
+								else if (!preg_match("/^([a-zşçüıöğ0-9]+\s?)*$/", $nick))
+									echo 'Nick sadece a-z0-9 ve boşluk içerebilir';
 								else if (!filter_var($email,FILTER_VALIDATE_EMAIL))
 									echo 'Geçersiz email adresi';
 								else if (strlen($sifre)<3 || strlen($sifre)>20)
@@ -269,6 +273,46 @@ else {
 								else if (!preg_match("/^[a-zŞşÇçÜüİıÖöĞğ]+$/i", $soyad))
 									echo 'Soyad sadece harf içerebilir';
 								else {
+									try {
+										$u = "root";
+										$p = "esozluk";
+										$link = new PDO("mysql:host=localhost;dbname=bahadir_etusozluk", $u,$p);
+										$nickkontrol = $link->prepare("SELECT Nick FROM members WHERE Nick = :nick");
+										$nickkontrol->bindParam(':nick',$nick,PDO::PARAM_STR);
+										$nickkontrol->execute();
+										if ($nickkontrol->rowCount() > 0)
+											echo $nick. ' kullanıcı adı daha önceden alınmış.';
+										else {
+											$emailkontrol = $link->prepare("SELECT Email FROM members WHERE Email = :email");
+											$emailkontrol->bindParam(":email",$email,PDO::PARAM_STR);
+											$emailkontrol->execute();
+											if ($emailkontrol->rowCount() > 0)
+												echo $email. ' email adresi daha önceden alınmış.';
+											else {
+												$ad = strtoupper(substr($ad,0,1)).strtolower(substr($ad,1));
+												$soyad = strtoupper(substr($soyad,0,1)).strtolower(substr($soyad,1));
+												$tarih = "{$yil}-{$ay}-{$gun}";
+												$uyeet = $link->prepare("INSERT INTO members (Nick,Sifre,Ad,Soyad,Email,Cinsiyet,D_Tarihi,Uyelik_Tarihi,Sehir) VALUES (:nick,:sifre,:ad,:soyad,:email,:cinsiyet,:tarih,NOW(),:sehir)");
+												$uyeet->bindParam(":nick",$nick);
+												$uyeet->bindParam(":sifre",$sifre);
+												$uyeet->bindParam(":ad",$ad);
+												$uyeet->bindParam(":soyad",$soyad);
+												$uyeet->bindParam(":email",$email);
+												$uyeet->bindParam(":cinsiyet",$cinsiyet);
+												$uyeet->bindParam(":tarih",$tarih);
+												$uyeet->bindParam(":sehir",$sehir);
+												if ($uyeet->execute())
+													echo 'Üyeliğiniz açıldı. Lütfen email adresinize gönderdiğimiz aktivasyon mailini onaylayıp giriş yapınız.';
+												else
+													echo 'Hata oluştu. Lütfen tekrar deneyin';
+											}
+										}
+									$link = null;
+									} catch (PDOException $e) {
+										echo "Hata: ". $e->getMessage();
+										die();
+									}
+									/*
 									//bağlan
 									$link = mysql_connect('127.0.0.1', 'root', 'esozluk') or die(mysql_error());
 									$dbname = "bahadir_etusozluk";
@@ -297,7 +341,7 @@ else {
 												echo 'Hata oluştu. Lütfen tekrar deneyin';
 										}
 									}
-									mysql_close();
+									mysql_close();*/
 								}							
 							}
 							else {
