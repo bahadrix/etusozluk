@@ -23,7 +23,10 @@ class LoggedPDO extends PDO
      * Sınıf kaldırıldığındaki eldeki loglar konsola basılır.
      */
     public function __destruct() {
-        self::printLog();
+        if (!count(self::$log))
+            FB::info ("Hiç sorgu çalıştırılmadı");
+        else
+            self::printLog();
     }
     
     public function query($query) {
