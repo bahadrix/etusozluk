@@ -2,7 +2,11 @@
 include('data/core/db.php');
 if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
 	if (!empty($_POST['nick']) && !empty($_POST['sifre']) && !empty($_POST['sifret']) && !empty($_POST['email']) && !empty($_POST['ad']) && !empty($_POST['soyad']) && !empty($_POST['cinsiyet']) && !empty($_POST['gun']) && !empty($_POST['ay']) && !empty($_POST['yil']) && !empty($_POST['sehir'])) {
-		$nick = strtolower($_POST['nick']);
+		
+                // Link başta bir kere tanımlansa
+                $link = getPDO();
+                
+                $nick = strtolower($_POST['nick']);
 		$sifre = $_POST['sifre'];
 		$sifret = $_POST['sifret'];
 		$email = $_POST['email'];
@@ -39,7 +43,7 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 				$u = "root";
 				$p = "esozluk";
 				//$link = new PDO("mysql:host=localhost;dbname=bahadir_etusozluk", $u,$p);
-                                $link = getPDO();
+                                
 				$nickkontrol = $link->prepare("SELECT Nick FROM members WHERE Nick = :nick");
 				$nickkontrol->bindValue(':nick',$nick,PDO::PARAM_STR);
 				$nickkontrol->execute();
@@ -73,6 +77,7 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 						}
 					}
 				}
+                                
 				$link = null;
 			} catch (PDOException $e) {
 				echo "Hata: ". $e->getMessage();
@@ -279,7 +284,7 @@ else {
 									try {
 										$u = "root";
 										$p = "esozluk";
-										$link = new PDO("mysql:host=localhost;dbname=bahadir_etusozluk", $u,$p);
+										
 										$nickkontrol = $link->prepare("SELECT Nick FROM members WHERE Nick = :nick");
 										$nickkontrol->bindValue(':nick',$nick,PDO::PARAM_STR);
 										$nickkontrol->execute();
