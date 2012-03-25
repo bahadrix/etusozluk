@@ -2,11 +2,13 @@
 /**
  * http://www.coderholic.com/php-database-query-logging-with-pdo/ adresindeki kod
  * esas alınarak düzeltilmiş ve geliştirilmiştir.
+ * @version 0.7
  */
 
 
 /**
 * PDO sınıfını extend ederek bütün log bilgilerini FirePHP konsoluna basar.
+ *@see PDO
 */
 class LoggedPDO extends PDO
 {
@@ -31,7 +33,12 @@ class LoggedPDO extends PDO
     
     public function query($query) {
         $start = microtime(true); // Zamanlayiciyi baslat
-            $result = parent::query($query);
+            try {
+                $result = parent::query($query);
+            } catch (PDOException $e) {
+                FB::error($e, "HATA: $query");
+                
+            }
         $time = microtime(true) - $start; // Zamanlayiciyi durdur
         
         // Sorgu basamaklarini bul
@@ -69,8 +76,9 @@ class LoggedPDO extends PDO
 }
 
 /**
-* PDOStatement decorator that logs when a PDOStatement is
-* executed, and the time it took to run
+ * PDOStatement sınıfını hem loglanabilecek hemde query plan alabilecek şekilde dekore ettim.
+ * Bu dekorasyon loglama işini LoggedPDO sınıfına devrediyor.  
+ * 
 * @see LoggedPDO
 */
 class LoggedPDOStatement {
@@ -78,24 +86,55 @@ class LoggedPDOStatement {
      * The PDOStatement we decorate
      */
     private $statement;
+    /**
+     * Explain'de kullanılacak sorgunun parametrelerini tutan array
+     * @var array
+     */
+    private $bindPairs;
 
     public function __construct(PDOStatement $statement) {
         $this->statement = $statement;
+        $this->bindPairs = array();
+        $this->pseudoQuery = "";
     }
 
     /**
-    * When execute is called record the time it takes and
-    * then log the query
+    * Çalıştırılan sorguyu süreleri ile beraber log'a gönderir.
+    * Suni sorguyu oluşturarak Explain yapar.
+     * 
     * @return PDO result set
     */
     public function execute() {
         $start = microtime(true);
-            $result = $this->statement->execute();
+            try {
+                $result = $this->statement->execute();
+            } catch (PDOException $e) {
+                FB::error($e, "Hata: " . $this->statement->queryString);
+                return;
+            }
         $time = microtime(true) - $start;
         
-        $explain = parent::query("EXPLAIN $this->statement->queryString")->fetchAll(PDO::FETCH_ASSOC);
+        $explain = getQueryPlan(
+                str_replace(
+                        array_keys($this->bindPairs),
+                        array_values($this->bindPairs),
+                        $this->statement->queryString
+                        )
+                );
         LoggedPDO::$log[] = array('[PS]' . $this->statement->queryString, $this->statement->rowCount(),round($time * 1000, 3),$explain);
         return $result;
+    }
+    
+    
+    public function bindValue ($parameter, $value, $data_type = PDO::PARAM_STR) {
+        
+        $this->bindPairs[$parameter] = $data_type == PDO::PARAM_STR ?  "'$value'" : $value;
+        
+        $this->statement->bindValue($parameter, $value, $data_type);
+                
+    }
+    public function bindParam ($parameter, &$variable, $data_type = null, $length = null, $driver_options = null) {
+        throw new Exception("bindParam fonksiyonu loggedPHP'de henuz desteklenmemektedir. Bunun yerine bindValue fonksiiyonunu kullanınız", 1002);
     }
     /**
     * Other than execute pass all other calls to the PDOStatement object
@@ -107,5 +146,13 @@ class LoggedPDOStatement {
     }
 }
 
+
+function getQueryPlan($query,$fetch_style = PDO::FETCH_ASSOC) {
+    
+    $db = getPDO(false);
+    $query = "EXPLAIN $query";
+    $st = $db->query($query);
+    return $st->fetchAll($fetch_style);
+}
 
 ?>
