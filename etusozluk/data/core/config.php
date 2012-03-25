@@ -2,10 +2,11 @@
 /**
  * Dip-switches :)
  */
-
-
 define ("DEBUG_MODE", true);
 
+/**
+ * INI
+ */
 class DBCONN {
     public static $dbhost = "localhost";
     public static $db = "etusozluk";
@@ -13,6 +14,8 @@ class DBCONN {
     public static $dbpass = "";
 }
 
-
+/**
+ * Includes
+ */
 include 'firephp/fb.php';
 ?>
