@@ -11,9 +11,9 @@
 class LoggedPDO extends PDO
 {
     public static $log = array();
-    
+
     public function __construct($dsn, $username = null, $password = null, $options=null) {
-        self::$log[] = array('Sorgu', 'Satır', 'Tepki Süresi');
+       
         parent::__construct($dsn, $username, $password, $options);
         
     }
@@ -27,10 +27,14 @@ class LoggedPDO extends PDO
     }
     
     public function query($query) {
-        $start = microtime(true);
-        $result = parent::query($query);
-        $time = microtime(true) - $start;
-        self::$log[] = array($query, $result->rowCount() . " adet", round($time * 1000, 3) . " ms");
+        $start = microtime(true); // Zamanlayiciyi baslat
+            $result = parent::query($query);
+        $time = microtime(true) - $start; // Zamanlayiciyi durdur
+        
+        // Sorgu basamaklarini bul
+        $explain = parent::query("EXPLAIN $query")->fetchAll(PDO::FETCH_ASSOC);
+        self::$log[] = array($query, $result->rowCount() . " adet", round($time * 1000, 3) . " ms", $explain);
+        
         return $result;
     }
 
@@ -43,14 +47,21 @@ class LoggedPDO extends PDO
     
     public static function printLog() {
         $totalTime = $totalRows = 0;
-
-        
-        foreach(self::$log as $entry) {
+        $i = 0;
+        foreach(self::$log as $entry) { $i++;
+            $exp = array();
+            $exp[] = array('ID', 'Select Tipi', 'Tablo', 'Tip', 'Olası Anahtarlar', 'Anahtar', 'Anahtar Boyutu', 'Ref', 'Satır', 'Bilgi');
+            
+            $exp = array_merge($exp,
+                    $entry[3]
+                    );
+            FB::table("[$i] {$entry[0]} | Toplam {$entry[1]} satır {$entry[2]} ms sürdü" , $exp);
             $totalTime += $entry[2];
             $totalRows += $entry[1];
         }
-        self::$log[] = array('TOPLAM', "$totalRows adet", " $totalTime ms");
-        FB::table("Sorgular", self::$log);
+        //self::$log[] = array('TOPLAM', "$totalRows adet", " $totalTime ms");
+        //FB::table("Sorgular", self::$log);
+        FB::info("Toplam $i sorgu $totalRows adet satırı $totalTime ms'de döndürdü");
     }
 }
 
@@ -76,9 +87,11 @@ class LoggedPDOStatement {
     */
     public function execute() {
         $start = microtime(true);
-        $result = $this->statement->execute();
+            $result = $this->statement->execute();
         $time = microtime(true) - $start;
-        LoggedPDO::$log[] = array('[PS]' . $this->statement->queryString, $this->statement->rowCount(),round($time * 1000, 3));
+        
+        $explain = parent::query("EXPLAIN $this->statement->queryString")->fetchAll(PDO::FETCH_ASSOC);
+        LoggedPDO::$log[] = array('[PS]' . $this->statement->queryString, $this->statement->rowCount(),round($time * 1000, 3),$explain);
         return $result;
     }
     /**
