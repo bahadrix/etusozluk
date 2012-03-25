@@ -1,4 +1,5 @@
 <?php
+include('data/core/db.php');
 if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
 	if (!empty($_POST['nick']) && !empty($_POST['sifre']) && !empty($_POST['sifret']) && !empty($_POST['email']) && !empty($_POST['ad']) && !empty($_POST['soyad']) && !empty($_POST['cinsiyet']) && !empty($_POST['gun']) && !empty($_POST['ay']) && !empty($_POST['yil']) && !empty($_POST['sehir'])) {
 		$nick = strtolower($_POST['nick']);
@@ -37,15 +38,16 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 			try {
 				$u = "root";
 				$p = "esozluk";
-				$link = new PDO("mysql:host=localhost;dbname=bahadir_etusozluk", $u,$p);
+				//$link = new PDO("mysql:host=localhost;dbname=bahadir_etusozluk", $u,$p);
+                                $link = getPDO();
 				$nickkontrol = $link->prepare("SELECT Nick FROM members WHERE Nick = :nick");
-				$nickkontrol->bindParam(':nick',$nick,PDO::PARAM_STR);
+				$nickkontrol->bindValue(':nick',$nick,PDO::PARAM_STR);
 				$nickkontrol->execute();
 				if ($nickkontrol->rowCount() > 0)
 					echo 'Bu kullanıcı adı daha önceden alınmış.';
 				else {
 					$emailkontrol = $link->prepare("SELECT Email FROM members WHERE Email = :email");
-					$emailkontrol->bindParam(":email",$email,PDO::PARAM_STR);
+					$emailkontrol->bindValue(":email",$email,PDO::PARAM_STR);
 					$emailkontrol->execute();
 					if ($emailkontrol->rowCount() > 0)
 						echo 'Bu email adresi daha önceden alınmış.';
@@ -54,14 +56,14 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 						$soyad = strtoupper(substr($soyad,0,1)).strtolower(substr($soyad,1));
 						$tarih = "{$yil}-{$ay}-{$gun}";
 						$uyeet = $link->prepare("INSERT INTO members (Nick,Sifre,Ad,Soyad,Email,Cinsiyet,D_Tarihi,Uyelik_Tarihi,Sehir) VALUES (:nick,:sifre,:ad,:soyad,:email,:cinsiyet,:tarih,NOW(),:sehir)");
-						$uyeet->bindParam(":nick",$nick);
-						$uyeet->bindParam(":sifre",$sifre);
-						$uyeet->bindParam(":ad",$ad);
-						$uyeet->bindParam(":soyad",$soyad);
-						$uyeet->bindParam(":email",$email);
-						$uyeet->bindParam(":cinsiyet",$cinsiyet);
-						$uyeet->bindParam(":tarih",$tarih);
-						$uyeet->bindParam(":sehir",$sehir);
+						$uyeet->bindValue(":nick",$nick);
+						$uyeet->bindValue(":sifre",$sifre);
+						$uyeet->bindValue(":ad",$ad);
+						$uyeet->bindValue(":soyad",$soyad);
+						$uyeet->bindValue(":email",$email);
+						$uyeet->bindValue(":cinsiyet",$cinsiyet);
+						$uyeet->bindValue(":tarih",$tarih);
+						$uyeet->bindValue(":sehir",$sehir);
 						if ($uyeet->execute())
 							echo "true";
 						else {
@@ -74,6 +76,7 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 				$link = null;
 			} catch (PDOException $e) {
 				echo "Hata: ". $e->getMessage();
+                                FB::error($e, "Üye oluşturma hatası");
 				die();
 			}
 		}							
@@ -278,13 +281,13 @@ else {
 										$p = "esozluk";
 										$link = new PDO("mysql:host=localhost;dbname=bahadir_etusozluk", $u,$p);
 										$nickkontrol = $link->prepare("SELECT Nick FROM members WHERE Nick = :nick");
-										$nickkontrol->bindParam(':nick',$nick,PDO::PARAM_STR);
+										$nickkontrol->bindValue(':nick',$nick,PDO::PARAM_STR);
 										$nickkontrol->execute();
 										if ($nickkontrol->rowCount() > 0)
 											echo $nick. ' kullanıcı adı daha önceden alınmış.';
 										else {
 											$emailkontrol = $link->prepare("SELECT Email FROM members WHERE Email = :email");
-											$emailkontrol->bindParam(":email",$email,PDO::PARAM_STR);
+											$emailkontrol->bindValue(":email",$email,PDO::PARAM_STR);
 											$emailkontrol->execute();
 											if ($emailkontrol->rowCount() > 0)
 												echo $email. ' email adresi daha önceden alınmış.';
@@ -293,14 +296,14 @@ else {
 												$soyad = strtoupper(substr($soyad,0,1)).strtolower(substr($soyad,1));
 												$tarih = "{$yil}-{$ay}-{$gun}";
 												$uyeet = $link->prepare("INSERT INTO members (Nick,Sifre,Ad,Soyad,Email,Cinsiyet,D_Tarihi,Uyelik_Tarihi,Sehir) VALUES (:nick,:sifre,:ad,:soyad,:email,:cinsiyet,:tarih,NOW(),:sehir)");
-												$uyeet->bindParam(":nick",$nick);
-												$uyeet->bindParam(":sifre",$sifre);
-												$uyeet->bindParam(":ad",$ad);
-												$uyeet->bindParam(":soyad",$soyad);
-												$uyeet->bindParam(":email",$email);
-												$uyeet->bindParam(":cinsiyet",$cinsiyet);
-												$uyeet->bindParam(":tarih",$tarih);
-												$uyeet->bindParam(":sehir",$sehir);
+												$uyeet->bindValue(":nick",$nick);
+												$uyeet->bindValue(":sifre",$sifre);
+												$uyeet->bindValue(":ad",$ad);
+												$uyeet->bindValue(":soyad",$soyad);
+												$uyeet->bindValue(":email",$email);
+												$uyeet->bindValue(":cinsiyet",$cinsiyet);
+												$uyeet->bindValue(":tarih",$tarih);
+												$uyeet->bindValue(":sehir",$sehir);
 												if ($uyeet->execute())
 													echo 'Üyeliğiniz açıldı. Lütfen email adresinize gönderdiğimiz aktivasyon mailini onaylayıp giriş yapınız.';
 												else
