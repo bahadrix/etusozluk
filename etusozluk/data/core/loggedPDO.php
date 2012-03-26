@@ -1,7 +1,7 @@
 <?php
 /**
- * http://www.coderholic.com/php-database-query-logging-with-pdo/ adresindeki kod
- * esas alınarak düzeltilmiş ve geliştirilmiştir.
+ * http://www.coderholic.com/php-database-query-logging-with-pdo/ adresindeki koddan ilham
+ * alınarak düzeltilmiş ve geliştirilmiştir.
  * @version 0.7
  */
 
