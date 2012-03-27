@@ -42,7 +42,7 @@ class LoggedPDO extends PDO
         $time = microtime(true) - $start; // Zamanlayiciyi durdur
         
         // Sorgu basamaklarini bul
-        $explain = parent::query("EXPLAIN $query")->fetchAll(PDO::FETCH_ASSOC);
+        $explain = parent::query("EXPLAIN $query")->fetchAll(PDO::FETCH_ASSOC); 
         self::$log[] = array($query, $result->rowCount() . " adet", round($time * 1000, 3) . " ms", $explain);
         
         return $result;
@@ -51,7 +51,7 @@ class LoggedPDO extends PDO
     /**
      * @return LoggedPDOStatement
      */
-    public function prepare($query) {
+    public function prepare($query,$options=NULL) {
         return new LoggedPDOStatement(parent::prepare($query));
     }
     
@@ -134,7 +134,7 @@ class LoggedPDOStatement {
                 
     }
     public function bindParam ($parameter, &$variable, $data_type = null, $length = null, $driver_options = null) {
-        throw new Exception("bindParam fonksiyonu loggedPHP'de henuz desteklenmemektedir. Bunun yerine bindValue fonksiiyonunu kullanınız", 1002);
+        throw new Exception("bindParam fonksiyonu loggedPHP'de henuz desteklenmemektedir. Bunun yerine bindValue fonksiyonunu kullanınız", 1002);
     }
     /**
     * Other than execute pass all other calls to the PDOStatement object
@@ -145,7 +145,6 @@ class LoggedPDOStatement {
         return call_user_func_array(array($this->statement, $function_name), $parameters);
     }
 }
-
 
 function getQueryPlan($query,$fetch_style = PDO::FETCH_ASSOC) {
     
