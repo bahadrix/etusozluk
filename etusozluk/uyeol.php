@@ -1,12 +1,11 @@
 <?php
 include('data/core/db.php');
+try {
+$link = getPDO();
 if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
 	if (!empty($_POST['nick']) && !empty($_POST['sifre']) && !empty($_POST['sifret']) && !empty($_POST['email']) && !empty($_POST['ad']) && !empty($_POST['soyad']) && !empty($_POST['cinsiyet']) && !empty($_POST['gun']) && !empty($_POST['ay']) && !empty($_POST['yil']) && !empty($_POST['sehir'])) {
 		
-                // Link başta bir kere tanımlansa
-                $link = getPDO();
-                
-                $nick = strtolower($_POST['nick']);
+        $nick = strtolower($_POST['nick']);
 		$sifre = $_POST['sifre'];
 		$sifret = $_POST['sifret'];
 		$email = $_POST['email'];
@@ -39,56 +38,46 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 		else if (!preg_match("/^[a-zŞşÇçÜüİıÖöĞğ]+$/i", $soyad))
 			echo 'Soyad sadece harf içerebilir';
 		else {
-			try {
-				$u = "root";
-				$p = "esozluk";
-				//$link = new PDO("mysql:host=localhost;dbname=bahadir_etusozluk", $u,$p);
+			//$link = new PDO("mysql:host=localhost;dbname=bahadir_etusozluk", $u,$p);
                                 
-				$nickkontrol = $link->prepare("SELECT Nick FROM members WHERE Nick = :nick");
-				$nickkontrol->bindValue(':nick',$nick,PDO::PARAM_STR);
-				$nickkontrol->execute();
-				if ($nickkontrol->rowCount() > 0)
-					echo 'Bu kullanıcı adı daha önceden alınmış.';
+			$nickkontrol = $link->prepare("SELECT Nick FROM members WHERE Nick = :nick");
+			$nickkontrol->bindValue(':nick',$nick,PDO::PARAM_STR);
+			$nickkontrol->execute();
+			if ($nickkontrol->rowCount() > 0)
+				echo 'Bu kullanıcı adı daha önceden alınmış.';
+			else {
+				$emailkontrol = $link->prepare("SELECT Email FROM members WHERE Email = :email");
+				$emailkontrol->bindValue(":email",$email,PDO::PARAM_STR);
+				$emailkontrol->execute();
+				if ($emailkontrol->rowCount() > 0)
+					echo 'Bu email adresi daha önceden alınmış.';
 				else {
-					$emailkontrol = $link->prepare("SELECT Email FROM members WHERE Email = :email");
-					$emailkontrol->bindValue(":email",$email,PDO::PARAM_STR);
-					$emailkontrol->execute();
-					if ($emailkontrol->rowCount() > 0)
-						echo 'Bu email adresi daha önceden alınmış.';
+					$ad = strtoupper(substr($ad,0,1)).strtolower(substr($ad,1));
+					$soyad = strtoupper(substr($soyad,0,1)).strtolower(substr($soyad,1));
+					$tarih = "{$yil}-{$ay}-{$gun}";
+					$uyeet = $link->prepare("INSERT INTO members (Nick,Sifre,Ad,Soyad,Email,Cinsiyet,D_Tarihi,Uyelik_Tarihi,Sehir) VALUES (:nick,:sifre,:ad,:soyad,:email,:cinsiyet,:tarih,NOW(),:sehir)");
+					$uyeet->bindValue(":nick",$nick);
+					$uyeet->bindValue(":sifre",$sifre);
+					$uyeet->bindValue(":ad",$ad);
+					$uyeet->bindValue(":soyad",$soyad);
+					$uyeet->bindValue(":email",$email);
+					$uyeet->bindValue(":cinsiyet",$cinsiyet);
+					$uyeet->bindValue(":tarih",$tarih);
+					$uyeet->bindValue(":sehir",$sehir);
+					if ($uyeet->execute())
+						echo "true";
 					else {
-						$ad = strtoupper(substr($ad,0,1)).strtolower(substr($ad,1));
-						$soyad = strtoupper(substr($soyad,0,1)).strtolower(substr($soyad,1));
-						$tarih = "{$yil}-{$ay}-{$gun}";
-						$uyeet = $link->prepare("INSERT INTO members (Nick,Sifre,Ad,Soyad,Email,Cinsiyet,D_Tarihi,Uyelik_Tarihi,Sehir) VALUES (:nick,:sifre,:ad,:soyad,:email,:cinsiyet,:tarih,NOW(),:sehir)");
-						$uyeet->bindValue(":nick",$nick);
-						$uyeet->bindValue(":sifre",$sifre);
-						$uyeet->bindValue(":ad",$ad);
-						$uyeet->bindValue(":soyad",$soyad);
-						$uyeet->bindValue(":email",$email);
-						$uyeet->bindValue(":cinsiyet",$cinsiyet);
-						$uyeet->bindValue(":tarih",$tarih);
-						$uyeet->bindValue(":sehir",$sehir);
-						if ($uyeet->execute())
-							echo "true";
-						else {
-							echo "Hata oluştu, <br />";
-							$arr = $uyeet->errorInfo();
-							print_r($arr);
+						echo "Hata oluştu, <br />";
+						$arr = $uyeet->errorInfo();
+						print_r($arr);
 						}
 					}
 				}
-                                
-				$link = null;
-			} catch (PDOException $e) {
-				echo "Hata: ". $e->getMessage();
-                                FB::error($e, "Üye oluşturma hatası");
-				die();
-			}
-		}							
+			}							
 	} else 
 		echo 'Geçersiz';
-}
-else {
+	}
+	else {
 ?>
 
 
@@ -281,75 +270,36 @@ else {
 								else if (!preg_match("/^[a-zŞşÇçÜüİıÖöĞğ]+$/i", $soyad))
 									echo 'Soyad sadece harf içerebilir';
 								else {
-									try {
-										$u = "root";
-										$p = "esozluk";
-										
-										$nickkontrol = $link->prepare("SELECT Nick FROM members WHERE Nick = :nick");
-										$nickkontrol->bindValue(':nick',$nick,PDO::PARAM_STR);
-										$nickkontrol->execute();
-										if ($nickkontrol->rowCount() > 0)
-											echo $nick. ' kullanıcı adı daha önceden alınmış.';
-										else {
-											$emailkontrol = $link->prepare("SELECT Email FROM members WHERE Email = :email");
-											$emailkontrol->bindValue(":email",$email,PDO::PARAM_STR);
-											$emailkontrol->execute();
-											if ($emailkontrol->rowCount() > 0)
-												echo $email. ' email adresi daha önceden alınmış.';
-											else {
-												$ad = strtoupper(substr($ad,0,1)).strtolower(substr($ad,1));
-												$soyad = strtoupper(substr($soyad,0,1)).strtolower(substr($soyad,1));
-												$tarih = "{$yil}-{$ay}-{$gun}";
-												$uyeet = $link->prepare("INSERT INTO members (Nick,Sifre,Ad,Soyad,Email,Cinsiyet,D_Tarihi,Uyelik_Tarihi,Sehir) VALUES (:nick,:sifre,:ad,:soyad,:email,:cinsiyet,:tarih,NOW(),:sehir)");
-												$uyeet->bindValue(":nick",$nick);
-												$uyeet->bindValue(":sifre",$sifre);
-												$uyeet->bindValue(":ad",$ad);
-												$uyeet->bindValue(":soyad",$soyad);
-												$uyeet->bindValue(":email",$email);
-												$uyeet->bindValue(":cinsiyet",$cinsiyet);
-												$uyeet->bindValue(":tarih",$tarih);
-												$uyeet->bindValue(":sehir",$sehir);
-												if ($uyeet->execute())
-													echo 'Üyeliğiniz açıldı. Lütfen email adresinize gönderdiğimiz aktivasyon mailini onaylayıp giriş yapınız.';
-												else
-													echo 'Hata oluştu. Lütfen tekrar deneyin';
-											}
-										}
-									$link = null;
-									} catch (PDOException $e) {
-										echo "Hata: ". $e->getMessage();
-										die();
-									}
-									/*
-									//bağlan
-									$link = mysql_connect('127.0.0.1', 'root', 'esozluk') or die(mysql_error());
-									$dbname = "bahadir_etusozluk";
-									mysql_select_db($dbname) or die(mysql_error());
-									
-									$nick = mysql_real_escape_string($nick);
-									$nickkontrol = mysql_query("SELECT Nick FROM members WHERE Nick ='".$nick."'");
-									if (mysql_num_rows($nickkontrol)>0)
-										echo $nick.' kullanıcı adı daha önceden alınmış.';
+									$nickkontrol = $link->prepare("SELECT Nick FROM members WHERE Nick = :nick");
+									$nickkontrol->bindValue(':nick',$nick,PDO::PARAM_STR);
+									$nickkontrol->execute();
+									if ($nickkontrol->rowCount() > 0)
+										echo $nick. ' kullanıcı adı daha önceden alınmış.';
 									else {
-										$email = mysql_real_escape_string($email);
-										$emailkontrol = mysql_query("SELECT Email FROM members WHERE Email = '".$email."'");
-										if (mysql_num_rows($emailkontrol)>0)
-											echo $email.' email adresi daha önceden alınmış.';
+										$emailkontrol = $link->prepare("SELECT Email FROM members WHERE Email = :email");
+										$emailkontrol->bindValue(":email",$email,PDO::PARAM_STR);
+										$emailkontrol->execute();
+										if ($emailkontrol->rowCount() > 0)
+											echo $email. ' email adresi daha önceden alınmış.';
 										else {
-											$ad = mysql_real_escape_string(strtoupper(substr($ad,0,1)) . strtolower(substr($ad,1)));
-											$soyad = mysql_real_escape_string(strtoupper(substr($soyad,0,1)) . strtolower(substr($soyad,1)));
-											$sifre = mysql_real_escape_string($sifre);
+											$ad = strtoupper(substr($ad,0,1)).strtolower(substr($ad,1));
+											$soyad = strtoupper(substr($soyad,0,1)).strtolower(substr($soyad,1));
 											$tarih = "{$yil}-{$ay}-{$gun}";
-											$cinsiyet = mysql_real_escape_string(strtoupper($cinsiyet));
-											$sehir = mysql_real_escape_string($sehir);
-											$uyeet = mysql_query("INSERT INTO members (Nick,Sifre,Ad,Soyad,Email,Cinsiyet,D_Tarihi,Uyelik_Tarihi,Sehir) VALUES ('".$nick."','".$sifre."','".$ad."','".$soyad."','".$email."','".$cinsiyet."','".$tarih."',NOW(),'".$sehir."')");
-											if ($uyeet)
+											$uyeet = $link->prepare("INSERT INTO members (Nick,Sifre,Ad,Soyad,Email,Cinsiyet,D_Tarihi,Uyelik_Tarihi,Sehir) VALUES (:nick,:sifre,:ad,:soyad,:email,:cinsiyet,:tarih,NOW(),:sehir)");
+											$uyeet->bindValue(":nick",$nick);
+											$uyeet->bindValue(":sifre",$sifre);
+											$uyeet->bindValue(":ad",$ad);
+											$uyeet->bindValue(":soyad",$soyad);
+											$uyeet->bindValue(":email",$email);
+											$uyeet->bindValue(":cinsiyet",$cinsiyet);
+											$uyeet->bindValue(":tarih",$tarih);
+											$uyeet->bindValue(":sehir",$sehir);
+											if ($uyeet->execute())
 												echo 'Üyeliğiniz açıldı. Lütfen email adresinize gönderdiğimiz aktivasyon mailini onaylayıp giriş yapınız.';
 											else
 												echo 'Hata oluştu. Lütfen tekrar deneyin';
 										}
 									}
-									mysql_close();*/
 								}							
 							}
 							else {
@@ -471,5 +421,10 @@ else {
 	</body>
 </html> 
 <?php
+}
+$link = null;
+} catch (PDOException $e) {
+	echo "Hata: ". $e->getMessage();
+	die();
 }
 ?>

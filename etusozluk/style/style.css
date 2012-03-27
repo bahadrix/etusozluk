@@ -5,6 +5,7 @@ body {
   font-size: 9pt;
   text-align:center;
   color: #999;
+  line-height:14px;
 }
 
 body, td, th, h1, h2, h3, h4 {font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;}
@@ -224,12 +225,17 @@ textarea.sikayet {
 textarea.ygirdi {
   background-color:#333;
   margin-right: 0;
+  margin-top:3px;
+  margin-bottom:3px;
   border: 1px solid #444;
   color: #fecc00;
   font-weight:bold;
   font-family:Verdana,Geneva,Arial,sans-serif;
+  font-size:10pt;
   position:relative;
   display:block;
+  width:760px;
+  height:200px;
 }
 
 input:hover, input.login:hover, textarea:hover, button:hover {
@@ -295,6 +301,24 @@ select.sayfa{
   text-align:center;
   padding-top:0;
   margin-top:0;
+}
+
+#top-link  { 
+  display:none;
+  position:fixed;
+  right:5px;
+  bottom:5px;
+  color:#0081c6;
+  font-weight:bold;
+  text-decoration:none;
+  border:1px solid black;
+  background:#222;
+  padding:10px; 
+}
+
+#top-link:hover  { 
+  border:1px solid #fe9900;
+  background:#000;
 }
 
 #loginboxx {
@@ -392,7 +416,7 @@ li.b {
 }
 
 .aramenupanel {
-  position: absolute;
+  position: fixed;
   top: 30px;
   right:30px;
   display: none;

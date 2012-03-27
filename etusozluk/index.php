@@ -124,5 +124,6 @@ sonuç olarak ilkokul çocuğu düzeyinde bir mantığa sahip olan bir adamın y
 			</table></form><font style="font-size:10px; margin-top:0px;">* Hatasız kul olmaz.</font>
 		</div>
 		<a class="sikayetmenu" href="#">İstek</a>
+		<a href="javascript:void(0);" id="top-link">Başa Zıpla</a>
 	</body>
 </html> 

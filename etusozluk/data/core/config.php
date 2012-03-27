@@ -18,4 +18,5 @@ class DBCONN {
  * Includes
  */
 include 'firephp/fb.php';
+ob_start(); //olmayýnca exception atýyor.
 ?>
