@@ -55,6 +55,7 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 					$ad = strtoupper(substr($ad,0,1)).strtolower(substr($ad,1));
 					$soyad = strtoupper(substr($soyad,0,1)).strtolower(substr($soyad,1));
 					$tarih = "{$yil}-{$ay}-{$gun}";
+					$sifre = md5($nick.$sifre);
 					$uyeet = $link->prepare("INSERT INTO members (Nick,Sifre,Ad,Soyad,Email,Cinsiyet,D_Tarihi,Uyelik_Tarihi,Sehir) VALUES (:nick,:sifre,:ad,:soyad,:email,:cinsiyet,:tarih,NOW(),:sehir)");
 					$uyeet->bindValue(":nick",$nick);
 					$uyeet->bindValue(":sifre",$sifre);
@@ -285,6 +286,7 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 											$ad = strtoupper(substr($ad,0,1)).strtolower(substr($ad,1));
 											$soyad = strtoupper(substr($soyad,0,1)).strtolower(substr($soyad,1));
 											$tarih = "{$yil}-{$ay}-{$gun}";
+											$sifre = md5($nick.$sifre);
 											$uyeet = $link->prepare("INSERT INTO members (Nick,Sifre,Ad,Soyad,Email,Cinsiyet,D_Tarihi,Uyelik_Tarihi,Sehir) VALUES (:nick,:sifre,:ad,:soyad,:email,:cinsiyet,:tarih,NOW(),:sehir)");
 											$uyeet->bindValue(":nick",$nick);
 											$uyeet->bindValue(":sifre",$sifre);
