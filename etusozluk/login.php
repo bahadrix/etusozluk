@@ -2,7 +2,7 @@
 /**
  * Login ve logout işlemlerini gerçekleştirir.
  * @version 0.1 
- * @throws
+ * @throws jException
  */
 
 include 'data/core/db.php';
