@@ -41,15 +41,7 @@ try {
 		
 		/*
 		 * Burayı da yazcam ama uykum geldi! Devam edicem..
-		 */
-		
-		
-		
-		
-		
-		
-		
-		
+		 */	
 		
 		
 	}
