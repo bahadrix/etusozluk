@@ -104,7 +104,7 @@ class LoggedPDOStatement {
      * 
     * @return PDO result set
     */
-    public function execute() {
+    public function execute(array $input_parameters = null) {
         $start = microtime(true);
             try {
                 $result = $this->statement->execute();
@@ -114,14 +114,17 @@ class LoggedPDOStatement {
             }
         $time = microtime(true) - $start;
         
-        $explain = getQueryPlan(
-                str_replace(
+        if ($input_parameters != null)
+        	$this->bindPairs = array_merge($this->bindPairs, $input_parameters);
+        
+        $parsedQuery =  str_replace(
                         array_keys($this->bindPairs),
                         array_values($this->bindPairs),
                         $this->statement->queryString
-                        )
-                );
-        LoggedPDO::$log[] = array('[PS]' . $this->statement->queryString, $this->statement->rowCount(),round($time * 1000, 3),$explain);
+                        );
+                
+        $explain = getQueryPlan($parsedQuery);
+        LoggedPDO::$log[] = array('[PS]' . $parsedQuery, $this->statement->rowCount(),round($time * 1000, 3),$explain);
         return $result;
     }
     
