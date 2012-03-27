@@ -9,6 +9,11 @@
 include 'loggedPDO.php';
 
 /**
+ * Basit model sınıfları
+ */
+include 'models.php';
+
+/**
  * Veritabanına bağlantı kurarak bu bağlantıya ait PDO objesini döndürür.
  * Debugged paramteresi true yada false olursa global setting'e override eder
  * 
@@ -32,7 +37,29 @@ function getPDO($debugged = null) {
     }   
 }
 
-
+/**
+ * Veritabanında bulunan bir tablodaki belirtilen $duplicated_field için aynı veriyi taşıyan satırlardan ilki dışında hepsi silinir.
+ * @param string $table
+ * @param string $duplicated_field
+ * @param string $primary_key
+ */
+function removeDuplicates($table, $duplicated_field, $primary_key) {
+	
+	$DBO = getPDO();
+	$st = $DBO->query("SELECT $primary_key, $duplicated_field FROM $table ORDER BY $duplicated_field");
+	$rows = $st->fetchAll(PDO::FETCH_ASSOC);
+	
+	$DBO->beginTransaction();
+	for ($i=1; $i < $st->rowCount(); $i++) {
+		
+		if ($rows[$i][$duplicated_field] == $rows[$i - 1][$duplicated_field]) {
+			
+			$DBO->exec("DELETE FROM $table WHERE $primary_key = '"  . $rows[$i][$primary_key] . "'");
+		}
+		
+	}
+	$DBO->commit();
+}
 
 
 ?>
