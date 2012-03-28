@@ -720,11 +720,6 @@ function generateRows(selected, opt) {
 				$("#loginbox").toggle(0).focus();
 				$("#gizlimenu").hide();
 			});
-			
-			$("#ben").click(function() {
-				$("#loginboxx").toggle(0).focus();
-				$("#gizlimenu").hide();
-			});
 
 			$("#bugun, #dun, #rastgele, #hot, #yeni, #ark, #iyuf,").hover(function(){
 				if ($("#loginbox:visible").length>0) {

@@ -1,9 +1,10 @@
 ﻿<?php
 /**
 * Yeni entry girme işlemini gerçekleştirir.
-* @version 0.52
+* @version 0.6
 */
 	include ('data/core/db.php');
+	include ('common.php');
 	
 	function girdiControl($girdi) {
 		$ygirdi = $girdi;
@@ -51,7 +52,7 @@
 	}
 	
 	try {
-		/*Login kontrol buraya*/
+		if ($MEMBER_LOGGED) {
 			if (!empty($_POST["t"]) && !empty($_POST["ygirdi"])) {
 				$link = getPDO();
 				$baslik = strtolower($_POST["t"]);
@@ -83,7 +84,7 @@
 				$baslikid = $sonuc['T_ID'];
 				$e = $link -> prepare("INSERT INTO entries (T_ID,U_ID,Girdi,Tarih,Aktif) VALUES (:bid,:uid,:girdi,NOW(),:aktif)");
 				$e -> bindValue(":bid",$baslikid);
-				$e -> bindValue(":uid",1); //Uye ID Session'dan alınıcak
+				$e -> bindValue(":uid",$_SESSION['member']->U_ID); //Uye ID Session'dan alınıcak
 				$e -> bindValue(":girdi",$entry);
 				$e -> bindValue(":aktif",$aktif);
 									
@@ -97,12 +98,13 @@
 						header("Location: index.php"); //daha sonra kenar.php'de entry'ye gidicek.
 				}
 				else {
-						echo "Hata oluştu, <br />";
-						$arr = $e->errorInfo();
-						print_r($arr);
+						echo "Hata oluştu, lütfen tekrar deneyin";
 				}
 			}
 		
+		}
+		else
+			header("Location: index.php"); //nothing to see here.
 	}
 	catch (PDOException $e) {
 		echo "Hata oluştu lütfen tekrar deneyin";

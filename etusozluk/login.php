@@ -36,12 +36,12 @@ try {
 
 		// Summon da creature!
 		$member = new modelMember($st);
-				
+			
 		if ($member->Sifre != $hash) // Şifre kontrol
 			throw new jException("Yanlış şifre!", 1003);
 		
 		// Şifre de doğru!
-		
+				
 		session_cache_expire(30);
 		session_start();
 		$_SESSION['logged'] = true;
