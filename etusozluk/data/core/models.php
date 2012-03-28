@@ -10,6 +10,7 @@
  */
 
 class motherModel {
+
 	/**
 	 * 
 	 * @param PDOStatement $statement
