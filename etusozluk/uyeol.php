@@ -182,7 +182,7 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 				if (data==="true") {
 					$("#register").remove();
 					$("#ek").remove();
-					$("p:last").append("<p style='color:#fecc00>Üyeliğiniz açıldı. Lütfen email adresinize gönderdiğimiz aktivasyon mailini onaylayıp giriş yapınız.</p>");
+					$("p:last").append("<p style='color:#fecc00'>Üyeliğiniz açıldı. Lütfen email adresinize gönderdiğimiz aktivasyon mailini onaylayıp giriş yapınız.</p>");
 				}
 				else {
 					$("#ek").remove();
