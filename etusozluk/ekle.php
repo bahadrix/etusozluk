@@ -1,7 +1,7 @@
 ﻿<?php
 /**
 * Yeni entry girme işlemini gerçekleştirir.
-* @version 0.5
+* @version 0.51
 */
 	include ('data/core/db.php');
 	
@@ -54,7 +54,7 @@
 		/*Login kontrol buraya*/
 			if (!empty($_POST["t"]) && !empty($_POST["ygirdi"])) {
 				$link = getPDO();
-				$baslik = rawurldecode(strtolower($_POST["t"]));
+				$baslik = strtolower($_POST["t"]);
 				$baslik = preg_replace('/\s\s+/',' ',$baslik);
 				$baslik = preg_replace('/\t/',' ',$baslik);
 				$baslik = preg_replace('/[^a-z0-9üçöğşı\'#$\.\-\+= ]/', '', $baslik);
