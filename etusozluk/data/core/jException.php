@@ -12,9 +12,9 @@ class jException extends Exception {
 	 */
 	public function encode() {
 		
-		$jSONError['code']		= $this->getCode();
-		$jSONError['message']	= $this->getMessage();
-		$jSONError['previous']	= $this->getPrevious();
+		$jSONError["code"]		= $this->getCode();
+		$jSONError["message"]	= $this->getMessage();
+		$jSONError["previous"]	= $this->getPrevious();
 		
 		// Hatayı json objesi olarak bas
 		return json_encode($jSONError);

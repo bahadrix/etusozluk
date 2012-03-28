@@ -12,7 +12,6 @@
 
 include 'data/core/db.php';
 
-
 try {	
 	if (isset($_REQUEST['login'])) { // Login talep edilmiş
 		// Parametre kontrol
@@ -46,7 +45,12 @@ try {
 		session_start();
 		$_SESSION['logged'] = true;
 		$_SESSION['member'] = $member;	
-		die("OK");
+		if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+			$JO = array("durum"=>"OK","nick"=>" ".$member->Nick." ");
+			echo json_encode($JO);
+		}
+		else
+			header("Location: index.php");
 		
 	}
 
@@ -58,5 +62,4 @@ try {
 	if (DEBUG_MODE) FB::error($e);
 	
 }
-
 ?>

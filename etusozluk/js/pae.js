@@ -485,7 +485,9 @@ function generateRows(selected, opt) {
 
 /* ScrollTo Bitti*/
 
-/* ETU SOZLUK KISMI */
+/* ETU SOZLUK KISMI
+* @version 0.2
+*/
 
 			/*$.fn.insertAtCaret = function (tagName) {
 			return this.each(function(){
@@ -681,6 +683,11 @@ function generateRows(selected, opt) {
 			
 		}
 		
+		function enBu(){
+			$('input[name="login"]').removeAttr('disabled')
+			$('input[name="login"]').removeClass('disabled');
+		};
+		
 	$(document).ready(function() {
 		gungetir(0,1);
 		var c = getcount(0);
@@ -790,6 +797,43 @@ function generateRows(selected, opt) {
 			$('#top-link').click(function(e) {
 				e.preventDefault();
 				$.scrollTo(0,300);
+			});
+			
+			$('form[name="loginform"]').submit(function(e) {
+				e.preventDefault();
+				$('input[name="login"]').attr("disabled","disabled");
+				$('input[name="login"]').addClass('disabled');
+				setTimeout('enBu()', 5000);
+				$.ajax({
+				url: "login.php",
+				dataType: "json",
+				data: "login&"+$(this).serialize(),
+				success: function(data) {
+				if (data.durum) {
+					$("#uyeol").find("span").text('Ben');
+					$("#loginbox").empty();
+					$("#loginbox").append('<p class="lgbaslik">' + data.nick + '</p><hr class="lg"/><p style="text-align:left; padding-left:50px; margin:0;"><a href="hq.php">HQ</a><br /><a href="mesaj.php">Mesajlar</a><br /><a href="getir.php?mode=ark">Arkadaşlar</a><br /><a href="getir.php?mode=kenar">Kenarda Duranlar</a><br /><a href="getir.php?mode=yeni">Yeni</a><br /><a href="login.php?mode=cikis">Çıkış</a></p>');
+					if ($("#baslikd").val()) { //tekrar çağırmak kirlilik, ilerde burasını direkt kaldırabilirim.
+						$("#hg").append('<div style="text-align:left; padding-top:10px; padding-left:25px;">"'+$("#baslikd").val()+'" hakkında söylemek istediklerim var diyorsan hadi durma:	<form action="ekle.php" method="post" id="yenigirdi" name="yenigirdi"><input type="hidden" name="t" value="'+$("#baslikd").val()+'" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt(\'link: (başında http:// olmalı)\', \'http://\');if(isURL(a))$(\'#entrytextarea\').tae(\'url\',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi"></textarea><input type="submit" value="böyle olur" class="ebut" /><input type="submit" value="bunu sonra gönderirim" class="ebut" name="kaydet" /></form></div>');
+						$("#bkz").click(function() {
+							$("#entrytextarea").tae("bkz");
+						});
+			
+						$("#gizlibkz").click(function() {
+							$("#entrytextarea").tae("gizli");
+						});
+			
+						$("#spoiler").click(function() {
+							$("#entrytextarea").tae("spoiler");
+						});
+					}
+				}
+				else if(data.code) {
+					$('#hata').remove();
+					$('#loginbox').append('<p id="hata" style="color:#fecc00;"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span><strong>Hata: </strong>'+data.message+'</p>');
+				}
+			}
+			});
 			});
 	});
 

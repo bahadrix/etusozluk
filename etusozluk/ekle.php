@@ -1,7 +1,7 @@
 ﻿<?php
 /**
 * Yeni entry girme işlemini gerçekleştirir.
-* @version 0.6
+* @version 0.61
 */
 	include ('data/core/db.php');
 	include ('common.php');
@@ -24,7 +24,7 @@
 				$ygirdi = str_replace($bkzs[$i],'(bkz: <a href="goster.php?t='.rawurlencode(trim($sonuc[1][$i])).'">'.trim($sonuc[1][$i]).'</a>)',$ygirdi);
 			}
 		}
-		$g = preg_match_all('/`\s?([a-z0-9ıüçöğş\^!\'$#~*_%!&=?\/ ]+)\s?`/', $ygirdi, $sonuc);
+		$g = preg_match_all('/`\s?([a-z0-9ıüçöğş\^!\'$#€£~*_%!&=?\/+ ]+)\s?`/', $ygirdi, $sonuc);
 		if ($g) {
 			$gbkzs = $sonuc[0];
 			for ($i=0;$i<$g;$i++) {
@@ -32,7 +32,7 @@
 			}
 		}
 		//url kontrol, gözden geçirilmesi gerek
-		$u = preg_match_all('/\[(https?|ftp):\/\/([a-z0-9\/?=%-_!^]+)\s?([a-z0-9ıüçöğş\^!\'$#~*_%!&=?\/ ]+)?\]/',$ygirdi,$sonuc);
+		$u = preg_match_all('/\[(https?|ftp):\/\/([a-z0-9\/?=%-_!^]+)\s?([a-z0-9ıüçöğş\^!\'$#€£~*_%!&=?\/+ ]+)?\]/',$ygirdi,$sonuc);
 		if ($u) {
 			$urls = $sonuc[0];
 			for ($i=0;$i<$u;$i++) {
