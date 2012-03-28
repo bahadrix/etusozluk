@@ -117,6 +117,7 @@ class LoggedPDOStatement {
         if ($input_parameters != null)
         	$this->bindPairs = array_merge($this->bindPairs, $input_parameters);
         
+        if (strpos(strtolower(trim($this->statement->queryString)), strtolower("EXPLAIN")) !== false ) {
         $parsedQuery =  str_replace(
                         array_keys($this->bindPairs),
                         array_values($this->bindPairs),
@@ -125,6 +126,7 @@ class LoggedPDOStatement {
                 
         $explain = getQueryPlan($parsedQuery);
         LoggedPDO::$log[] = array('[PS]' . $parsedQuery, $this->statement->rowCount(),round($time * 1000, 3),$explain);
+        }
         return $result;
     }
     
@@ -150,11 +152,18 @@ class LoggedPDOStatement {
 }
 
 function getQueryPlan($query,$fetch_style = PDO::FETCH_ASSOC) {
-    
-    $db = getPDO(false);
-    $query = "EXPLAIN $query";
-    $st = $db->query($query);
-    return $st->fetchAll($fetch_style);
+	$result = array();
+	try {
+	    $db = getPDO(true);
+	    $query = "EXPLAIN $query";
+	    $st = $db->query($query);
+	    $result = $st->fetchAll($fetch_style);
+	} catch (PDOException $e) {
+		
+		FB::error($e);
+		//die('hata');
+	}
+	return $result;
 }
 
 ?>
