@@ -19,5 +19,11 @@ class DBCONN {
  */
 include 'firephp/fb.php';
 include 'jException.php';
+include 'funcks.php';
+
+
+
+
+
 ob_start(); //olmay�nca exception at�yor.
 ?>

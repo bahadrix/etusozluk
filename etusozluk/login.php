@@ -1,13 +1,16 @@
 <?php
 /**
  * Login ve logout işlemlerini gerçekleştirir.
+ * Login de hata olursa (yanlış şifre vb) jException'dan jSON objesi basar.
+ * Giriş başarılı olursa "OK" döndürür. Bu durumda mevcut sayfanın refresh edilmesi yeterlidir.
+ * 
+ * Bi ara brute force önlemi alınmalı
+ * 
  * @version 0.1 
  * @throws jException
  */
 
 include 'data/core/db.php';
-
-
 
 
 try {	
@@ -37,12 +40,13 @@ try {
 		if ($member->Sifre != $hash) // Şifre kontrol
 			throw new jException("Yanlış şifre!", 1003);
 		
-		// Şifrede doğru!
+		// Şifre de doğru!
 		
-		/*
-		 * Burayı da yazcam ama uykum geldi! Devam edicem..
-		 */	
-		
+		session_cache_expire(30);
+		session_start();
+		$_SESSION['logged'] = true;
+		$_SESSION['member'] = $member;	
+		die("OK");
 		
 	}
 
