@@ -74,11 +74,6 @@ class modelMember extends motherModel {
 	 */
 	public $Son_Online;
 	/**
-	 * Bulunduğu ülke
-	 * @var string
-	 */
-	public $Ulke;
-	/**
 	 * Bulunduğu şehir
 	 * @var string
 	 */
