@@ -532,7 +532,7 @@ function generateRows(selected, opt) {
 		
 		function isURL(a) {
 			return /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(a)
-		}
+		};
 		
 		$.fn.tae = function (tagName, tag) {
 			return this.each(function(){
@@ -626,7 +626,7 @@ function generateRows(selected, opt) {
 						$("#basliklar").empty().append('Hata oluştu lütfen tekrar deneyin.');
 					}
 				});
-		}
+		};
 		
 		function getcount(opt) {
 			var count = 0;
@@ -649,7 +649,7 @@ function generateRows(selected, opt) {
 			  }
 			});
 			return count;
-		}
+		};
 		
 		function yazarinfo(id,posX,posY) {
 			$("#sharebox").remove();
@@ -665,7 +665,7 @@ function generateRows(selected, opt) {
 				$("#yazarminiinfo").click(function(e){ e.stopPropagation(); });
 				$(document).one("click", function() { $("#yazarminiinfo").fadeOut(300, function() { $("#yazarminiinfo").remove() ;}); });
 			});
-		}
+		};
 		
 		function sharebox(eid,posX,posY) {
 			$("#yazarminiinfo").remove();
@@ -681,10 +681,10 @@ function generateRows(selected, opt) {
 			$(document).one("click", function() { $("#sharebox").fadeOut(300, function() { $("#sharebox").remove(); $("#fbtw").remove(); }); });
 			$("#sharebox").click(function(e){ e.stopPropagation(); });
 			
-		}
+		};
 		
 		function enBu(){
-			$('input[name="login"]').removeAttr('disabled')
+			$('input[name="login"]').removeAttr('disabled');
 			$('input[name="login"]').removeClass('disabled');
 		};
 		
