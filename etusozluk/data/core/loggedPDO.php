@@ -25,10 +25,14 @@ class LoggedPDO extends PDO
      * Sınıf kaldırıldığındaki eldeki loglar konsola basılır.
      */
     public function __destruct() {
-        if (!count(self::$log))
-            FB::info ("Hiç sorgu çalıştırılmadı");
-        else
-            self::printLog();
+    	try {
+	        if (!count(self::$log))
+	            FB::info ("Hiç sorgu çalıştırılmadı");
+	        else
+	            self::printLog();
+	    	} catch (Exception $e){
+    		FB::error($e);
+    	}
     }
     
     public function query($query) {
@@ -154,7 +158,7 @@ class LoggedPDOStatement {
 function getQueryPlan($query,$fetch_style = PDO::FETCH_ASSOC) {
 	$result = array();
 	try {
-	    $db = getPDO(true);
+	    $db = getPDO();
 	    $query = "EXPLAIN $query";
 	    $st = $db->query($query);
 	    $result = $st->fetchAll($fetch_style);

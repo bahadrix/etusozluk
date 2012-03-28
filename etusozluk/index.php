@@ -1,3 +1,5 @@
+<?php include 'common.php'; 
+?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="tr-tr" lang="tr-tr" dir="ltr" >
 <head>
@@ -37,14 +39,14 @@
 			<div id="loginboxx">
 				<p class="lgbaslik">Nick</p><hr class="lg"/><p style="text-align:left; padding-left:50px; margin:0;"><a href="ben.php">Karargah</a><br /><a href="mesaj.php">Mesajlar</a><br /><a href="getir.php?mode=ark">Arkadaşlar</a><br /><a href="getir.php?mode=yeni">Yeni</a><br /><a href="login.php?mode=cikis">Çıkış</a></p>
 			</div>
-			<li id="uyeol"><a href="javascript:void(0);"><span>Üye Ol/Giriş</span></a></li>
+			<?php if (!$MEMBER_LOGGED) { ?><li id="uyeol"><a href="javascript:void(0);"><span>Üye Ol/Giriş</span></a></li><?php }?>
 			<li id="bugun"><a href="javascript:void(0);"><span>Bugün</span></a><div id="gizlimenu">Bugün yazılanlar</div></li>
 			<li id="dun"><a href="javascript:void(0);"><span>Dün</span></a><div id="gizlimenu">Dün yazılanlar</div></li>
 			<li id="rastgele"><a href="javascript:void(0);"><span>Rastgele</span></a><div id="gizlimenu">Rastgele 50 başlık</div></li>
 			<li id="hot"><a href="javascript:void(0);"><span>Hot</span></a><div id="gizlimenu">Sıcak sıcak yeni çıktı</div></li>
 			<li id="iyuf"><a href="javascript:void(0);"><span>İyuf</span></a><div id="gizlimenu">Yok böyle girdi</div></li>
 			<li id="da-ara"><a href="javascript:void(0);" class="aramenu"><span>Ara</span></a></li>
-			<li id="ben"><a href="javascript:void(0);"><span>Ben</span></a></li>
+			<?php if ($MEMBER_LOGGED) { ?><li id="ben"><a href="javascript:void(0);"><span>Ben</span></a></li><?php }?>
 		</ul>
 		<div id="header"><form name="baslikara" action="ara.php?op=baslikara"><input type="text" value="Başlık Getir" id="titlea" name="title" size="30" maxlength="70" />&nbsp;<input type="submit" value="ara" /></form></div>
 		<div id="main">
