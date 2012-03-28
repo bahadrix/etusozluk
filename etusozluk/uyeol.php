@@ -199,7 +199,7 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 		<ul id="menu">
 		<div id="loginbox">
 				<p class="lgbaslik">Giriş</p>
-				<form action="login.php" method="post" name="login">
+				<form action="login.php" method="post" name="loginform">
 				<table style="width:270px; text-align:center; margin-left:5px;">
 					<tr>
 					<td style="text-align:left; padding-left: 7px; width:100px;">Kullanıcı Adı:</td>

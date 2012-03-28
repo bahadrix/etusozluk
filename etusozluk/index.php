@@ -16,7 +16,7 @@
 		<ul id="menu">
 		<div id="loginbox">
 				<p class="lgbaslik">Giriş</p>
-				<form action="login.php" method="post" name="login">
+				<form action="login.php" method="post" name="loginform">
 				<table style="width:270px; text-align:center; margin-left:5px;">
 					<tr>
 					<td style="text-align:left; padding-left: 7px; width:100px;">Kullanıcı Adı:</td>
@@ -62,7 +62,7 @@ onlar duyarsızdı, suçluydu zarttı zurttu; e sen yap görevini, sen sağla ad
 sonuç olarak ilkokul çocuğu düzeyinde bir mantığa sahip olan bir adamın yazdığı, yine o mantığa sahip olanların da ayar sandığı yazıdır.<div class="yazarinfo">(<a href="goster.php?baslik=tahrik+eden+cisim" id="yazar" rel="12345">tahrik eden cisim</a>, 17.03.2012 12:47)<div class="ymore"><a href="goster.php?eid=1234" id="entryid">@1234</a>&nbsp;<button type="button" value="entry id" class="minib">iyuf</button>&nbsp;<button type="button" value="entry id" class="minib">ı ıh</button></div><div id="yazarmini"></div></div></li><br /></ol>
 						<br /><div style="text-align:center;"><button type="button" value="Başlık ID">Hepsi Gelsin</button>
 						<div style="text-align:left; padding-top:10px; padding-left:25px;">"Random Başlık" hakkında söylemek istediklerim var diyorsan hadi durma:
-						<form action="ekle.php" method="post" id="yenigirdi"><input type="hidden" name="t" value="random başlık" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt('link: (başında http:// olmalı)', 'http://');if(isURL(a))$('#entrytextarea').tae('url',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi"></textarea><input type="submit" value="böyle olur" class="ebut" /><input type="submit" value="bunu sonra gönderirim" class="ebut" name="kaydet" /></form></div></div></div></div>
+						<form action="ekle.php" method="post" id="yenigirdi" name="yenigirdi"><input type="hidden" name="t" value="ilk başlık" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt('link: (başında http:// olmalı)', 'http://');if(isURL(a))$('#entrytextarea').tae('url',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi"></textarea><input type="submit" value="böyle olur" class="ebut" /><input type="submit" value="bunu sonra gönderirim" class="ebut" name="kaydet" /></form></div></div></div></div>
 					</td>
 					<td valign=top width=400>
 						<div id="mainright"><div id="basliklar" style="text-align:left;"></div><input type="hidden" name="page_count" id="page_count" /></div>
@@ -128,4 +128,4 @@ sonuç olarak ilkokul çocuğu düzeyinde bir mantığa sahip olan bir adamın y
 		<a class="sikayetmenu" href="#">İstek</a>
 		<a href="javascript:void(0);" id="top-link">Başa Zıpla</a>
 	</body>
-</html> 
+</html>
