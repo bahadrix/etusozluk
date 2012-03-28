@@ -1,7 +1,7 @@
 ﻿<?php
 /**
 * Yeni entry girme işlemini gerçekleştirir.
-* @version 0.51
+* @version 0.52
 */
 	include ('data/core/db.php');
 	
@@ -14,7 +14,7 @@
 		$ygirdi = preg_replace('/\'/', '&#39;',$ygirdi);
 		$ygirdi = preg_replace('/\t/',' ',$ygirdi);
 		$ygirdi = nl2br($ygirdi);
-		$ygirdi = preg_replace('/[<br \/>\s?]{2,}/','<br /><br />',$ygirdi);
+		$ygirdi = preg_replace('/(?:<br \/>\s*){2,}/', "<br /><br />", $ygirdi);
 		$ygirdi = preg_replace('/\s\s+/',' ',$ygirdi);
 		$b = preg_match_all('/\(bkz:\s?([a-z0-9ıüçöğş\^!\'$#€£~*_%!&=?\/+ ]+)\)/', $ygirdi, $sonuc);
 		if ($b) {
