@@ -1,4 +1,4 @@
-<?php include 'config.php';
+<?php include_once 'config.php';
 /**
  * Veritabanı bağlantı kurulum ve erişim fonksiyonları dosyası.
  */
