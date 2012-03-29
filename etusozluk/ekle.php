@@ -15,7 +15,7 @@
 				$baslik = strtolower($_POST["t"]);
 				$baslik = preg_replace('/\s\s+/',' ',$baslik);
 				$baslik = preg_replace('/\t/',' ',$baslik);
-				$baslik = preg_replace('/[^a-z0-9üçöğşı\'#$\.\-\+=@ ]/', '', $baslik);
+				$baslik = preg_replace('/[^a-z0-9üçöğşı\'#$\.\-\+= ]/', '', $baslik);
 				$entry = strtolower($_POST["ygirdi"]);
 				
 				if (isset($_REQUEST['kaydet']))
