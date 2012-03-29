@@ -1,5 +1,5 @@
 <?php
-include('data/core/db.php');
+include_once('data/core/db.php');
 session_start();
 
 $MEMBER_LOGGED = isset($_SESSION['logged']) && $_SESSION['logged'];

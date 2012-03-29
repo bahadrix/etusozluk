@@ -1,5 +1,6 @@
 <?php
-include('data/core/db.php');
+include('common.php');
+if (!$MEMBER_LOGGED) {
 try {
 $link = getPDO();
 if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
@@ -428,5 +429,8 @@ $link = null;
 } catch (PDOException $e) {
 	echo "Hata: ". $e->getMessage();
 	die();
+}
+} else {
+	header("Location: index.php"); //üyeyse girmesin.
 }
 ?>

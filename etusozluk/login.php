@@ -40,7 +40,12 @@ try {
 			throw new jException("Yanlış şifre!", 1003);
 		
 		// Şifre de doğru!
-				
+		
+		// Son Online'ı update et.
+		$u = $DO->prepare("UPDATE members SET Son_Online = NOW() WHERE U_ID = :uid");
+		$u->bindValue(":uid",$member->U_ID);
+		$u->execute();
+		
 		session_cache_expire(30);
 		session_start();
 		$_SESSION['logged'] = true;

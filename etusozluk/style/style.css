@@ -465,7 +465,11 @@ h3 {
   margin:0;
   padding:8px 0 5px 0;
 }
-
+  
+.url {
+    padding-right: 10px;
+    background: url(img/exurl.png) no-repeat right top;   
+}
 
 a.sikayetmenu {
   position:fixed;

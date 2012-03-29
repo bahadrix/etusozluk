@@ -1,55 +1,12 @@
 ﻿<?php
 /**
 * Yeni entry girme işlemini gerçekleştirir.
-* @version 0.61
+*
+* @girdiControl fonksiyonu funct.php'ye taşındı. 
+*
+* @version 0.7
 */
-	include ('data/core/db.php');
 	include ('common.php');
-	
-	function girdiControl($girdi) {
-		$ygirdi = $girdi;
-		$ygirdi = preg_replace('/&/', '&amp;',$ygirdi);
-		$ygirdi = preg_replace('/</', '&lt;',$ygirdi);
-		$ygirdi = preg_replace('/>/', '&gt;',$ygirdi);
-		$ygirdi = preg_replace('/"/', '&quot;',$ygirdi);
-		$ygirdi = preg_replace('/\'/', '&#39;',$ygirdi);
-		$ygirdi = preg_replace('/\t/',' ',$ygirdi);
-		$ygirdi = nl2br($ygirdi);
-		$ygirdi = preg_replace('/(?:<br \/>\s*){2,}/', "<br /><br />", $ygirdi);
-		$ygirdi = preg_replace('/\s\s+/',' ',$ygirdi);
-		$b = preg_match_all('/\(bkz:\s?([a-z0-9ıüçöğş\^!\'$#€£~*_%!&=?\/+ ]+)\)/', $ygirdi, $sonuc);
-		if ($b) {
-			$bkzs = $sonuc[0];
-			for ($i=0;$i<$b;$i++) {
-				$ygirdi = str_replace($bkzs[$i],'(bkz: <a href="goster.php?t='.rawurlencode(trim($sonuc[1][$i])).'">'.trim($sonuc[1][$i]).'</a>)',$ygirdi);
-			}
-		}
-		$g = preg_match_all('/`\s?([a-z0-9ıüçöğş\^!\'$#€£~*_%!&=?\/+ ]+)\s?`/', $ygirdi, $sonuc);
-		if ($g) {
-			$gbkzs = $sonuc[0];
-			for ($i=0;$i<$g;$i++) {
-				$ygirdi = str_replace($gbkzs[$i],'`<a href="goster.php?t='.rawurlencode(trim($sonuc[1][$i])).'">'.trim($sonuc[1][$i]).'</a>`',$ygirdi);
-			}
-		}
-		//url kontrol, gözden geçirilmesi gerek
-		$u = preg_match_all('/\[(https?|ftp):\/\/([a-z0-9\/?=%-_!^]+)\s?([a-z0-9ıüçöğş\^!\'$#€£~*_%!&=?\/+ ]+)?\]/',$ygirdi,$sonuc);
-		if ($u) {
-			$urls = $sonuc[0];
-			for ($i=0;$i<$u;$i++) {
-				$url = trim($sonuc[1][$i].'://'.$sonuc[2][$i]);
-				if (!$sonuc[3][$i]=='') 
-					$kelime = trim($sonuc[3][$i]);
-				else
-					$kelime = substr(trim($url),0,25).'...';
-				if (filter_var($url,FILTER_VALIDATE_URL)) 
-					$ygirdi = str_replace($urls[$i], '<a href="'.$url.'" target="_blank">'.$kelime.'</a>',$ygirdi);
-				else
-					$ygirdi = str_replace($urls[$i],"[$url $kelime]",$ygirdi);
-			}
-		}
-		//spoiler kontrolü daha sonra, sıktı regexp şu an :) 
-		return $ygirdi;
-	}
 	
 	try {
 		if ($MEMBER_LOGGED) {
@@ -58,8 +15,8 @@
 				$baslik = strtolower($_POST["t"]);
 				$baslik = preg_replace('/\s\s+/',' ',$baslik);
 				$baslik = preg_replace('/\t/',' ',$baslik);
-				$baslik = preg_replace('/[^a-z0-9üçöğşı\'#$\.\-\+= ]/', '', $baslik);
-				$entry = girdiControl(strtolower($_POST["ygirdi"]));			
+				$baslik = preg_replace('/[^a-z0-9üçöğşı\'#$\.\-\+=@ ]/', '', $baslik);
+				$entry = strtolower($_POST["ygirdi"]);
 				
 				if (isset($_REQUEST['kaydet']))
 					$aktif = 0;
@@ -78,7 +35,6 @@
 					$se -> execute();
 				}
 				//id'yi al
-				$s -> bindValue(":baslik",$baslik); //gereksiz olabilir.
 				$s -> execute();
 				$sonuc = $s -> fetch(PDO::FETCH_ASSOC);
 				$baslikid = $sonuc['T_ID'];
@@ -100,8 +56,7 @@
 				else {
 						echo "Hata oluştu, lütfen tekrar deneyin";
 				}
-			}
-		
+			}		
 		}
 		else
 			header("Location: index.php"); //nothing to see here.
