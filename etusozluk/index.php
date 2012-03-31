@@ -1,4 +1,6 @@
-<?php include 'common.php'; 
+<?php 
+include 'common.php';
+include_once 'funct.php'; 
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="tr-tr" lang="tr-tr" dir="ltr" >
@@ -53,17 +55,47 @@
 			<table cellspacing=0 cellpadding=0>
 				<tr>
 					<td valign=top width=800 style="border-right:1px dotted #666;">
-						<div id="mainleft"><div id="entries"><input type="hidden" value="random başlık" id="baslikd" /><h3 style="text-align:left; margin-left:40px;">Random Entry Başlığı</h3><ol class=girdiler><li class=girdi value="1">sivas katliam'ından, davanın zamanaşımına uğramasından; insanların suçları ispatlanmadan, hatta suçlarının bile ne olduğunu tam olarak ortaya konulamadan bir yıl hapiste tutulmalarından rahatsız olmayıp "birbiri ile alakasız konuların bir araya getirilmesinden" rahatsız olmuş bir adamın yazısı. 
-
-aynı adamın mantığına göre bir yerlerde bir yanlış varsa onu düzeltmek sadece o dönemde işbaşında olanların işi. yani sivas katliamında erdal inönü, demirel, dyp, chp kılını kıpırdatmadıysa bu sadece onların suçudur, bu olay sadece onların sorumluluğundadır. 
-
-onlar duyarsızdı, suçluydu zarttı zurttu; e sen yap görevini, sen sağla adaleti. yok "onlar adil değildi, ben niye adil olayım, bana niye adil ol diyorsun" diye sızlanıyor adam. yaşananların vahşilik, suç vs. olduğunu düşünmesine rağmen başbakanın çıkıp "sivas davası milletimize hayırlı olsun" demesinin sebebi budur. böyle dediği için başbakana bir şey denilmemelidir bu adamın mantığına göre.
-
-sonuç olarak ilkokul çocuğu düzeyinde bir mantığa sahip olan bir adamın yazdığı, yine o mantığa sahip olanların da ayar sandığı yazıdır.<div class="yazarinfo">(<a href="goster.php?baslik=tahrik+eden+cisim" id="yazar" rel="12345">tahrik eden cisim</a>, 17.03.2012 12:47)<div class="ymore"><a href="goster.php?eid=1234" id="entryid">@1234</a>&nbsp;<button type="button" value="entry id" class="minib">iyuf</button>&nbsp;<button type="button" value="entry id" class="minib">ı ıh</button></div><div id="yazarmini"></div></div></li><br /></ol>
-						<br /><div style="text-align:center;" id="hg"><button type="button" value="Başlık ID">Hepsi Gelsin</button>
+						<div id="mainleft"><div id="entries">
+						<?php
+						$link = getPDO();
+						$se = $link -> query("SELECT * FROM entries WHERE Aktif = 1 AND Thrash = 0 ORDER BY RAND() LIMIT 1");
+						if (!$se->rowCount())
+							echo "Yuh yazmadınız mı daha.";
+						else { 
+						$rentry = $se->fetch(PDO::FETCH_ASSOC);
+		
+						$st = $link -> query("SELECT Baslik FROM titles WHERE T_ID = ".$rentry['T_ID']);
+						$b = $st -> fetch(PDO::FETCH_ASSOC);
+						$baslikadi = $b["Baslik"];
+		
+						$sy = $link -> query("SELECT Nick FROM members WHERE U_ID = ".$rentry['U_ID']);
+						$y = $sy -> fetch(PDO::FETCH_ASSOC);
+						$yazar = $y['Nick'];
+		
+						$sk = $link -> query ("SELECT COUNT(E_ID) as listnumber FROM entries WHERE T_ID=".$rentry['T_ID']." AND E_ID BETWEEN 1 AND ".$rentry['E_ID']." ORDER BY Tarih");
+						$s = $sk -> fetch(PDO::FETCH_ASSOC);
+						$sayi = $s['listnumber'];
+		
+						echo '<input type="hidden" value="'.$baslikadi.'" id="baslikd" />';
+						echo '<h3 style="text-align:left; margin-left:40px;">'.$baslikadi.'</h3><ol class=girdiler><li class=girdi value="'.$sayi.'">';
+						echo girdiControl($rentry['Girdi']);
+						echo '<div class="yazarinfo">(<a href="goster.php?t='.yazarBoslukSil($yazar).'" id="yazar" rel="'.$rentry['U_ID'].'">'.$yazar.'</a>, '.substr($rentry['Tarih'],0,16).')</div><div class="ymore"><a href="goster.php?e=#'.$rentry['E_ID'].'" id="entryid">#'.$rentry['E_ID'].'</a>';
+						if ($MEMBER_LOGGED) {
+							echo '&nbsp;<button type="button" value="'.$rentry['E_ID'].'" class="minib" title="olmuş bu" id="+1">iyuf</button>&nbsp;<button type="button" value="'.$rentry['E_ID'].'" class="minib" title="böyle olmaz hacı" id="-1">ı ıh</button>';
+							if ($_SESSION['member']->U_ID = $rentry['U_ID'])
+								echo '&nbsp;<button type="button" onClick="location.href=\'edit.php?e='.$rentry['E_ID'].'\'" class="minib" id="eduz">düzelt</button>&nbsp;<button type="button" onClick="location.href=\'del.php?e='.$rentry['E_ID'].'\'" class="minib" title="sil" id="esil">X</button>';
+							else
+								echo '&nbsp;<button type="button" onClick="location.href=\'fav.php?e='.$rentry['E_ID'].'\'" class="minib" title="favorilere ekle" id="efav">:D</button>&nbsp;<button type="button" onClick="location.href=\'mesaj.php?y='.yazarBoslukSil($yazar).'\'" class="minib" title="yazara mesaj atiyim" id="eymesaj">msj</button>';
+							}
+						echo '&nbsp;<button type="button" onClick="location.href=\'yazar.php?y='.yazarBoslukSil($yazar).'\'" id="eyh" class="minib" title="yazar hakkında">?</button>&nbsp;<button type="button" onClick="location.href=\'sikayet.php?e='.$rentry['E_ID'].'\'" id="esb" class="minib" title="şikayet et">!</button>';
+						echo '&nbsp;</div><div id="yazarmini"></div>';
+						echo '</li><br /></ol>';
+						}
+						?>
+						<br /><div style="text-align:center;" id="hg"><button type="button" onClick="location.href='goster.php?t=<?php echo yazarBoslukSil($baslikadi); ?>'" id="ehg">Hepsi Gelsin</button>
 						<?php if ($MEMBER_LOGGED) { ?>
-						<div style="text-align:left; padding-top:10px; padding-left:25px;">"Random Başlık" hakkında söylemek istediklerim var diyorsan hadi durma:
-						<form action="ekle.php" method="post" id="yenigirdi" name="yenigirdi"><input type="hidden" name="t" value="ilk başlık" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt('link: (başında http:// olmalı)', 'http://');if(isURL(a))$('#entrytextarea').tae('url',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi"></textarea><input type="submit" value="böyle olur" class="ebut" /><input type="submit" value="bunu sonra gönderirim" class="ebut" name="kaydet" /></form></div><?php } ?></div></div></div>
+						<div style="text-align:left; padding-top:10px; padding-left:25px;">"<?php echo $baslikadi; ?>" hakkında söylemek istediklerim var diyorsan durma:
+						<form action="ekle.php" method="post" id="yenigirdi" name="yenigirdi"><input type="hidden" name="t" value="<?php echo $baslikadi; ?>" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt('link: (başında http:// olmalı)', 'http://');if(isURL(a))$('#entrytextarea').tae('url',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi"></textarea><input type="submit" value="böyle olur" class="ebut" /><input type="submit" value="bunu sonra gönderirim" class="ebut" name="kaydet" /></form></div><?php } ?></div></div></div>
 					</td>
 					<td valign=top width=400>
 						<div id="mainright"><div id="basliklar" style="text-align:left;"></div><input type="hidden" name="page_count" id="page_count" /></div>

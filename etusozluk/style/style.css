@@ -71,6 +71,9 @@ li.girdi {
 .ymore {
   display:none;
   margin:0;
+  right:0;
+  margin-top:20px;
+  position:absolute;
 }
 
 ul#menu {
