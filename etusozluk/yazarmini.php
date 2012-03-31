@@ -2,7 +2,7 @@
 include_once('common.php');
 include_once('funct.php');
 $msg="";
-if (!empty($_POST['yid']) && is_int($_POST['yid'])) {
+if (!empty($_POST['yid'])) {
   $yid = $_POST['yid'];
   $link = getPDO();
   $st = $link -> prepare('SELECT U_ID,Nick,Uyelik_Tarihi,Sehir,Son_Online FROM members where U_ID=:uid');

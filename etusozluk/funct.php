@@ -6,7 +6,7 @@
 *	TODO: + direkt yazılan linkleri de link haline çevir.
 *		  + eğer domain içinde bir sayfaya link verilirse (bkz: )'a çevir.
 *		  + ek kontroller eklenebilir.
-* @version 0.12
+* @version 0.13
 *
 */
 	function girdiControl($girdi) {
@@ -35,7 +35,7 @@
 			}
 		}
 		//url kontrol, gözden geçirilmesi gerek
-		$u = preg_match_all('/\[(https?|ftp):\/\/([a-z0-9\.]+)(\/?\??[a-z0-9\/?=%&(&amp;)\+\-_\.]*)\s?([a-z0-9ıüçöğş\^!$#€£~*_%!\-(&amp;)=?\/+(&quot;)(&#39;):;\.@ ]+)?\]/iuS',$ygirdi,$sonuc);
+		$u = preg_match_all('/\[(https?|ftp):\/\/([a-z0-9\.]+)(\/?\??[a-z0-9#!,\/\?=%&(&amp;)\+\-_\.]*)\s?([a-z0-9ıüçöğş\^!$#€£~*_%!\-(&amp;)=?\/+(&quot;)(&#39;):;\.@ ]+)?\]/iuS',$ygirdi,$sonuc);
 		if ($u) {
 			$urls = $sonuc[0];
 			for ($i=0;$i<$u;$i++) {
@@ -61,5 +61,12 @@
 			}
 		}
 		return $ygirdi;
+	}
+	
+	function yazarBoslukSil($yazar) {
+		$y = $yazar;
+		$y = preg_replace('/\s\s+/',' ',$y);
+		$y = str_replace(' ','+',$y);
+		return $y;
 	}
 ?>
