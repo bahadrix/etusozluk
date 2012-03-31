@@ -6,7 +6,7 @@
 *	TODO: + direkt yazılan linkleri de link haline çevir.
 *		  + eğer domain içinde bir sayfaya link verilirse (bkz: )'a çevir.
 *		  + ek kontroller eklenebilir.
-* @version 0.14
+* @version 0.16
 *
 */
 	function girdiControl($girdi) {
@@ -18,8 +18,8 @@
 		$ygirdi = preg_replace('/\'/', '&#39;',$ygirdi);
 		$ygirdi = preg_replace('/\t/',' ',$ygirdi);
 		$ygirdi = nl2br($ygirdi);
-		$ygirdi = preg_replace('/(?:<br \/>\s*){2,}/', "<br /><br />", $ygirdi);
 		$ygirdi = preg_replace('/\s\s+/',' ',$ygirdi);
+		$ygirdi = preg_replace('/(?:<br \/>\s*){2,}/', "<br /><br />", $ygirdi);
 		$b = preg_match_all('/\(bkz:\s?([a-z0-9ıüçöğş\^!$#€£~*\-_%!(&amp;)=?\/+(&quot;)(&#39;):;\.@ ]+)\)/uS', $ygirdi, $sonuc);
 		if ($b) {
 			$bkzs = $sonuc[0];
@@ -60,6 +60,8 @@
 				$ygirdi = str_replace($spoyler[$i],'<div id="spoyler_container"><button title="şpoyleri göstermek/kapatmak için tıklayın." class="spoyl">spoiler</button><div id="spoyler">'.trim($sonuc[3][$i]).'</div></div>',$ygirdi);
 			}
 		}
+		$ygirdi = preg_replace('/^(?:<br \/>\s*)*/','',$ygirdi);
+		$ygirdi = preg_replace('/(?:<br \/>\s*)*$/','',$ygirdi);
 		return $ygirdi;
 	}
 	

@@ -2,9 +2,9 @@
 /**
 * Yeni entry girme işlemini gerçekleştirir.
 *
-* @girdiControl fonksiyonu funct.php'ye taşındı. 
+* 
 *
-* @version 0.7
+* @version 0.71
 */
 	include ('common.php');
 	
@@ -16,7 +16,13 @@
 				$baslik = preg_replace('/\s\s+/',' ',$baslik);
 				$baslik = preg_replace('/\t/',' ',$baslik);
 				$baslik = preg_replace('/[^a-z0-9üçöğşı\'#$\.\-\+= ]/', '', $baslik);
+				
 				$entry = strtolower($_POST["ygirdi"]);
+				$entry = preg_replace('/(?:\n\s*){2,}/', "\n\n", $entry);
+				$entry = preg_replace('/^(?:\n\s*)*/','',$entry);
+				$entry = preg_replace('/(?:\n\s*)*$/','',$entry);
+				$entry = preg_replace('/^(?:\s\s*)*/','',$entry);
+				$entry = preg_replace('/(?:\s\s*)*$/','',$entry);
 				
 				if (isset($_REQUEST['kaydet']))
 					$aktif = 0;
