@@ -160,5 +160,6 @@ include_once 'funct.php';
 		</div>
 		<a class="sikayetmenu" href="#">İstek</a>
 		<a href="javascript:void(0);" id="top-link">Başa Zıpla</a>
+		<?php include 'footer.php'; ?>
 	</body>
 </html>

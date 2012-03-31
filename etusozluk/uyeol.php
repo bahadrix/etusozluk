@@ -421,6 +421,7 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 			</table></form><font style="font-size:10px; margin-top:0px;">* Hatasız kul olmaz.</font>
 		</div>
 		<a class="sikayetmenu" href="#">İstek</a>
+		<?php include 'footer.php'; ?>
 	</body>
 </html> 
 <?php
