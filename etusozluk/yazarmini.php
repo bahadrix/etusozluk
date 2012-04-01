@@ -13,7 +13,7 @@ if (!empty($_POST['yid'])) {
     $msg .= '<a href="yazar.php?y='.yazarBoslukSil($sonuc['Nick']).'" style="color:#0081c6; font-weight:bold;">'.$sonuc['Nick'].'</a><hr />';
 	if ($MEMBER_LOGGED && $_SESSION['member']->U_ID != $sonuc['U_ID'])
 	  $msg .= '<a href="mesaj.php?y='.yazarBoslukSil($sonuc['Nick']).'">Mesaj Gönder</a><br />';
-	$msg .= '<a href="baslik.php?y='.yazarBoslukSil($sonuc['Nick']).'">Son Yazdıkları</a><br />'; //baslik.php'ye burayı ekleriz sonra.
+	$msg .= '<a href="javascript:void(0);" id="sonyaz" rel="'.yazarBoslukSil($sonuc['Nick']).'">Son Yazdıkları</a><br />'; 
 	$msg .= 'Son Giriş: '.substr($sonuc['Son_Online'],0,10).'<br />';
 	$msg .= 'Üyelik Tarihi: '.substr($sonuc['Uyelik_Tarihi'],0,10).'<br />';
   } else

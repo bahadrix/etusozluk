@@ -595,7 +595,7 @@ function generateRows(selected, opt) {
 			});
 		};
 
-		function gungetir(gun, i) {
+		function gungetir(gun, p,rel) {
 			var loading = 'Başlıklar yükleniyor... <br /><img src="img/1.gif">';
 			var uza='';
 			
@@ -603,21 +603,25 @@ function generateRows(selected, opt) {
 			  uza = "g=dun";
 			else if(isFinite(gun) && $.isNumeric(gun) && gun.length == 8)
 			  uza= "g=gun&gun="+gun.substr(0,2)+"&ay="+gun.substr(2,2)+"&yil="+gun.substr(4);
+			else if(gun == "yazar")
+			  uza ="y="+rel;
 			else 
 			  uza = "g=bugun";
 			  
 			$("#basliklar").empty().append(loading);
 			$.ajax({
 				url: "data/baslik.php",
-				data: uza + "&page=" + i,
+				data: uza + "&page=" + p,
 				dataType: "json",
 				success: function(JSON) {
-					
+					if (!JSON.items[0]) {
+						$("#basliklar").empty().append('Bir şey yazılmamış');
+					} else {
 					$("#basliklar").empty();
 					$("#basliklar").append('<ul class="b">');
 					$.each(JSON.items, function(i,item) {
 						if (item.hata)
-							$("#basliklar").empty().append('Hata oluştu lütfen tekrar deneyin.');
+							$("#basliklar").empty().append(item.hata);
 						else {
 							var sayi='';
 							if (item.count>1)
@@ -626,10 +630,13 @@ function generateRows(selected, opt) {
 						}
 					});
 					$("#basliklar").append('</ul>');
-					var c = getcount(gun);
+					if (rel!=null)
+						var c = getcount(gun,rel);
+					else
+						var c = getcount(gun);
 					$("#page_count").val(Math.ceil(c / 50));
 					generateRows(i,gun);
-					
+					}
 						
 				},
 
@@ -640,13 +647,53 @@ function generateRows(selected, opt) {
 				});
 		};
 		
-		function getcount(opt) {
+		function rastgetir() {
+			var loading = 'Başlıklar yükleniyor... <br /><img src="img/1.gif">';
+			var uza='';
+			
+			$("#paginator").remove();
+			$("#basliklar").empty().append(loading);
+			$.ajax({
+				url: "data/baslik.php",
+				data: "rast=1",
+				dataType: "json",
+				success: function(JSON) {
+					if (!JSON.items[0]) {
+						$("#basliklar").empty().append('Bir şey yazılmamış');
+					} else {
+					$("#basliklar").empty();
+					$("#basliklar").append('<ul class="b">');
+					$.each(JSON.items, function(i,item) {
+						if (item.hata)
+							$("#basliklar").empty().append(item.hata);
+						else {
+							var sayi='';
+							if (item.count>1)
+							sayi='('+item.count+')';
+							$("#basliklar").append('<li class="b">-&nbsp;<a href='+item.id+'>'+item.baslik+'</a> '+sayi+'</li>');
+						}
+					});
+					$("#basliklar").append('</ul>');
+					}
+						
+				},
+
+					error: function (request, status, error) {
+						//alert(request.responseText);
+						$("#basliklar").empty().append('Hata oluştu lütfen tekrar deneyin.');
+					}
+				});
+		};
+		
+		function getcount(opt,rel) {
 			var count = 0;
 			var uza = null;
 			if (opt == "dun")
 			  uza = "?say=dun";
 			else if(isFinite(opt) && $.isNumeric(opt) && opt.length == 8)
 			  uza= "?say=gun&gun="+opt.substr(0,2)+"&ay="+opt.substr(2,2)+"&yil="+opt.substr(4);
+			else if(opt == "yazar")
+			  uza ="?say=yazar&y="+rel;
 			else 
 			  uza = "?say=bugun";
 			$.ajax({
@@ -667,10 +714,12 @@ function generateRows(selected, opt) {
 			$("#sharebox").remove();
 			$("#yazarminiinfo").remove();
 			$("#fbtw").remove();
+			$("#yi").remove();
 			var bilgi="";
 			$.post("yazarmini.php", {yid:id}, function(data) {
 				bilgi += '<div id="yazarminiinfo">' + data + '<div class="kapat"></div></div>';
 				$("body").append(bilgi);
+				$('body').append('<div id="yi"><script type=text/javascript>$("#sonyaz").click(function() { $cur = $(this);	gungetir("yazar",1,$cur.attr("rel"));});</script></div>');
 				$("#yazarminiinfo").css({top: posY-30+"px", left: posX-260+"px"});
 				$("#yazarminiinfo").delay(200).fadeIn(300);
 				$(".kapat").click(function() { $("#yazarminiinfo").fadeOut(300, function() { $("#yazarminiinfo").remove() ;}) });
@@ -683,6 +732,7 @@ function generateRows(selected, opt) {
 			$("#yazarminiinfo").remove();
 			$("#sharebox").remove();
 			$("#fbtw").remove();
+			$("#yi").remove();
 			var bilgi="";
 			bilgi += '<div id="sharebox"><input type="text" name="eadres" id="eadres" value="http://www.etusozluk.com/goster.php?e='+eid+'"/><br /><div style="position:relative; left:50px; top:2px; text-align:left; background-color:#000; width:50px;"><a type="button" name="fb_share" share_url="http://www.etusozluk.com/goster.php?eid='+eid+'">Paylaş</a></div><div style="position:relative; left:50px; top:5px; text-align:left; background-color:#000; width:50px;"><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.etusozluk.com/goster.php?eid='+eid+'" data-via="etusozluk" data-lang="tr" data-count="none"></a><br /></div><div class="kapat"></div></div>';
 			$('body').append('<div id="fbtw"><script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" type="text/javascript"></script><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script></div>');
@@ -703,7 +753,7 @@ function generateRows(selected, opt) {
 	$(document).ready(function() {
 		gungetir(0,1);
 		var c = getcount(0);
-		$("#page_count").val(Math.ceil(c / 3));
+		$("#page_count").val(Math.ceil(c / 50));
 		generateRows(1,0);
 		
 		$("#txt1").maxlength({slider: true, maxCharacters: 255} );
@@ -753,16 +803,20 @@ function generateRows(selected, opt) {
 			
 			$("#bugun").click(function() {
 				var c = getcount(0);
-				$("#page_count").val(Math.ceil(c / 3));
+				$("#page_count").val(Math.ceil(c / 50));
 				gungetir(0,1);
 				generateRows(1,0);
 			});
 			
 			$("#dun").click(function() {
 				var c = getcount("dun");
-				$("#page_count").val(Math.ceil(c / 3));
+				$("#page_count").val(Math.ceil(c / 50));
 				gungetir("dun",1);
 				generateRows(1,"dun");
+			});
+			
+			$("#rastgele").click(function() {
+				rastgetir();
 			});
 			
 			$("li #entryid").click(function(e) {
