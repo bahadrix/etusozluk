@@ -59,8 +59,11 @@ include_once 'funct.php';
 						<?php
 						$link = getPDO();
 						$se = $link -> query("SELECT * FROM entries WHERE Aktif = 1 AND Thrash = 0 ORDER BY RAND() LIMIT 1");
-						if (!$se->rowCount())
+						$var = true;
+						if (!$se->rowCount()) {
 							echo "Yuh yazmadınız mı daha.";
+							$var = false;
+						}
 						else { 
 						$rentry = $se->fetch(PDO::FETCH_ASSOC);
 		
@@ -79,23 +82,23 @@ include_once 'funct.php';
 						echo '<input type="hidden" value="'.$baslikadi.'" id="baslikd" />';
 						echo '<h3 style="text-align:left; margin-left:40px;">'.$baslikadi.'</h3><ol class=girdiler><li class=girdi value="'.$sayi.'">';
 						echo girdiControl($rentry['Girdi']);
-						echo '<div class="yazarinfo">(<a href="goster.php?t='.yazarBoslukSil($yazar).'" id="yazar" rel="'.$rentry['U_ID'].'">'.$yazar.'</a>, '.substr($rentry['Tarih'],0,16).')</div><div class="ymore"><a href="goster.php?e=#'.$rentry['E_ID'].'" id="entryid">#'.$rentry['E_ID'].'</a>';
+						echo '<div class="yazarinfo">(<a href="goster.php?t='.yazarBoslukSil($yazar).'" id="yazar" rel="'.$rentry['U_ID'].'">'.$yazar.'</a>, '.substr($rentry['Tarih'],0,16).')</div><div class="ymore"><a href="goster.php?e='.$rentry['E_ID'].'" id="entryid">#'.$rentry['E_ID'].'</a>';
 						if ($MEMBER_LOGGED) {
-							echo '&nbsp;<button type="button" value="'.$rentry['E_ID'].'" class="minib" title="olmuş bu" id="+1">iyuf</button>&nbsp;<button type="button" value="'.$rentry['E_ID'].'" class="minib" title="böyle olmaz hacı" id="-1">ı ıh</button>';
+							echo '&nbsp;<button type="button" onClick="ep(\'vote.php?id='.$rentry['E_ID'].'&o=1\',\'400\',\'400\')" class="minib" title="olmuş bu" id="+1">iyuf</button>&nbsp;<button type="button" onClick="ep(\'vote.php?id='.$rentry['E_ID'].'&o=-1\',\'400\',\'400\')" class="minib" title="böyle olmaz hacı" id="-1">ı ıh</button>';
 							if ($_SESSION['member']->U_ID = $rentry['U_ID'])
-								echo '&nbsp;<button type="button" onClick="location.href=\'edit.php?e='.$rentry['E_ID'].'\'" class="minib" id="eduz">düzelt</button>&nbsp;<button type="button" onClick="location.href=\'del.php?e='.$rentry['E_ID'].'\'" class="minib" title="sil" id="esil">X</button>';
+								echo '&nbsp;<button type="button" onClick="ep(\'edit.php?e='.$rentry['E_ID'].'\',\'600\',\'400\')" class="minib" id="eduz">düzelt</button>&nbsp;<button type="button" onClick="ep(\'del.php?e='.$rentry['E_ID'].'\')" class="minib" title="sil" id="esil">X</button>';
 							else
-								echo '&nbsp;<button type="button" onClick="location.href=\'fav.php?e='.$rentry['E_ID'].'\'" class="minib" title="favorilere ekle" id="efav">:D</button>&nbsp;<button type="button" onClick="location.href=\'mesaj.php?y='.yazarBoslukSil($yazar).'\'" class="minib" title="yazara mesaj atiyim" id="eymesaj">msj</button>';
+								echo '&nbsp;<button type="button" onClick="ep(\'fav.php?e='.$rentry['E_ID'].'\')" class="minib" title="favorilere ekle" id="efav">:D</button>&nbsp;<button type="button" onClick="ep(\'mesaj.php?y='.yazarBoslukSil($yazar).'\',\'600\',\'400\')" class="minib" title="yazara mesaj atiyim" id="eymesaj">msj</button>';
 							}
 						echo '&nbsp;<button type="button" onClick="location.href=\'yazar.php?y='.yazarBoslukSil($yazar).'\'" id="eyh" class="minib" title="yazar hakkında">?</button>&nbsp;<button type="button" onClick="location.href=\'sikayet.php?e='.$rentry['E_ID'].'\'" id="esb" class="minib" title="şikayet et">!</button>';
 						echo '&nbsp;</div><div id="yazarmini"></div>';
 						echo '</li><br /></ol>';
 						}
 						?>
-						<br /><div style="text-align:center;" id="hg"><button type="button" onClick="location.href='goster.php?t=<?php echo yazarBoslukSil($baslikadi); ?>'" id="ehg">Hepsi Gelsin</button>
+						<br /><?php if($var) { ?><div style="text-align:center;" id="hg"><button type="button" onClick="location.href='goster.php?t=<?php echo yazarBoslukSil($baslikadi); ?>'" id="ehg">Hepsi Gelsin</button>
 						<?php if ($MEMBER_LOGGED) { ?>
 						<div style="text-align:left; padding-top:10px; padding-left:25px;">"<?php echo $baslikadi; ?>" hakkında söylemek istediklerim var diyorsan durma:
-						<form action="ekle.php" method="post" id="yenigirdi" name="yenigirdi"><input type="hidden" name="t" value="<?php echo $baslikadi; ?>" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt('link: (başında http:// olmalı)', 'http://');if(isURL(a))$('#entrytextarea').tae('url',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi"></textarea><input type="submit" value="böyle olur" class="ebut" /><input type="submit" value="bunu sonra gönderirim" class="ebut" name="kaydet" /></form></div><?php } ?></div></div></div>
+						<form action="ekle.php" method="post" id="yenigirdi" name="yenigirdi"><input type="hidden" name="t" value="<?php echo $baslikadi; ?>" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt('link: (başında http:// olmalı)', 'http://');if(isURL(a))$('#entrytextarea').tae('url',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi"></textarea><input type="submit" value="böyle olur" class="ebut" /><input type="submit" value="bunu sonra gönderirim" class="ebut" name="kaydet" /></form></div><?php } } ?></div></div></div>
 					</td>
 					<td valign=top width=400>
 						<div id="mainright"><div id="basliklar" style="text-align:left;"></div><input type="hidden" name="page_count" id="page_count" /></div>

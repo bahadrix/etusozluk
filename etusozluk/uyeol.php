@@ -183,11 +183,11 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 				if (data==="true") {
 					$("#register").remove();
 					$("#ek").remove();
-					$("p:last").append("<p style='color:#fecc00'>Üyeliğiniz açıldı. Lütfen email adresinize gönderdiğimiz aktivasyon mailini onaylayıp giriş yapınız.</p>");
+					$("#ekp").append("<p style='color:#fecc00'>Üyeliğiniz açıldı. Lütfen email adresinize gönderdiğimiz aktivasyon mailini onaylayıp giriş yapınız.</p>");
 				}
 				else {
 					$("#ek").remove();
-					$("p:last").append("<p style='color:#e2001a' id='ek'>"+data+"</p>");
+					$("#ekp").append("<p style='color:#e2001a' id='ek'>"+data+"</p>");
 				}
 			}
 			});
@@ -307,7 +307,7 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 							}
 							else {
 						?>
-						<p style="color:#fff; margin-left:40px;">aşağıdaki formu doldurarak bu şartları kabul etmiş olursunuz.</p><br />
+						<p style="color:#fff; margin-left:40px;" id="ekp">aşağıdaki formu doldurarak bu şartları kabul etmiş olursunuz.</p><br />
 						<form action="uyeol.php" id="register" method="post">
 							<fieldset style="border:1px solid #ccc; -moz-border-radius: 10px; -webkit-border-radius: 10px; -khtml-border-radius: 10px; border-radius: 10px;">
 								<legend style="font-family: Arial, sans-serif; font-size: 1.3em; font-weight:bold; color:#fff;">&nbsp;artık aparata geçelim&nbsp;</legend>

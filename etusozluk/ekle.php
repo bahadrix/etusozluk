@@ -51,7 +51,7 @@
 				$e -> bindValue(":aktif",$aktif);
 									
 				if ($e -> execute()) {
-					$ba = $link -> prepare("UPDATE titles SET Entry_Count = Entry_Count+1 WHERE T_ID = :tid");
+					$ba = $link -> prepare("UPDATE titles SET Entry_Count = Entry_Count+1 AND Tarih = NOW() WHERE T_ID = :tid");
 					$ba -> bindValue(":tid",$baslikid);
 					$ba -> execute();
 					if ($aktif == 1)
