@@ -66,12 +66,20 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 					$uyeet->bindValue(":cinsiyet",$cinsiyet);
 					$uyeet->bindValue(":tarih",$tarih);
 					$uyeet->bindValue(":sehir",$sehir);
-					if ($uyeet->execute())
-						echo "true";
+					if ($uyeet->execute()) {
+					/* arada relation olmasına rağmen kendisi otomatik eklemiyor? */
+					$uyebilgial = $link -> prepare("SELECT U_ID FROM members WHERE Nick = :nick");
+					$uyebilgial -> bindValue(":nick",$nick);
+					$uyebilgial -> execute();
+					$uye = $uyebilgial->fetch(PDO::FETCH_ASSOC);
+					$uyebilgi = $link -> prepare("INSERT INTO memberinfo (U_ID,Post_Count,Entry_Per_Page,Yetki,Sil) VALUES (:uid,0,25,0,0)");
+					$uyebilgi -> bindValue(":uid", $uye['U_ID']);
+					$uyebilgi -> execute();
+					/* */
+					echo "true";
+					}
 					else {
-						echo "Hata oluştu, <br />";
-						$arr = $uyeet->errorInfo();
-						print_r($arr);
+						echo "Hata oluştu";
 						}
 					}
 				}
@@ -297,8 +305,18 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 											$uyeet->bindValue(":cinsiyet",$cinsiyet);
 											$uyeet->bindValue(":tarih",$tarih);
 											$uyeet->bindValue(":sehir",$sehir);
-											if ($uyeet->execute())
+											if ($uyeet->execute()) {
+												/* arada relation olmasına rağmen kendisi otomatik eklemiyor? */
+												$uyebilgial = $link -> prepare("SELECT U_ID FROM members WHERE Nick = :nick");
+												$uyebilgial -> bindValue(":nick",$nick);
+												$uyebilgial -> execute();
+												$uye = $uyebilgial->fetch(PDO::FETCH_ASSOC);
+												$uyebilgi = $link -> prepare("INSERT INTO memberinfo (U_ID,Post_Count,Entry_Per_Page,Yetki,Sil) VALUES (:uid,0,25,0,0)");
+												$uyebilgi -> bindValue(":uid", $uye['U_ID']);
+												$uyebilgi -> execute();
+												/* */
 												echo 'Üyeliğiniz açıldı. Lütfen email adresinize gönderdiğimiz aktivasyon mailini onaylayıp giriş yapınız.';
+											}
 											else
 												echo 'Hata oluştu. Lütfen tekrar deneyin';
 										}

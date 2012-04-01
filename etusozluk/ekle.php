@@ -4,7 +4,7 @@
 *
 * 
 *
-* @version 0.71
+* @version 0.72
 */
 	include ('common.php');
 	
@@ -46,7 +46,7 @@
 				$baslikid = $sonuc['T_ID'];
 				$e = $link -> prepare("INSERT INTO entries (T_ID,U_ID,Girdi,Tarih,Aktif) VALUES (:bid,:uid,:girdi,NOW(),:aktif)");
 				$e -> bindValue(":bid",$baslikid);
-				$e -> bindValue(":uid",$_SESSION['member']->U_ID); //Uye ID Session'dan alınıcak
+				$e -> bindValue(":uid",$_SESSION['member']->U_ID);
 				$e -> bindValue(":girdi",$entry);
 				$e -> bindValue(":aktif",$aktif);
 									
@@ -54,8 +54,11 @@
 					$ba = $link -> prepare("UPDATE titles SET Entry_Count = Entry_Count+1 AND Tarih = NOW() WHERE T_ID = :tid");
 					$ba -> bindValue(":tid",$baslikid);
 					$ba -> execute();
+					$ue -> $link -> prepare("UPDATE memberinfo SET Post_Count = Post_Count+1 WHERE U_ID = :uid");
+					$ue -> bindValue(":uid",$_SESSION['member']->U_ID);
+					$ue -> execute();
 					if ($aktif == 1)
-						header("Location: goster.php?t=".rawurlencode($baslik));
+						header("Location: goster.php?t=".yazarBoslukSil($baslik));
 					else
 						header("Location: index.php"); //daha sonra kenar.php'de entry'ye gidicek.
 				}

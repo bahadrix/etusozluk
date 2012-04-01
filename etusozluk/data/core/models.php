@@ -83,9 +83,33 @@ class modelMember extends motherModel {
 	 * @var boolean
 	 */
 	public $Aktif;
-	
-	
-	
 }
 
+class modelMemberInfo extends motherModel {
+	/**
+	 * User ID, primary key
+	 * @var integer
+	 */
+	public $U_ID;
+	/**
+	 * Post Sayısı
+	 * @var integer
+	 */
+	public $Post_Count;
+	/**
+	 * Sayfa Başına Gösterilicek Girdi
+	 * @var int
+	 */
+	public $Entry_Per_Page;
+	/**
+	 * Yetki
+	 * @var int
+	 */
+	public $Yetki;
+	/**
+	 * Silme Bilgisi
+	 * @var boolean
+	 */
+	public $Sil;
+}
 ?>

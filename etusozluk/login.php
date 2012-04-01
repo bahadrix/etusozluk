@@ -46,10 +46,18 @@ try {
 		$u->bindValue(":uid",$member->U_ID);
 		$u->execute();
 		
+		// Memberinfo bilgilerini al.
+		$bilgi = $DO->prepare("SELECT * FROM memberinfo WHERE U_ID = :uid"); //Natural Join ile ilk sorgudan çekilebilir.
+		$bilgi -> bindValue(":uid",$member->U_ID);
+		$bilgi -> execute();
+		
+		$membil = new modelMemberInfo($bilgi);
+		
 		session_cache_expire(30);
 		session_start();
 		$_SESSION['logged'] = true;
-		$_SESSION['member'] = $member;	
+		$_SESSION['member'] = $member;
+		$_SESSION['membil'] = $membil;
 		if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
 			$JO = array("durum"=>"OK","nick"=>" ".$member->Nick." ");
 			echo json_encode($JO);
