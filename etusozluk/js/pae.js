@@ -612,19 +612,24 @@ function generateRows(selected, opt) {
 				data: uza + "&page=" + i,
 				dataType: "json",
 				success: function(JSON) {
-
+					
 					$("#basliklar").empty();
 					$("#basliklar").append('<ul class="b">');
 					$.each(JSON.items, function(i,item) {
-						var sayi='';
-						if (item.count>1)
-						  sayi='('+item.count+')';
-						$("#basliklar").append('<li class="b">-&nbsp;<a href='+item.id+'>'+item.baslik+'</a> '+sayi+'</li>');
+						if (item.hata)
+							$("#basliklar").empty().append('Hata oluştu lütfen tekrar deneyin.');
+						else {
+							var sayi='';
+							if (item.count>1)
+							sayi='('+item.count+')';
+							$("#basliklar").append('<li class="b">-&nbsp;<a href='+item.id+'>'+item.baslik+'</a> '+sayi+'</li>');
+						}
 					});
 					$("#basliklar").append('</ul>');
 					var c = getcount(gun);
-					$("#page_count").val(Math.ceil(c / 3));
+					$("#page_count").val(Math.ceil(c / 50));
 					generateRows(i,gun);
+					
 						
 				},
 
