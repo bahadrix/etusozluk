@@ -44,19 +44,25 @@
 	</head>
 	<body><div style="text-align:center"><br />
 		<?php
-			$st = $link -> prepare("SELECT entries.Girdi,entries.U_ID,titles.Baslik FROM entries NATURAL JOIN titles WHERE entries.E_ID = :eid");
+			$st = $link -> prepare("SELECT Girdi,U_ID,T_ID FROM entries WHERE E_ID = :eid");
 			$st -> bindValue(":eid",$e);
 			$st -> execute();
-			if (!$st->rowCount()) {
+			if ($st->rowCount()==0) {
 				echo "kardeş kardeşe yapmaz bunu.";
 			}
 			else {
 				$girdi = $st -> fetch(PDO::FETCH_ASSOC);
+				
+				$gb = $link->query("SELECT Baslik FROM titles WHERE T_ID =".$girdi['T_ID']);
+				$bslk = $gb -> fetch(PDO::FETCH_ASSOC);
+				$baslik = $bslk['Baslik'];
 				if ($_SESSION['member']->U_ID == $girdi['U_ID'] || $_SESSION['membil']->Yetki > 5) { //5 ve üstü de düzenleyebilir. 5 değişebilir.
 					if ($_SESSION['member']->U_ID==$girdi['U_ID']) $ek = "nızı"; else $ek = "yı";
-					echo '"'.$girdi['Baslik'].'" hakkındaki yazı'.$ek.' düzenliyorsunuz: <br /><div style="text-align:left; padding-top:10px; padding-left:25px;"><form action="edit.php?e='.$e.'" method="post" name="girdiduzen"><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt(\'link: (başında http:// olmalı)\', \'http://\');if(isURL(a))$(\'#entrytextarea\').tae(\'url\',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi">'.$girdi['Girdi'].'</textarea><input type="submit" value="bu daha iyi" name="duzenle" class="ebut" /></form></div>';
+					echo '"'.$baslik.'" hakkındaki yazı'.$ek.' düzenliyorsunuz: <br /><div style="text-align:left; padding-top:10px; padding-left:25px;"><form action="edit.php?e='.$e.'" method="post" name="girdiduzen"><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt(\'link: (başında http:// olmalı)\', \'http://\');if(isURL(a))$(\'#entrytextarea\').tae(\'url\',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi">'.$girdi['Girdi'].'</textarea><input type="submit" value="bu daha iyi" name="duzenle" class="ebut" /></form></div>';
 					echo '<br /><br /><button type="button" onClick="window.close()">vazgeçtim böyle kalsın</button>';
-				} 
+				}
+				else //entry kendinin değil veya yetkili bir abi bakmıyorsa 
+					echo "kardeş kardeşe yapmaz bunu!!!!";
 			}
 		}
 	}
