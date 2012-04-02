@@ -74,6 +74,16 @@ include_once 'funct.php';
 						$sy = $link -> query("SELECT Nick FROM members WHERE U_ID = ".$rentry['U_ID']);
 						$y = $sy -> fetch(PDO::FETCH_ASSOC);
 						$yazar = $y['Nick'];
+						
+						$duzen = $rentry['Duzenleme'];
+						if (!$duzen)
+							$duzenleme = "";
+						else {
+							if (substr($duzen,0,10)==substr($rentry['Tarih'],0,10))
+								$duzenleme = " ~ ".substr($duzen,11,5);
+							else
+								$duzenleme = " ~ ".substr($duzen,0,16);
+						}
 		
 						$sk = $link -> query ("SELECT COUNT(E_ID) as listnumber FROM entries WHERE T_ID=".$rentry['T_ID']." AND E_ID BETWEEN 1 AND ".$rentry['E_ID']." ORDER BY Tarih");
 						$s = $sk -> fetch(PDO::FETCH_ASSOC);
@@ -82,7 +92,7 @@ include_once 'funct.php';
 						echo '<input type="hidden" value="'.$baslikadi.'" id="baslikd" />';
 						echo '<h3 style="text-align:left; margin-left:40px;">'.$baslikadi.'</h3><ol class=girdiler><li class=girdi value="'.$sayi.'">';
 						echo girdiControl($rentry['Girdi']);
-						echo '<div class="yazarinfo">(<a href="goster.php?t='.yazarBoslukSil($yazar).'" id="yazar" rel="'.$rentry['U_ID'].'">'.$yazar.'</a>, '.substr($rentry['Tarih'],0,16).')</div><div class="ymore"><a href="goster.php?e='.$rentry['E_ID'].'" id="entryid">#'.$rentry['E_ID'].'</a>';
+						echo '<div class="yazarinfo">(<a href="goster.php?t='.yazarBoslukSil($yazar).'" id="yazar" rel="'.$rentry['U_ID'].'">'.$yazar.'</a>, '.substr($rentry['Tarih'],0,16).''.$duzenleme.')</div><div class="ymore"><a href="goster.php?e='.$rentry['E_ID'].'" id="entryid">#'.$rentry['E_ID'].'</a>';
 						if ($MEMBER_LOGGED) {
 							echo '&nbsp;<button type="button" onClick="ep(\'vote.php?id='.$rentry['E_ID'].'&o=1\',\'400\',\'400\')" class="minib" title="olmuş bu" id="+1">iyuf</button>&nbsp;<button type="button" onClick="ep(\'vote.php?id='.$rentry['E_ID'].'&o=-1\',\'400\',\'400\')" class="minib" title="böyle olmaz hacı" id="-1">ı ıh</button>';
 							if ($_SESSION['member']->U_ID == $rentry['U_ID'])
