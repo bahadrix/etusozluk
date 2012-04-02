@@ -13,18 +13,19 @@ if ($say=="yazar" && !empty($_GET['y'])) {
 	$y -> execute();
 	if (!$y->rowCount()) {
 		$UID = 1;
-	} else {
+	} 
+	else {
 		$yid = $y->fetch(PDO::FETCH_ASSOC);
 		$UID = $yid['U_ID'];
-		$y1 = $db -> prepare("SELECT count(DISTINCT T_ID) as sayi from entries WHERE U_ID=:uid GROUP BY U_ID");
-		$y1 -> bindValue(":uid",$UID);
-		$y1 -> execute();
-		if (!$y1->rowCount())
-			echo "0";
-		else  {
-			$sayi = $y1->fetch(PDO::FETCH_ASSOC);
-			echo $sayi['sayi'];
-		}
+	}
+	$y1 = $db -> prepare("SELECT count(DISTINCT T_ID) as sayi from entries WHERE U_ID=:uid GROUP BY U_ID");
+	$y1 -> bindValue(":uid",$UID);
+	$y1 -> execute();
+	if (!$y1->rowCount())
+		echo "0";
+	else  {
+		$sayi = $y1->fetch(PDO::FETCH_ASSOC);
+		echo $sayi['sayi'];
 	}
 } else {
 $date_condition = $say == 'gun' ? getCondByDate($say, 'Tarih',$_GET['gun'], $_GET['ay'], $_GET['yil'] ) : getCondByDate($say, 'Tarih');
