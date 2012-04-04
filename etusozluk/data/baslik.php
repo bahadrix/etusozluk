@@ -22,7 +22,7 @@ try {
 		
 			$titles = $DBO->query("SELECT titles.T_ID as id, titles.Baslik as baslik FROM titles WHERE $date_condition LIMIT $next_start,$per_page");
 
-			$count = $DBO->query("SELECT count(E_ID) as count FROM entries WHERE $date_condition GROUP BY T_ID LIMIT $next_start,$per_page");
+			$count = $DBO->query("SELECT count(E_ID) as count FROM entries WHERE $date_condition AND Aktif=1 AND Thrash=0 GROUP BY T_ID LIMIT $next_start,$per_page");
 
 			$t=$titles->fetchAll(PDO::FETCH_ASSOC);
 			$e=$count->fetchAll(PDO::FETCH_ASSOC);
@@ -41,7 +41,7 @@ try {
 				$t = "{'hata':'kullanıcı bulunamadı'}";
 			} else {
 				$yid = $y->fetch(PDO::FETCH_ASSOC);
-				$y1 = $DBO -> prepare("SELECT T_ID as id, Baslik as baslik, count FROM (SELECT T_ID,Baslik FROM titles) as t NATURAL JOIN (SELECT U_ID, T_ID, count(E_ID) as count from entries WHERE U_ID=:uid GROUP BY T_ID) as e ORDER BY id LIMIT $next_start,$per_page");
+				$y1 = $DBO -> prepare("SELECT T_ID as id, Baslik as baslik, count FROM (SELECT T_ID,Baslik FROM titles) as t NATURAL JOIN (SELECT U_ID, T_ID, count(E_ID) as count from entries WHERE U_ID=:uid AND Aktif=1 AND Thrash=0 GROUP BY T_ID) as e ORDER BY id LIMIT $next_start,$per_page");
 				$y1 -> bindValue(":uid",$yid['U_ID']);
 				$y1 -> execute();
 			
@@ -51,7 +51,7 @@ try {
 					$t = $y1->fetchAll(PDO::FETCH_ASSOC);
 			}
 		} else if (empty($_GET['g']) && empty($_GET['y']) && !empty($_GET['rast'])) { //rastgele
-			$r = $DBO -> query("SELECT T_ID as id, Baslik as baslik, count FROM (SELECT T_ID as id, Baslik as baslik FROM titles ORDER BY RAND() LIMIT $per_page) as t NATURAL JOIN (SELECT T_ID, count(E_ID) as count from entries GROUP BY T_ID) as e WHERE e.T_ID = id ORDER BY RAND()");			
+			$r = $DBO -> query("SELECT T_ID as id, Baslik as baslik, count FROM (SELECT T_ID as id, Baslik as baslik FROM titles ORDER BY RAND() LIMIT $per_page) as t NATURAL JOIN (SELECT T_ID, count(E_ID) as count from entries WHERE Aktif=1 AND Thrash=0 GROUP BY T_ID) as e WHERE e.T_ID = id ORDER BY RAND()");			
 			if (!$r->rowCount())
 				$t = "{'hata':'yazılmış başlık yok'}";
 			else 
