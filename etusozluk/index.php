@@ -58,6 +58,7 @@ include_once 'funct.php';
 						<div id="mainleft"><div id="entries">
 						<?php
 						$link = getPDO();
+						//random entry çek
 						$se = $link -> query("SELECT * FROM entries WHERE Aktif = 1 AND Thrash = 0 ORDER BY RAND() LIMIT 1");
 						$var = true;
 						if (!$se->rowCount()) {
@@ -66,15 +67,18 @@ include_once 'funct.php';
 						}
 						else { 
 						$rentry = $se->fetch(PDO::FETCH_ASSOC);
-		
+						
+						//başlık adını çek
 						$st = $link -> query("SELECT Baslik FROM titles WHERE T_ID = ".$rentry['T_ID']);
 						$b = $st -> fetch(PDO::FETCH_ASSOC);
 						$baslikadi = $b["Baslik"];
-		
+						
+						//kullanıcı adını çek
 						$sy = $link -> query("SELECT Nick FROM members WHERE U_ID = ".$rentry['U_ID']);
 						$y = $sy -> fetch(PDO::FETCH_ASSOC);
 						$yazar = $y['Nick'];
 						
+						//düzenleme varsa eklemek için
 						$duzen = $rentry['Duzenleme'];
 						if (!$duzen)
 							$duzenleme = "";
@@ -84,22 +88,28 @@ include_once 'funct.php';
 							else
 								$duzenleme = " ~ ".substr($duzen,0,16);
 						}
-		
+						
+						//o başlıktaki kaçıncı girdi
 						$sk = $link -> query ("SELECT COUNT(E_ID) as listnumber FROM entries WHERE T_ID=".$rentry['T_ID']." AND E_ID BETWEEN 1 AND ".$rentry['E_ID']." ORDER BY Tarih");
 						$s = $sk -> fetch(PDO::FETCH_ASSOC);
 						$sayi = $s['listnumber'];
-		
-						echo '<input type="hidden" value="'.$baslikadi.'" id="baslikd" />';
+						echo '<input type="hidden" value="'.$baslikadi.'" id="baslikd" />'; //bu satır index.php için
+						//görünüm
 						echo '<h3 style="text-align:left; margin-left:40px;">'.$baslikadi.'</h3><ol class=girdiler><li class=girdi value="'.$sayi.'">';
 						echo girdiControl($rentry['Girdi']);
 						echo '<div class="yazarinfo">(<a href="goster.php?t='.yazarBoslukSil($yazar).'" id="yazar" rel="'.$rentry['U_ID'].'">'.$yazar.'</a>, '.substr($rentry['Tarih'],0,16).''.$duzenleme.')</div><div class="ymore"><a href="goster.php?e='.$rentry['E_ID'].'" id="entryid">#'.$rentry['E_ID'].'</a>';
+						//butonlar
 						if ($MEMBER_LOGGED) {
 							echo '&nbsp;<button type="button" onClick="ep(\'vote.php?id='.$rentry['E_ID'].'&o=1\',\'400\',\'400\')" class="minib" title="olmuş bu" id="+1">iyuf</button>&nbsp;<button type="button" onClick="ep(\'vote.php?id='.$rentry['E_ID'].'&o=-1\',\'400\',\'400\')" class="minib" title="böyle olmaz hacı" id="-1">ı ıh</button>';
-							if ($_SESSION['member']->U_ID == $rentry['U_ID'])
+							if ($_SESSION['member']->U_ID == $rentry['U_ID']) //yazarın gördüğü
 								echo '&nbsp;<button type="button" onClick="ep(\'edit.php?e='.$rentry['E_ID'].'\',\'820\',\'400\')" class="minib" id="eduz">düzelt</button>&nbsp;<button type="button" onClick="ep(\'del.php?e='.$rentry['E_ID'].'\')" class="minib" title="sil" id="esil">X</button>';
-							else
+							else if ($_SESSION['membil']->Yetki>5) { //kendi yazmadığı entry ise moderasyonun gördüğü -> ilerki zamanlarda taşı da eklenebilir.
+								echo '&nbsp;<button type="button" onClick="ep(\'edit.php?e='.$rentry['E_ID'].'\',\'820\',\'400\')" class="minib" id="eduz">düzelt</button>&nbsp;<button type="button" onClick="ep(\'del.php?e='.$rentry['E_ID'].'\')" class="minib" title="sil" id="esil">X</button>';
+								echo '&nbsp;<button type="button" onClick="ep(\'fav.php?e='.$rentry['E_ID'].'\')" class="minib" title="favorilere ekle" id="efav">:D</button>&nbsp;<button type="button" onClick="ep(\'mesaj.php?y='.yazarBoslukSil($yazar).'\',\'600\',\'400\')" class="minib" title="yazara mesaj atiyim" id="eymesaj">msj</button>';
+							} else //diğer üyelerin gördüğü
 								echo '&nbsp;<button type="button" onClick="ep(\'fav.php?e='.$rentry['E_ID'].'\')" class="minib" title="favorilere ekle" id="efav">:D</button>&nbsp;<button type="button" onClick="ep(\'mesaj.php?y='.yazarBoslukSil($yazar).'\',\'600\',\'400\')" class="minib" title="yazara mesaj atiyim" id="eymesaj">msj</button>';
 							}
+						//herkesin gördüğü
 						echo '&nbsp;<button type="button" onClick="location.href=\'yazar.php?y='.yazarBoslukSil($yazar).'\'" id="eyh" class="minib" title="yazar hakkında">?</button>&nbsp;<button type="button" onClick="location.href=\'sikayet.php?e='.$rentry['E_ID'].'\'" id="esb" class="minib" title="şikayet et">!</button>';
 						echo '&nbsp;</div><div id="yazarmini"></div>';
 						echo '</li><br /></ol>';
