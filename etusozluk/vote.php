@@ -67,7 +67,7 @@
 					if($su -> execute()) {
 						if (!$gerial) {
 							echo "Oyunuz kaydedildi <br />";
-							echo '<a href="vote.php?id='.$eid.'&o='.$oy.'&op=g">geri al?<a>';
+							echo '<a href="vote.php?id='.$eid.'&o='.$oy.'&op=g">geri al?</a>';
 						}
 						else
 							echo "tamam geçti korkma";

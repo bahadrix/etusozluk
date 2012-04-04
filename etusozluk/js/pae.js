@@ -535,7 +535,7 @@ function generateRows(selected, opt) {
 		};
 		
 		function ep( s,w,h ) {
-		if (!h) h = 400;
+		if (!h) h = 200;
 		if (!w) w = 320;
         var p = window.open(s,"_blank","toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=1,width=" + w.toString() + ",height=" + h.toString() +"resizeable=0");
 		p.focus();

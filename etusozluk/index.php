@@ -100,8 +100,9 @@ include_once 'funct.php';
 						echo '<div class="yazarinfo">(<a href="goster.php?t='.yazarBoslukSil($yazar).'" id="yazar" rel="'.$rentry['U_ID'].'">'.$yazar.'</a>, '.substr($rentry['Tarih'],0,16).''.$duzenleme.')</div><div class="ymore"><a href="goster.php?e='.$rentry['E_ID'].'" id="entryid">#'.$rentry['E_ID'].'</a>';
 						//butonlar
 						if ($MEMBER_LOGGED) {
-							echo '&nbsp;<button type="button" onClick="ep(\'vote.php?id='.$rentry['E_ID'].'&o=1\',\'400\',\'400\')" class="minib" title="olmuş bu" id="+1">iyuf</button>&nbsp;<button type="button" onClick="ep(\'vote.php?id='.$rentry['E_ID'].'&o=-1\',\'400\',\'400\')" class="minib" title="böyle olmaz hacı" id="-1">ı ıh</button>';
-							if ($_SESSION['member']->U_ID == $rentry['U_ID']) //yazarın gördüğü
+							if ($rentry['U_ID'] != $_SESSION['member']->U_ID) //kendine oy vermesin
+								echo '&nbsp;<button type="button" onClick="ep(\'vote.php?id='.$rentry['E_ID'].'&o=1\',\'400\',\'400\')" class="minib" title="olmuş bu" id="+1">iyuf</button>&nbsp;<button type="button" onClick="ep(\'vote.php?id='.$rentry['E_ID'].'&o=-1\',\'400\',\'400\')" class="minib" title="böyle olmaz hacı" id="-1">ı ıh</button>';
+							if ($rentry['U_ID'] == $_SESSION['member']->U_ID) //yazarın gördüğü
 								echo '&nbsp;<button type="button" onClick="ep(\'edit.php?e='.$rentry['E_ID'].'\',\'820\',\'400\')" class="minib" id="eduz">düzelt</button>&nbsp;<button type="button" onClick="ep(\'del.php?e='.$rentry['E_ID'].'\')" class="minib" title="sil" id="esil">X</button>';
 							else if ($_SESSION['membil']->Yetki>5) { //kendi yazmadığı entry ise moderasyonun gördüğü -> ilerki zamanlarda taşı da eklenebilir.
 								echo '&nbsp;<button type="button" onClick="ep(\'edit.php?e='.$rentry['E_ID'].'\',\'820\',\'400\')" class="minib" id="eduz">düzelt</button>&nbsp;<button type="button" onClick="ep(\'del.php?e='.$rentry['E_ID'].'\')" class="minib" title="sil" id="esil">X</button>';
