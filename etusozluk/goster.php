@@ -63,6 +63,7 @@ include_once 'funct.php';
 						<div id="mainleft"><div id="entries">
 						<?php
 							$link = getPDO();
+							$var = false; //başlığın tamamı gösterilmediği durumda true olucak.
 							if (!empty($_REQUEST['t']) || !empty($_REQUEST['e'])) { //başlık veya entry istenmiş mi?
 								if (!empty($_REQUEST['t']) && empty($_REQUEST['e'])) { //başlık istenmiş mi?
 									$t = $_REQUEST['t'];
@@ -103,11 +104,11 @@ include_once 'funct.php';
 										$ee = $link -> prepare("SELECT E_ID,U_ID,Girdi,Tarih,Duzenleme,n.Nick from entries NATURAL JOIN (SELECT U_ID,Nick FROM members) as n WHERE T_ID=:tid AND Aktif=1 AND Thrash=0 ORDER BY Tarih LIMIT $sayfa,$sayfabasinagirdi");
 										$ee -> bindValue(":tid",$baslikid['T_ID']);
 										$ee -> execute();
-										if (!$ee->rowCount()) //başlığın doldurulması istenmiş (titles.Entry_Count = -1 durumu) olabilir
-											echo "ukte olarak duruyor.";
+										if (!$ee->rowCount()) //sayfa numarası fazla girildiyse vb.
+											echo "<i>yakışmadı bu.</i>";
 										else {
 											$girdiler = $ee -> fetchAll(PDO::FETCH_ASSOC);
-											echo '<h3 style="text-align:left; margin-left:40px;">'.$t.'</h3><ol class="girdiler">';
+											echo '<h3 style="text-align:left; margin-left:40px;">'.$t.'</h3><input type="hidden" value="'.$t.'" id="baslikd" /><ol class="girdiler">';
 											//dök entryleri
 											for ($i=0;$i<count($girdiler);$i++) {
 												$duzen = $girdiler[$i]['Duzenleme'];
@@ -122,7 +123,7 @@ include_once 'funct.php';
 												$no = $sayfa+$i+1;
 												echo '<li class="girdi" value="'.$no.'">';
 												echo girdiControl($girdiler[$i]['Girdi']);
-												echo '<div class="yazarinfo">(<a href="goster.php?t='.yazarBoslukSil($girdiler[$i]['Nick']).'" id="$girdiler[$i][\'Nick\']" rel="'.$girdiler[$i]['U_ID'].'">'.$girdiler[$i]['Nick'].'</a>, '.substr($girdiler[$i]['Tarih'],0,16).''.$duzenleme.')</div><div class="ymore"><a href="goster.php?e='.$girdiler[$i]['E_ID'].'" id="entryid">#'.$girdiler[$i]['E_ID'].'</a>';
+												echo '<div class="yazarinfo">(<a href="goster.php?t='.yazarBoslukSil($girdiler[$i]['Nick']).'" id="yazar" rel="'.$girdiler[$i]['U_ID'].'">'.$girdiler[$i]['Nick'].'</a>, '.substr($girdiler[$i]['Tarih'],0,16).''.$duzenleme.')</div><div class="ymore"><a href="goster.php?e='.$girdiler[$i]['E_ID'].'" id="entryid">#'.$girdiler[$i]['E_ID'].'</a>';
 												//butonlar
 												if ($MEMBER_LOGGED) {
 													if ($girdiler[$i]['U_ID'] != $_SESSION['member']->U_ID) //kendine oy vermesin
@@ -138,14 +139,15 @@ include_once 'funct.php';
 												//herkesin gördüğü
 												echo '&nbsp;<button type="button" onClick="location.href=\'$girdiler[$i][\'Nick\'].php?y='.yazarBoslukSil($girdiler[$i]['Nick']).'\'" id="eyh" class="minib" title="$girdiler[$i][\'Nick\'] hakkında">?</button>&nbsp;<button type="button" onClick="location.href=\'sikayet.php?e='.$girdiler[$i]['E_ID'].'\'" id="esb" class="minib" title="şikayet et">!</button>';
 												echo '&nbsp;</div><div id="yazarmini"></div>';
-												echo '</li>';
+												echo '</li><br />';
 											}
 											echo '<br /></ol>';
 										}
 									}
 								}
 							}
-						?>						
+						?>	
+						<br /><div style="text-align:center;" id="hg"><?php if($var) { ?><button type="button" onClick="location.href='goster.php?t=<?php echo yazarBoslukSil($baslikadi); ?>'" id="ehg">Hepsi Gelsin</button><?php } ?>
 						<?php if ($MEMBER_LOGGED) { ?>
 						<div style="text-align:left; padding-top:10px; padding-left:25px;">"<?php echo $t; ?>" hakkında söylemek istediklerim var diyorsan durma:
 						<form action="ekle.php" method="post" id="yenigirdi" name="yenigirdi"><input type="hidden" name="t" value="<?php echo $t; ?>" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt('link: (başında http:// olmalı)', 'http://');if(isURL(a))$('#entrytextarea').tae('url',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi"></textarea><input type="submit" value="böyle olur" class="ebut" /><input type="submit" value="bunu sonra gönderirim" class="ebut" name="kaydet" /></form></div><?php } ?></div></div>
