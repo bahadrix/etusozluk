@@ -29,16 +29,14 @@
 					$aktif = 0;
 				else
 					$aktif = 1;
-				
 				//başlık var mı?
 				$s = $link->prepare("SELECT T_ID FROM titles WHERE Baslik = :baslik");
 				$s -> bindValue(":baslik",$baslik);
 				$s -> execute();
 				//yoksa ekle
 				if (!$s->rowCount()) {
-					$se = $link -> prepare("INSERT INTO titles (Baslik,Entry_Count) VALUES (:baslik,:post)");
+					$se = $link -> prepare("INSERT INTO titles (Baslik,Entry_Count,Tarih) VALUES (:baslik,0,NOW())");
 					$se -> bindValue(":baslik",$baslik);
-					$se -> bindValue(":post",0);
 					$se -> execute();
 				}
 				//id'yi al
