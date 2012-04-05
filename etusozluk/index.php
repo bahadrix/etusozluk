@@ -39,7 +39,7 @@ include_once 'funct.php';
 			<a href="uyeol.php">Üye Ol!</a>
 			</div></form>
 			<?php } else { ?>
-			<p class="lgbaslik"><?php echo $_SESSION['member']->Nick; ?></p><hr class="lg"/><p style="text-align:left; padding-left:50px; margin:0;"><a href="hq.php">HQ</a><br /><a href="mesaj.php">Mesajlar</a><br /><a href="getir.php?mode=ark">Arkadaşlar</a><br /><a href="getir.php?mode=kenar">Kenarda Duranlar</a><br /><a href="getir.php?mode=yeni">Yeni</a><br /><a href="login.php?mode=cikis">Çıkış</a></p>
+			<p class="lgbaslik"><?php echo $_SESSION['member']->Nick; ?></p><hr class="lg"/><p style="text-align:left; padding-left:50px; margin:0;"><a href="hq.php">HQ</a><br /><a href="mesaj.php">Mesajlar</a><br /><a href="getir.php?mode=ark">Arkadaşlar</a><br /><a href="getir.php?mode=kenar">Kenarda Duranlar</a><br /><a href="getir.php?mode=yeni">Yeni</a><br /><a href="login.php?logout">Çıkış</a></p>
 			<?php } ?>
 			</div>
 			<li id="uyeol"><a href="javascript:void(0);"><span><?php if (!$MEMBER_LOGGED) { ?>Üye Ol/Giriş<?php } else { ?>Ben<?php } ?></span></a></li>
