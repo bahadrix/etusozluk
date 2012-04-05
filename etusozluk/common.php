@@ -10,6 +10,7 @@ $MEMBER_LOGGED = isset($_SESSION['logged']) && $_SESSION['logged'];
  */
 $MEMBER = $MEMBER_LOGGED ? $_SESSION['member'] : null;
 
-if (DEBUG_MODE) FB::info($MEMBER,"Giriş Yapan üye");
+// Giriş yapan bir üye varsa bilgilerini debug'da göster
+if (DEBUG_MODE) FB::info($MEMBER ? $MEMBER : "Yok","Giriş Yapan üye");
 
 ?>
