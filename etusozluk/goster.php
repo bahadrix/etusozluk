@@ -2,7 +2,7 @@
 /**
 * goster.php 
 * entry veya başlık gösterme sayfası
-* @version v0.1
+* @version v0.5
 */
 include_once 'common.php';
 include_once 'funct.php'; 
@@ -116,7 +116,7 @@ include_once 'funct.php';
 													} else if ($g=="d")  {
 														$gun = "dun";
 													} else if (strlen($g)==8 && is_numeric($g) && checkdate(substr($g,0,2),substr($g,2,2),substr($g,4))) {
-														$gun = substr($g,0,2)."-".substr($g,2,2)."-".substr($g,4); //gun-ay-yıl
+														$gun = substr($g,4)."-".substr($g,2,2)."-".substr($g,0,2); //yıl-ay-gün
 													} else //default
 														$gun = "bugun";
 													$var = true;
@@ -136,7 +136,7 @@ include_once 'funct.php';
 										} else if ($g=="d")  {
 											$gun = "dun";
 										} else if (strlen($g)==8 && is_numeric($g) && checkdate(substr($g,0,2),substr($g,2,2),substr($g,4))) {
-											$gun = substr($g,0,2)."-".substr($g,2,2)."-".substr($g,4); //gun-ay-yıl
+											$gun = substr($g,4)."-".substr($g,2,2)."-".substr($g,0,2); //yıl-ay-gün
 										} else //default
 											$gun = "bugun";
 										$var = true;
@@ -182,7 +182,7 @@ include_once 'funct.php';
 														echo '&nbsp;<button type="button" onClick="ep(\'fav.php?e='.$girdiler[$i]['E_ID'].'\')" class="minib" title="favorilere ekle" id="efav">:D</button>&nbsp;<button type="button" onClick="ep(\'mesaj.php?y='.yazarBoslukSil($girdiler[$i]['Nick']).'\',\'600\',\'400\')" class="minib" title="yazara mesaj atiyim" id="eymesaj">msj</button>';
 												}
 												//herkesin gördüğü
-												echo '&nbsp;<button type="button" onClick="location.href=\'$girdiler[$i][\'Nick\'].php?y='.yazarBoslukSil($girdiler[$i]['Nick']).'\'" id="eyh" class="minib" title="$girdiler[$i][\'Nick\'] hakkında">?</button>&nbsp;<button type="button" onClick="location.href=\'sikayet.php?e='.$girdiler[$i]['E_ID'].'\'" id="esb" class="minib" title="şikayet et">!</button>';
+												echo '&nbsp;<button type="button" onClick="location.href=\'yazar.php?y='.yazarBoslukSil($girdiler[$i]['Nick']).'\'" id="eyh" class="minib" title="yazar hakkında">?</button>&nbsp;<button type="button" onClick="location.href=\'sikayet.php?e='.$girdiler[$i]['E_ID'].'\'" id="esb" class="minib" title="şikayet et">!</button>';
 												echo '&nbsp;</div><div id="yazarmini"></div>';
 												echo '</li><br />';
 											}
@@ -205,10 +205,11 @@ include_once 'funct.php';
 								echo "<i>bütün uğraşlarımıza rağmen böyle bir entry bulamadık.</i>";
 						}
 						else { //ne t ne e varsa direkt T_ID=1 olan başlığı göster.
-						
+							$baslikentry[0]="etüsözlük";
+							entryGoster();
 						}
 						?>	
-						<br /><div style="text-align:center;" id="hg"><?php if($var) { ?><button type="button" onClick="location.href='goster.php?t=<?php echo yazarBoslukSil($baslikadi); ?>'" id="ehg">Hepsi Gelsin</button><?php } ?>
+						<br /><div style="text-align:center;" id="hg"><?php if($var) { ?><button type="button" onClick="location.href='goster.php?t=<?php echo yazarBoslukSil($baslikentry[0]); ?>'" id="ehg">Hepsi Gelsin</button><?php } ?>
 						<?php if ($MEMBER_LOGGED) { ?>
 						<div style="text-align:left; padding-top:10px; padding-left:25px;">"<?php echo $baslikentry[0]; ?>" hakkında söylemek istediklerim var diyorsan durma:
 						<form action="ekle.php" method="post" id="yenigirdi" name="yenigirdi"><input type="hidden" name="t" value="<?php echo $baslikentry[0]; ?>" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt('link: (başında http:// olmalı)', 'http://');if(isURL(a))$('#entrytextarea').tae('url',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi"></textarea><input type="submit" value="böyle olur" class="ebut" /><input type="submit" value="bunu sonra gönderirim" class="ebut" name="kaydet" /></form></div><?php } ?></div></div>
@@ -289,16 +290,21 @@ include_once 'funct.php';
 * @param $u : kullanıcı adı // bir başlıktaki $u'nun yazdıklarını göstermek için
 * @param $g : gün //istenen bir gün varsa, dün, bugün, belirli bir gün gibi
 * @param $p : sayfa numarası
-* @version v0.2
+* @version v0.5
 */
 	function entryGoster($eid=null,$t=null,$u=null,$g=null,$p=null) {
 		$MEMBER_LOGGED = isset($_SESSION['logged']) && $_SESSION['logged'];
 		$link = getPDO();
-	
-		if (!empty($p)) {
-			$sayfabasinagirdi = !empty($_SESSION['membil']) ? $_SESSION['membil']->Entry_Per_Page : 25;
+		
+		$sayfabasinagirdi = !empty($_SESSION['membil']) ? $_SESSION['membil']->Entry_Per_Page : 25;
+		if (!empty($p)) {			
 			$sayfa = ($p-1)*$sayfabasinagirdi;
 		}
+		else {
+			$sayfa = 0;
+		}
+		
+		$date_condition="";
 		
 		if (!empty($eid) && empty($u) && empty($g)) { //istenen tek bir entry ise
 			$e = $eid;
@@ -314,79 +320,100 @@ include_once 'funct.php';
 			}
 		}
 		else if (empty($eid) && !empty($t) && !empty($u) && empty($g)) { //baslik ve nick
-			
-			$es = $link -> prepare("SELECT E_ID,T_ID,U_ID,Girdi,Tarih,Duzenleme from entries NATURAL JOIN (SELECT U_ID,Nick FROM members WHERE Nick = :nick) as u NATURAL JOIN (SELECT T_ID,Baslik FROM titles WHERE Baslik=:baslik) as b WHERE U_ID=u.U_ID AND T_ID=b.T_ID AND Aktif=1 AND Thrash=0 LIMIT $sayfa,$sayfabasinagirdi ORDER BY Tarih");
+			$es = $link -> prepare("SELECT E_ID,T_ID,U_ID,Girdi,Tarih,Duzenleme,u.Nick,b.Baslik FROM entries NATURAL JOIN (SELECT U_ID,Nick FROM members WHERE Nick = :nick) as u NATURAL JOIN (SELECT T_ID,Baslik FROM titles WHERE Baslik=:baslik) as b WHERE U_ID=u.U_ID AND T_ID=b.T_ID AND Aktif=1 AND Thrash=0 ORDER BY Tarih LIMIT $sayfa,$sayfabasinagirdi");
 			$es -> bindValue(":nick",$u);
 			$es -> bindValue(":baslik",$t);
-		
 		}
 		else if (empty($eid) && !empty($t) && !empty($u) && !empty($g)) { //baslik nick ve tarih
 			if ($g=="dun") 
 				$date_condition = "Tarih BETWEEN ADDDATE(CURDATE(), INTERVAL - 1 DAY) AND CURDATE()";
-			else if ($g=="bugun")
+			else if ($g=="bugun") 
 				$date_condition = "Tarih BETWEEN CURDATE() AND ADDDATE(CURDATE(), INTERVAL  1 DAY)";
 			else {
 				$date_condition = "Tarih BETWEEN '$g'  AND ADDDATE('$g', INTERVAL  1 DAY)";
 			}
-			$es = $link -> prepare("SELECT E_ID,T_ID,U_ID,Girdi,Tarih,Duzenleme FROM entries NATURAL JOIN (SELECT U_ID,Nick FROM members WHERE Nick = :nick) as u NATURAL JOIN (SELECT T_ID,Baslik FROM titles WHERE Baslik=:baslik) as b WHERE U_ID=u.U_ID AND T_ID=b.T_ID AND Aktif=1 AND Thrash=0 AND $date_condition LIMIT $sayfa,$sayfabasinagirdi ORDER BY Tarih");
+			$es = $link -> prepare("SELECT E_ID,T_ID,U_ID,Girdi,Tarih,Duzenleme,u.Nick,b.Baslik FROM entries NATURAL JOIN (SELECT U_ID,Nick FROM members WHERE Nick = :nick) as u NATURAL JOIN (SELECT T_ID,Baslik FROM titles WHERE Baslik=:baslik) as b WHERE U_ID=u.U_ID AND T_ID=b.T_ID AND Aktif=1 AND Thrash=0 AND $date_condition ORDER BY Tarih LIMIT $sayfa,$sayfabasinagirdi");
 			$es -> bindValue(":nick",$u);
 			$es -> bindValue(":baslik",$t);
 		}
 		else if (empty($eid) && !empty($t) && empty($u) && !empty($g)) { //baslik ve tarih
 			if ($g=="dun") 
 				$date_condition = "Tarih BETWEEN ADDDATE(CURDATE(), INTERVAL - 1 DAY) AND CURDATE()";
-			else if ($g=="bugun")
-				$date_condition = "Tarih BETWEEN CURDATE() AND ADDDATE(CURDATE(), INTERVAL  1 DAY)";
+			else if ($g=="bugun") 
+				$date_condition = "Tarih BETWEEN CURDATE() AND ADDDATE(CURDATE(), INTERVAL  1 DAY)"; 
 			else {
 				$date_condition = "Tarih BETWEEN '$g'  AND ADDDATE('$g', INTERVAL  1 DAY)";
 			}
-			$es = $link -> prepare("SELECT E_ID,T_ID,U_ID,Girdi,Tarih,Duzenleme FROM entries NATURAL JOIN (SELECT T_ID,Baslik FROM titles WHERE Baslik=:baslik) as b WHERE T_ID=b.T_ID AND Aktif=1 AND Thrash=0 AND $date_condition LIMIT $sayfa,$sayfabasinagirdi ORDER BY Tarih");
+			$es = $link -> prepare("SELECT E_ID,T_ID,U_ID,Girdi,Tarih,Duzenleme,u.Nick,b.Baslik FROM ((entries NATURAL JOIN (SELECT T_ID,Baslik FROM titles WHERE Baslik=:baslik) as b) NATURAL JOIN (SELECT U_ID,Nick FROM members) as u) WHERE T_ID=b.T_ID AND Aktif=1 AND Thrash=0 AND $date_condition ORDER BY Tarih LIMIT $sayfa,$sayfabasinagirdi");
 			$es -> bindValue(":baslik",$t);
 		}
-		else {
-			$es = $link -> prepare("SELECT E_ID,T_ID,U_ID,Girdi,Tarih,Duzenleme,b.Baslik,u.Nick FROM entries NATURAL JOIN (SELECT U_ID,Nick FROM members) as u NATURAL JOIN (SELECT T_ID,Baslik FROM titles) as b WHERE T_ID=1 AND Aktif=1 AND Thrash=0 LIMIT $sayfa,$sayfabasinagirdi ORDER BY Tarih");
+		else { //T_ID=1 olan başlığı göster -- daha sonra domain name'i içeren başlığı göstericek.
+			$es = $link -> prepare("SELECT E_ID,T_ID,U_ID,Girdi,Tarih,Duzenleme,u.Nick,t.Baslik FROM ((entries NATURAL JOIN (SELECT U_ID,Nick FROM members) as u) NATURAL JOIN (SELECT T_ID,Baslik FROM titles WHERE T_ID=1) as t) WHERE T_ID=1 AND Aktif=1 AND Thrash=0 ORDER BY Tarih LIMIT $sayfa,$sayfabasinagirdi");
 		}
 		$es -> execute();
 		if (!$es->rowCount())
 			echo "<i>bütün uğraşlarımıza rağmen bu şartlara uyan entry bulamadık.</i>";
 		else {			
 			$girdi = $es -> fetchAll(PDO::FETCH_ASSOC);
-				
+						
 			$baslikadi = !empty($baslik)?$baslik:$girdi[0]['Baslik'];
 			
-			$sk = $link -> query ("SELECT COUNT(E_ID) as listnumber FROM entries WHERE T_ID=".$girdi['T_ID']." AND E_ID BETWEEN 1 AND ".$e." AND Aktif = 1 AND Thrash = 0 ORDER BY Tarih");
-			$s = $sk -> fetch(PDO::FETCH_ASSOC);
-			$sayi = $s['listnumber'];
 			echo '<h3 style="text-align:left; margin-left:40px;">'.$baslikadi.'</h3><input type="hidden" value="'.$baslikadi.'" id="baslikd" /><ol class="girdiler">';
-				
-			$duzen = $girdi['Duzenleme'];
-			if (!$duzen)
-				$duzenleme = "";
-			else {
-				if (substr($duzen,0,10)==substr($girdi['Tarih'],0,10))
-					$duzenleme = " ~ ".substr($duzen,11,5);
-				else
-					$duzenleme = " ~ ".substr($duzen,0,16);
-			}
-			echo '<li class="girdi" value="'.$sayi.'">';
-			echo girdiControl($girdi['Girdi']);
-			echo '<div class="yazarinfo">(<a href="goster.php?t='.yazarBoslukSil($girdi['Nick']).'" id="yazar" rel="'.$girdi['U_ID'].'">'.$girdi['Nick'].'</a>, '.substr($girdi['Tarih'],0,16).''.$duzenleme.')</div><div class="ymore"><a href="goster.php?e='.$girdi['E_ID'].'" id="entryid">#'.$girdi['E_ID'].'</a>';
-			//butonlar
-			if ($MEMBER_LOGGED) {
-				if ($girdi['U_ID'] != $_SESSION['member']->U_ID) //kendine oy vermesin
-					echo '&nbsp;<button type="button" onClick="ep(\'vote.php?id='.$girdi['E_ID'].'&o=1\')" class="minib" title="olmuş bu" id="+1">iyuf</button>&nbsp;<button type="button" onClick="ep(\'vote.php?id='.$girdi['E_ID'].'&o=-1\')" class="minib" title="böyle olmaz hacı" id="-1">ı ıh</button>';
-				if ($girdi['U_ID'] == $_SESSION['member']->U_ID) //yazarın gördüğü
-					echo '&nbsp;<button type="button" onClick="ep(\'edit.php?e='.$girdi['E_ID'].'\',\'820\',\'400\')" class="minib" id="eduz">düzelt</button>&nbsp;<button type="button" onClick="ep(\'del.php?e='.$girdi['E_ID'].'\')" class="minib" title="sil" id="esil">X</button>';
-				else if ($_SESSION['membil']->Yetki>5) { //kendi yazmadığı entry ise moderasyonun gördüğü -> ilerki zamanlarda taşı da eklenebilir.
-					echo '&nbsp;<button type="button" onClick="ep(\'edit.php?e='.$girdi['E_ID'].'\',\'820\',\'400\')" class="minib" id="eduz">düzelt</button>&nbsp;<button type="button" onClick="ep(\'del.php?e='.$girdi['E_ID'].'\')" class="minib" title="sil" id="esil">X</button>';
-				echo '&nbsp;<button type="button" onClick="ep(\'fav.php?e='.$girdi['E_ID'].'\')" class="minib" title="favorilere ekle" id="efav">:D</button>&nbsp;<button type="button" onClick="ep(\'mesaj.php?y='.yazarBoslukSil($girdi['Nick']).'\',\'600\',\'400\')" class="minib" title="yazara mesaj atiyim" id="eymesaj">msj</button>';
-				} else //diğer üyelerin gördüğü
-				echo '&nbsp;<button type="button" onClick="ep(\'fav.php?e='.$girdi['E_ID'].'\')" class="minib" title="favorilere ekle" id="efav">:D</button>&nbsp;<button type="button" onClick="ep(\'mesaj.php?y='.yazarBoslukSil($girdi['Nick']).'\',\'600\',\'400\')" class="minib" title="yazara mesaj atiyim" id="eymesaj">msj</button>';
-			}
-			//herkesin gördüğü
-			echo '&nbsp;<button type="button" onClick="location.href=\'$girdi[\'Nick\'].php?y='.yazarBoslukSil($girdi['Nick']).'\'" id="eyh" class="minib" title="$girdi[\'Nick\'] hakkında">?</button>&nbsp;<button type="button" onClick="location.href=\'sikayet.php?e='.$girdi['E_ID'].'\'" id="esb" class="minib" title="şikayet et">!</button>';
-			echo '&nbsp;</div><div id="yazarmini"></div>';
-			echo '</li><br />';
+			
+			for ($i=0;$i<count($girdi);$i++) {
+				$duzen = $girdi[$i]['Duzenleme'];
+				if (!$duzen)
+					$duzenleme = "";
+				else {
+					if (substr($duzen,0,10)==substr($girdi[$i]['Tarih'],0,10))
+						$duzenleme = " ~ ".substr($duzen,11,5);
+					else
+						$duzenleme = " ~ ".substr($duzen,0,16);
+				}
+				if (!empty($eid) && empty($u) && empty($g)) { //tek entry
+					$sk = $link -> query("SELECT COUNT(E_ID) as listnumber FROM entries WHERE T_ID=".$girdi[$i]['T_ID']." AND E_ID BETWEEN 1 AND ".$girdi[$i]['E_ID']." AND Aktif = 1 AND Thrash = 0 ORDER BY Tarih");
+					$s = $sk -> fetch(PDO::FETCH_ASSOC);
+				}
+				else if (empty($eid) && !empty($t) && !empty($u) && empty($g)) { //başlık ve nick
+					$sk = $link -> query("SELECT COUNT(E_ID) as listnumber FROM entries WHERE T_ID=".$girdi[$i]['T_ID']." AND E_ID BETWEEN 1 AND ".$girdi[$i]['E_ID']." AND Aktif = 1 AND Thrash = 0 ORDER BY Tarih");
+					$s = $sk -> fetch(PDO::FETCH_ASSOC);
+				}
+				else if (empty($eid) && !empty($t) && !empty($u) && !empty($g)) { //başlık nick ve gün
+					$sk = $link -> query("SELECT COUNT(E_ID) as listnumber FROM entries WHERE T_ID=".$girdi[$i]['T_ID']." AND E_ID BETWEEN 1 AND ".$girdi[$i]['E_ID']." AND $date_condition AND Aktif = 1 AND Thrash = 0 ORDER BY Tarih");
+					$s = $sk -> fetch(PDO::FETCH_ASSOC);			
+				}
+				else if (empty($eid) && !empty($t) && empty($u) && !empty($g)) { //başlık ve gün
+					$sk = $link -> query("SELECT COUNT(E_ID) as listnumber FROM entries WHERE T_ID=".$girdi[$i]['T_ID']." AND E_ID BETWEEN 1 AND ".$girdi[$i]['E_ID']." AND $date_condition AND Aktif = 1 AND Thrash = 0 ORDER BY Tarih");
+					$s = $sk -> fetch(PDO::FETCH_ASSOC);
+				}
+				else { //T_ID=1
+					$s = 1;
+				}
+				if ($s!=1) 
+					$no = $s['listnumber'];
+				else {
+					$no = $sayfa + $i + 1;
+				}
+				echo '<li class="girdi" value="'.$no.'">';
+				echo girdiControl($girdi[$i]['Girdi']);
+				echo '<div class="yazarinfo">(<a href="goster.php?t='.yazarBoslukSil($girdi[$i]['Nick']).'" id="yazar" rel="'.$girdi[$i]['U_ID'].'">'.$girdi[$i]['Nick'].'</a>, '.substr($girdi[$i]['Tarih'],0,16).''.$duzenleme.')</div><div class="ymore"><a href="goster.php?e='.$girdi[$i]['E_ID'].'" id="entryid">#'.$girdi[$i]['E_ID'].'</a>';
+				//butonlar
+				if ($MEMBER_LOGGED) {
+					if ($girdi[$i]['U_ID'] != $_SESSION['member']->U_ID) //kendine oy vermesin
+						echo '&nbsp;<button type="button" onClick="ep(\'vote.php?id='.$girdi[$i]['E_ID'].'&o=1\')" class="minib" title="olmuş bu" id="+1">iyuf</button>&nbsp;<button type="button" onClick="ep(\'vote.php?id='.$girdi[$i]['E_ID'].'&o=-1\')" class="minib" title="böyle olmaz hacı" id="-1">ı ıh</button>';
+					if ($girdi[$i]['U_ID'] == $_SESSION['member']->U_ID) //yazarın gördüğü
+						echo '&nbsp;<button type="button" onClick="ep(\'edit.php?e='.$girdi[$i]['E_ID'].'\',\'820\',\'400\')" class="minib" id="eduz">düzelt</button>&nbsp;<button type="button" onClick="ep(\'del.php?e='.$girdi[$i]['E_ID'].'\')" class="minib" title="sil" id="esil">X</button>';
+					else if ($_SESSION['membil']->Yetki>5) { //kendi yazmadığı entry ise moderasyonun gördüğü -> ilerki zamanlarda taşı da eklenebilir.
+						echo '&nbsp;<button type="button" onClick="ep(\'edit.php?e='.$girdi[$i]['E_ID'].'\',\'820\',\'400\')" class="minib" id="eduz">düzelt</button>&nbsp;<button type="button" onClick="ep(\'del.php?e='.$girdi[$i]['E_ID'].'\')" class="minib" title="sil" id="esil">X</button>';
+					echo '&nbsp;<button type="button" onClick="ep(\'fav.php?e='.$girdi[$i]['E_ID'].'\')" class="minib" title="favorilere ekle" id="efav">:D</button>&nbsp;<button type="button" onClick="ep(\'mesaj.php?y='.yazarBoslukSil($girdi[$i]['Nick']).'\',\'600\',\'400\')" class="minib" title="yazara mesaj atiyim" id="eymesaj">msj</button>';
+					} else //diğer üyelerin gördüğü
+					echo '&nbsp;<button type="button" onClick="ep(\'fav.php?e='.$girdi[$i]['E_ID'].'\')" class="minib" title="favorilere ekle" id="efav">:D</button>&nbsp;<button type="button" onClick="ep(\'mesaj.php?y='.yazarBoslukSil($girdi[$i]['Nick']).'\',\'600\',\'400\')" class="minib" title="yazara mesaj atiyim" id="eymesaj">msj</button>';
+				}
+				//herkesin gördüğü
+				echo '&nbsp;<button type="button" onClick="location.href=\'yazar.php?y='.yazarBoslukSil($girdi[$i]['Nick']).'\'" id="eyh" class="minib" title="yazar hakkında">?</button>&nbsp;<button type="button" onClick="location.href=\'sikayet.php?e='.$girdi[$i]['E_ID'].'\'" id="esb" class="minib" title="şikayet et">!</button>';
+				echo '&nbsp;</div><div id="yazarmini"></div>';
+				echo '</li><br />';
+				}
 			echo '<br /></ol>';
 		}
 	}
