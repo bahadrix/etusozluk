@@ -190,23 +190,23 @@ include_once 'funct.php';
 										}
 									}
 								}
+							}							
+							else if (empty($_REQUEST['t']) && !empty($_REQUEST['e']) && is_numeric($_REQUEST['e'])) { //entry istenmiş mi?
+								$entryno = $_REQUEST['e'];
+								$se = $link -> prepare("SELECT E_ID FROM entries WHERE E_ID=:eid");
+								$se -> bindValue(":eid",$entryno);
+								$se -> execute();
+								if ($se->rowCount()) {
+									$var = true;
+									entryGoster($entryno);
+								}
+								else
+									echo "<i>bütün uğraşlarımıza rağmen böyle bir entry bulamadık.</i>";
 							}
-						}								
-						else if (empty($_REQUEST['t']) && !empty($_REQUEST['e']) && is_numeric($_REQUEST['e'])) { //entry istenmiş mi?
-							$entryno = $_REQUEST['e'];
-							$se = $link -> prepare("SELECT E_ID FROM entries WHERE E_ID=:eid");
-							$se -> bindValue(":eid",$entryno);
-							$se -> execute();
-							if ($se->rowCount()) {
-								$var = true;
-								entryGoster($entryno);
+							else { //ne t ne e varsa direkt T_ID=1 olan başlığı göster.
+								$baslikentry[0]="etüsözlük";
+								entryGoster();
 							}
-							else
-								echo "<i>bütün uğraşlarımıza rağmen böyle bir entry bulamadık.</i>";
-						}
-						else { //ne t ne e varsa direkt T_ID=1 olan başlığı göster.
-							$baslikentry[0]="etüsözlük";
-							entryGoster();
 						}
 						?>	
 						<br /><div style="text-align:center;" id="hg"><?php if($var) { ?><button type="button" onClick="location.href='goster.php?t=<?php echo yazarBoslukSil($baslikentry[0]); ?>'" id="ehg">Hepsi Gelsin</button><?php } ?>
