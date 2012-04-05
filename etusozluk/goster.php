@@ -2,7 +2,8 @@
 /**
 * goster.php 
 * entry veya başlık gösterme sayfası
-* @version v0.5
+* hala json yok.
+* @version v1.0rc1
 */
 include_once 'common.php';
 include_once 'funct.php'; 
@@ -146,6 +147,7 @@ include_once 'funct.php';
 										
 										$sayfabasinagirdi = !empty($_SESSION['membil']) ? $_SESSION['membil']->Entry_Per_Page : 25;
 										$sayfa = ($p-1)*$sayfabasinagirdi;
+										
 										$ee = $link -> prepare("SELECT E_ID,U_ID,Girdi,Tarih,Duzenleme,n.Nick from entries NATURAL JOIN (SELECT U_ID,Nick FROM members) as n WHERE T_ID=:tid AND Aktif=1 AND Thrash=0 ORDER BY Tarih LIMIT $sayfa,$sayfabasinagirdi");
 										$ee -> bindValue(":tid",$baslikid['T_ID']);
 										$ee -> execute();
@@ -153,7 +155,41 @@ include_once 'funct.php';
 											echo "<i>aradık taradık bi şey bulamadık.</i>";
 										else {
 											$girdiler = $ee -> fetchAll(PDO::FETCH_ASSOC);
-											echo '<h3 style="text-align:left; margin-left:40px;">'.$baslikentry[0].'</h3><input type="hidden" value="'.$baslikentry[0].'" id="baslikd" /><ol class="girdiler">';
+											//entry sayısı
+											$say = $link -> prepare("SELECT COUNT(E_ID) as ttl FROM entries WHERE T_ID=:tid AND Aktif=1 AND Thrash=0 GROUP BY T_ID");
+											$say -> bindValue(":tid",$baslikid['T_ID']);
+											$say -> execute();
+											$sayf = $say->fetch(PDO::FETCH_ASSOC);
+											$toplamgirdi = $sayf['ttl'];
+											
+											echo '<h3 style="text-align:left; margin-left:40px;">'.$baslikentry[0].'</h3><input type="hidden" value="'.$baslikentry[0].'" id="baslikd" />';
+											$url = $_SERVER['REQUEST_URI'];
+											$url = preg_replace('/\&p(?:=[0-9])*/','',$url);
+											if ($toplamgirdi>$sayfabasinagirdi) { //üst kısım sayfalama
+												$toplamsayfa = ceil($toplamgirdi/$sayfabasinagirdi);
+												if ($toplamsayfa>1) {
+													echo '<div id="sayfalar" style="position:absolute;right:0;top:0;font-size:8pt;">';
+													if ($p>1) {
+														$syf = $p-1;
+														echo '<a href="'.$url.'&p='.$syf.'">&lt;&lt</a>';
+													}
+													echo '<select class="sayfa" style="font-size:8pt;" onChange="location.href=\''.$url.'&p=\'+(this.selectedIndex+1)" name="p">';
+													for ($i=1;$i<=$toplamsayfa;$i++) {
+														if ($i==$p)
+															$ekle = " selected";
+														else
+															$ekle = "";
+														echo '<option value="'.$i.'"'.$ekle.'>'.$i.'</option>';
+													}
+													echo '</select>';
+													if ($p != $toplamsayfa) {
+														$syf = $p+1;
+														echo '<a href="'.$url.'&p='.$syf.'">&gt;&gt</a>';
+													}
+													echo '</div>';
+												}
+											}
+											echo '<ol class="girdiler">';
 											//dök entryleri
 											for ($i=0;$i<count($girdiler);$i++) {
 												$duzen = $girdiler[$i]['Duzenleme'];
@@ -186,6 +222,30 @@ include_once 'funct.php';
 												echo '&nbsp;</div><div id="yazarmini"></div>';
 												echo '</li><br />';
 											}
+											if ($toplamgirdi>$sayfabasinagirdi) { //alt kısım sayfalama
+												$toplamsayfa = ceil($toplamgirdi/$sayfabasinagirdi);
+												if ($toplamsayfa>1) {
+													echo '<div id="sayfalar" style="position:absolute;right:0;font-size:8pt;">';
+													if ($p>1) {
+														$syf = $p-1;
+														echo '<a href="'.$_SERVER['REQUEST_URI'].'&p='.$syf.'">&lt;&lt</a>';
+													}
+													echo '<select class="sayfa" style="font-size:8pt;" onChange="location.href=\''.$_SERVER['REQUEST_URI'].'&p=\'+(this.selectedIndex+1)" name="p">';
+													for ($i=1;$i<=$toplamsayfa;$i++) {
+														if ($i==$p)
+															$ekle = " selected";
+														else
+															$ekle = "";
+														echo '<option value="'.$i.'"'.$ekle.'>'.$i.'</option>';
+													}
+													echo '</select>';
+													if ($p != $toplamsayfa) {
+														$syf = $p+1;
+														echo '<a href="'.$_SERVER['REQUEST_URI'].'&p='.$syf.'">&gt;&gt</a>';
+													}
+													echo '</div>';
+												}
+											}
 											echo '<br /></ol>';
 										}
 									}
@@ -193,10 +253,12 @@ include_once 'funct.php';
 							}							
 							else if (empty($_REQUEST['t']) && !empty($_REQUEST['e']) && is_numeric($_REQUEST['e'])) { //entry istenmiş mi?
 								$entryno = $_REQUEST['e'];
-								$se = $link -> prepare("SELECT E_ID FROM entries WHERE E_ID=:eid");
+								$se = $link -> prepare("SELECT e.E_ID,t.Baslik FROM (SELECT E_ID,T_ID FROM entries WHERE E_ID=:eid) as e NATURAL JOIN (SELECT T_ID,Baslik FROM titles) as t");
 								$se -> bindValue(":eid",$entryno);
 								$se -> execute();
 								if ($se->rowCount()) {
+									$be = $se -> fetch(PDO::FETCH_ASSOC);
+									$baslikentry[0]=$be["Baslik"];
 									$var = true;
 									entryGoster($entryno);
 								}
@@ -290,11 +352,14 @@ include_once 'funct.php';
 * @param $u : kullanıcı adı // bir başlıktaki $u'nun yazdıklarını göstermek için
 * @param $g : gün //istenen bir gün varsa, dün, bugün, belirli bir gün gibi
 * @param $p : sayfa numarası
-* @version v0.5
+* @version v0.8
 */
 	function entryGoster($eid=null,$t=null,$u=null,$g=null,$p=null) {
 		$MEMBER_LOGGED = isset($_SESSION['logged']) && $_SESSION['logged'];
 		$link = getPDO();
+		
+		$url = $_SERVER['REQUEST_URI'];
+		$url = preg_replace('/\&p(?:=[0-9])*/','',$url);
 		
 		$sayfabasinagirdi = !empty($_SESSION['membil']) ? $_SESSION['membil']->Entry_Per_Page : 25;
 		if (!empty($p)) {			
@@ -355,10 +420,64 @@ include_once 'funct.php';
 			echo "<i>bütün uğraşlarımıza rağmen bu şartlara uyan entry bulamadık.</i>";
 		else {			
 			$girdi = $es -> fetchAll(PDO::FETCH_ASSOC);
+			
+			//sayfa sayma
+			if (!empty($eid) && empty($u) && empty($g)) { //tek entry
+				$toplamgirdi=1;
+			}
+			else if (empty($eid) && !empty($t) && !empty($u) && empty($g)) { //başlık ve nick
+				$say = $link -> query("SELECT COUNT(E_ID) as ttl FROM entries WHERE T_ID=".$girdi[0]['T_ID']." AND U_ID=".$girdi[0]['U_ID']." AND Aktif = 1 AND Thrash = 0 GROUP BY T_ID");
+				$say -> execute();
+				$sayf = $say->fetch(PDO::FETCH_ASSOC);
+				$toplamgirdi = $sayf['ttl'];
+			}
+			else if (empty($eid) && !empty($t) && !empty($u) && !empty($g)) { //başlık nick ve gün
+				$say = $link -> query("SELECT COUNT(E_ID) as ttl FROM entries WHERE T_ID=".$girdi[0]['T_ID']." AND U_ID=".$girdi[0]['U_ID']." AND $date_condition AND Aktif = 1 AND Thrash = 0 GROUP BY T_ID");
+				$say -> execute();
+				$sayf = $say->fetch(PDO::FETCH_ASSOC);
+				$toplamgirdi = $sayf['ttl'];			
+			}
+			else if (empty($eid) && !empty($t) && empty($u) && !empty($g)) { //başlık ve gün
+				$say = $link -> query("SELECT COUNT(E_ID) as ttl FROM entries WHERE T_ID=".$girdi[0]['T_ID']." AND $date_condition AND Aktif = 1 AND Thrash = 0 GROUP BY T_ID");
+				$say -> execute();
+				$sayf = $say->fetch(PDO::FETCH_ASSOC);
+				$toplamgirdi = $sayf['ttl'];
+			}
+			else { //T_ID=1
+				$say = $link -> query("SELECT COUNT(E_ID) as ttl FROM entries WHERE T_ID=1 AND Aktif = 1 AND Thrash = 0 GROUP BY T_ID");
+				$say -> execute();
+				$sayf = $say->fetch(PDO::FETCH_ASSOC);
+				$toplamgirdi = $sayf['ttl'];
+			}
 						
 			$baslikadi = !empty($baslik)?$baslik:$girdi[0]['Baslik'];
 			
-			echo '<h3 style="text-align:left; margin-left:40px;">'.$baslikadi.'</h3><input type="hidden" value="'.$baslikadi.'" id="baslikd" /><ol class="girdiler">';
+			echo '<h3 style="text-align:left; margin-left:40px;">'.$baslikadi.'</h3><input type="hidden" value="'.$baslikadi.'" id="baslikd" />';
+			if ($toplamgirdi>$sayfabasinagirdi) { //üst kısım sayfalama
+				$toplamsayfa = ceil($toplamgirdi/$sayfabasinagirdi);
+				if ($toplamsayfa>1) {
+					echo '<div id="sayfalar" style="position:absolute;right:0;top:0;font-size:8pt;">';
+				if ($p>1) {
+					$syf = $p-1;
+					echo '<a href="'.$url.'&p='.$syf.'">&lt;&lt</a>';
+				}
+				echo '<select class="sayfa" style="font-size:8pt;" onChange="location.href=\''.$url.'&p=\'+(this.selectedIndex+1)" name="p">';
+				for ($i=1;$i<=$toplamsayfa;$i++) {
+					if ($i==$p)
+						$ekle = " selected";
+					else
+						$ekle = "";
+					echo '<option value="'.$i.'"'.$ekle.'>'.$i.'</option>';
+				}
+				echo '</select>';
+				if ($p != $toplamsayfa) {
+				$syf = $p+1;
+				echo '<a href="'.$url.'&p='.$syf.'">&gt;&gt</a>';
+				}
+				echo '</div>';
+				}
+			}
+			echo'<ol class="girdiler">';
 			
 			for ($i=0;$i<count($girdi);$i++) {
 				$duzen = $girdi[$i]['Duzenleme'];
@@ -413,7 +532,31 @@ include_once 'funct.php';
 				echo '&nbsp;<button type="button" onClick="location.href=\'yazar.php?y='.yazarBoslukSil($girdi[$i]['Nick']).'\'" id="eyh" class="minib" title="yazar hakkında">?</button>&nbsp;<button type="button" onClick="location.href=\'sikayet.php?e='.$girdi[$i]['E_ID'].'\'" id="esb" class="minib" title="şikayet et">!</button>';
 				echo '&nbsp;</div><div id="yazarmini"></div>';
 				echo '</li><br />';
+			}
+			if ($toplamgirdi>$sayfabasinagirdi) { //alt kısım sayfalama
+				$toplamsayfa = ceil($toplamgirdi/$sayfabasinagirdi);
+				if ($toplamsayfa>1) {
+					echo '<div id="sayfalar" style="position:absolute;right:0;font-size:8pt;">';
+				if ($p>1) {
+					$syf = $p-1;
+					echo '<a href="'.$url.'&p='.$syf.'">&lt;&lt</a>';
 				}
+				echo '<select class="sayfa" style="font-size:8pt;" onChange="location.href=\''.$url.'&p=\'+(this.selectedIndex+1)" name="p">';
+				for ($i=1;$i<=$toplamsayfa;$i++) {
+					if ($i==$p)
+						$ekle = " selected";
+					else
+						$ekle = "";
+					echo '<option value="'.$i.'"'.$ekle.'>'.$i.'</option>';
+				}
+				echo '</select>';
+				if ($p != $toplamsayfa) {
+				$syf = $p+1;
+				echo '<a href="'.$url.'&p='.$syf.'">&gt;&gt</a>';
+				}
+				echo '</div>';
+				}
+			}
 			echo '<br /></ol>';
 		}
 	}
