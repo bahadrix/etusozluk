@@ -68,8 +68,9 @@
 	
 	function yazarBoslukSil($yazar) {
 		$y = $yazar;
-		$y = preg_replace('/\s\s+/',' ',$y);
-		$y = str_replace(' ','+',$y);
+		$y = preg_replace('/\s\s+/',' ',$y);	
+		//$y = str_replace(' ','+',$y);
+		$y = urlencode($yazar);
 		return $y;
 	}
 ?>

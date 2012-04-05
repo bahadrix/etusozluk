@@ -59,7 +59,7 @@ include_once 'funct.php';
 						<?php
 						$link = getPDO();
 						//random entry çek
-						$se = $link -> query("SELECT * FROM entries WHERE Aktif = 1 AND Thrash = 0 ORDER BY RAND() LIMIT 1");
+						$se = $link -> query("SELECT E_ID,T_ID,U_ID,Girdi,Tarih,Duzenleme FROM entries WHERE Aktif = 1 AND Thrash = 0 ORDER BY RAND() LIMIT 1");
 						$var = true;
 						if (!$se->rowCount()) {
 							echo "Yuh yazmadınız mı daha.";
@@ -90,12 +90,12 @@ include_once 'funct.php';
 						}
 						
 						//o başlıktaki kaçıncı girdi
-						$sk = $link -> query ("SELECT COUNT(E_ID) as listnumber FROM entries WHERE T_ID=".$rentry['T_ID']." AND E_ID BETWEEN 1 AND ".$rentry['E_ID']." ORDER BY Tarih");
+						$sk = $link -> query ("SELECT COUNT(E_ID) as listnumber FROM entries WHERE T_ID=".$rentry['T_ID']." AND E_ID BETWEEN 1 AND ".$rentry['E_ID']." AND Aktif = 1 AND Thrash = 0 ORDER BY Tarih");
 						$s = $sk -> fetch(PDO::FETCH_ASSOC);
 						$sayi = $s['listnumber'];
 						echo '<input type="hidden" value="'.$baslikadi.'" id="baslikd" />'; //bu satır index.php için
 						//görünüm
-						echo '<h3 style="text-align:left; margin-left:40px;">'.$baslikadi.'</h3><ol class=girdiler><li class=girdi value="'.$sayi.'">';
+						echo '<h3 style="text-align:left; margin-left:40px;">'.$baslikadi.'</h3><ol class=girdiler><li class="girdi" value="'.$sayi.'">';
 						echo girdiControl($rentry['Girdi']);
 						echo '<div class="yazarinfo">(<a href="goster.php?t='.yazarBoslukSil($yazar).'" id="yazar" rel="'.$rentry['U_ID'].'">'.$yazar.'</a>, '.substr($rentry['Tarih'],0,16).''.$duzenleme.')</div><div class="ymore"><a href="goster.php?e='.$rentry['E_ID'].'" id="entryid">#'.$rentry['E_ID'].'</a>';
 						//butonlar
