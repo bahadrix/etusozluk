@@ -65,7 +65,14 @@ try {
 		else
 			header("Location: index.php");
 		
+	} elseif (isset($_REQUEST['logout'])) {
+		session_start();
+		session_destroy();
+		header("Location: index.php?act=logged_out");
+	} else {
+		throw new jException("Dediinden bise annamadim..",3001);
 	}
+	
 
 } catch (jException $e) {
 
