@@ -603,15 +603,26 @@ function generateRows(selected, opt) {
 		function gungetir(gun, p,rel) {
 			var loading = 'Başlıklar yükleniyor... <br /><img src="img/1.gif">';
 			var uza='';
+			var durum='';
+			var yazi='';
 			
-			if (gun == "dun")
+			if (gun == "dun") {
 			  uza = "g=dun";
-			else if(isFinite(gun) && $.isNumeric(gun) && gun.length == 8)
+			  durum = "&g=d";
+			  yazi = "dün yazılanlar:";
+			}
+			else if(isFinite(gun) && $.isNumeric(gun) && gun.length == 8) {
 			  uza= "g=gun&gun="+gun.substr(0,2)+"&ay="+gun.substr(2,2)+"&yil="+gun.substr(4);
+			  durum="&g="+gun.substr(4)+""+gun.substr(2,2)+""+gun.substr(0,2); //yıl-ay-gün
+			  yazi = gun.substr(0,2)+"."+gun.substr(2,2)+"."+gun.substr(4)+" yazılanlar:";
+			}
 			else if(gun == "yazar")
 			  uza ="y="+rel;
-			else 
+			else {
 			  uza = "g=bugun";
+			  durum ="&g=bg";
+			  yazi = "bugün yazılanlar:";
+			}
 			  
 			$("#basliklar").empty().append(loading);
 			$.ajax({
@@ -623,6 +634,7 @@ function generateRows(selected, opt) {
 						$("#basliklar").empty().append('Bir şey yazılmamış');
 					} else {
 					$("#basliklar").empty();
+					$("#basliklar").append('<font style="font-size:8pt;">&nbsp;&nbsp;&nbsp;'+yazi+'</font>');
 					$("#basliklar").append('<ul class="b">');
 					$.each(JSON.items, function(i,item) {
 						if (item.hata)
@@ -631,7 +643,7 @@ function generateRows(selected, opt) {
 							var sayi='';
 							if (item.count>1)
 							sayi='('+item.count+')';
-							$("#basliklar").append('<li class="b">-&nbsp;<a href=goster.php?t='+boslukSil(item.baslik)+'>'+item.baslik+'</a> '+sayi+'</li>');
+							$("#basliklar").append('<li class="b">-&nbsp;<a href=goster.php?t='+boslukSil(item.baslik)+''+durum+'>'+item.baslik+'</a> '+sayi+'</li>');
 						}
 					});
 					$("#basliklar").append('</ul>');
@@ -667,6 +679,7 @@ function generateRows(selected, opt) {
 						$("#basliklar").empty().append('Bir şey yazılmamış');
 					} else {
 					$("#basliklar").empty();
+					$("#basliklar").append('<font style="font-size:8pt;">&nbsp;&nbsp;&nbsp;Rastgele 50 başlık:</font>');
 					$("#basliklar").append('<ul class="b">');
 					$.each(JSON.items, function(i,item) {
 						if (item.hata)
