@@ -486,7 +486,7 @@ function generateRows(selected, opt) {
 /* ScrollTo Bitti*/
 
 /* ETU SOZLUK KISMI
-* @version 0.2
+* @version 0.3
 */
 
 			/*$.fn.insertAtCaret = function (tagName) {
@@ -755,6 +755,26 @@ function generateRows(selected, opt) {
 			$('input[name="login"]').removeClass('disabled');
 		};
 		
+		var ac_config = {
+				minLength:2,
+				delay:750,
+				appendTo: '#basara',
+				source: function(request,response) {
+					$.post("ara.php",{t:request.term}, function(data) {
+						$('#basara').addClass('basara').empty().show();
+						$.each(data, function(i,item) {
+							$('#basara').append('<a href="goster.php?t='+boslukSil(item.Baslik)+'" id="baslikaraid">'+item.Baslik+'</a><br />');
+						});
+						$('#baslikaraid').click(function() {
+							$('#titlea').val($(this).text());
+						});
+						if ($('#basara').css('display')!='none') {
+							$(document).one("click", function() { $("#basara").fadeOut(250); });
+							$("#basara").click(function(e){ e.stopPropagation(); });
+						}
+					}, "json");
+				}
+		};
 	$(document).ready(function() {
 		gungetir(0,1);
 		var c = getcount(0);
@@ -906,6 +926,10 @@ function generateRows(selected, opt) {
 			}
 			});
 			});
+			
+			$('#titlea').autocomplete(ac_config);
+			
+			
 	});
 
 /* ETU SOZLUK KISMI BITIS */

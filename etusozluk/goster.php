@@ -56,7 +56,7 @@ include_once 'funct.php';
 			<li id="iyuf"><a href="javascript:void(0);"><span>İyuf</span></a><div id="gizlimenu">Yok böyle girdi</div></li>
 			<li id="da-ara"><a href="javascript:void(0);" class="aramenu"><span>Ara</span></a></li>
 		</ul>
-		<div id="header"><form name="baslikara" action="ara.php?op=baslikara"><input type="text" value="Başlık Getir" id="titlea" name="title" size="30" maxlength="70" />&nbsp;<input type="submit" value="ara" /></form></div>
+		<div id="header"><div id="baslikarama" style="position:relative;left:40%;width:255px;margin:0;padding:0;"><form name="baslikara" action="goster.php"><div id="basara"></div><input type="text" value="Başlık Getir" id="titlea" name="t" size="30" maxlength="70" /><input type="submit" value="ara" /></form></div></div>
 		<div id="main">
 			<table cellspacing=0 cellpadding=0>
 				<tr>
