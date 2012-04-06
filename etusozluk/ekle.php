@@ -14,9 +14,7 @@
 			if (!empty($_POST["t"]) && !empty($_POST["ygirdi"])) {
 				$link = getPDO();
 				$baslik = strtolower($_POST["t"]);
-				$baslik = preg_replace('/\s\s+/',' ',$baslik);
-				$baslik = preg_replace('/\t/',' ',$baslik);
-				$baslik = preg_replace('/[^a-z0-9üçöğşı\'#$\.\-\+= ]/', '', $baslik);
+				
 				
 				$entry = strtolower($_POST["ygirdi"]);
 				$entry = preg_replace('/(?:\n\s*){2,}/', "\n\n", $entry);
@@ -35,6 +33,9 @@
 				$s -> execute();
 				//yoksa ekle
 				if (!$s->rowCount()) {
+					$baslik = preg_replace('/\s\s+/',' ',$baslik);
+					$baslik = preg_replace('/\t/',' ',$baslik);
+					$baslik = preg_replace('/[^a-z0-9üçöğşı\'#$\.\-\+= ]/', '', $baslik);
 					$se = $link -> prepare("INSERT INTO titles (Baslik,Entry_Count,Tarih) VALUES (:baslik,0,NOW())");
 					$se -> bindValue(":baslik",$baslik);
 					$se -> execute();
@@ -50,10 +51,10 @@
 				$e -> bindValue(":aktif",$aktif);
 									
 				if ($e -> execute()) {
-					$ba = $link -> prepare("UPDATE titles SET Entry_Count = Entry_Count+1 AND Tarih = NOW() WHERE T_ID = :tid");
+					$ba = $link -> prepare("UPDATE titles SET Entry_Count = Entry_Count + 1, Tarih = NOW() WHERE T_ID = :tid");
 					$ba -> bindValue(":tid",$baslikid);
 					$ba -> execute();
-					$ue = $link -> prepare("UPDATE memberinfo SET Post_Count = Post_Count+1 WHERE U_ID = :uid");
+					$ue = $link -> prepare("UPDATE memberinfo SET Post_Count = Post_Count + 1 WHERE U_ID = :uid");
 					$ue -> bindValue(":uid",$_SESSION['member']->U_ID);
 					$ue -> execute();
 					if ($aktif == 1)
