@@ -249,7 +249,7 @@ include_once 'funct.php';
 * @param $u : kullanıcı adı // bir başlıktaki $u'nun yazdıklarını göstermek için
 * @param $g : gün //istenen bir gün varsa, dün, bugün, belirli bir gün gibi
 * @param $p : sayfa numarası
-* @version v0.9
+* @version v0.91
 */
 	function entryGoster($eid=null,$t=null,$u=null,$g=null,$p=null) {
 		$MEMBER_LOGGED = isset($_SESSION['logged']) && $_SESSION['logged'];
@@ -268,6 +268,7 @@ include_once 'funct.php';
 		
 		$date_condition="";
 		
+		/* girdi çekme kısmı */
 		if (!empty($eid) && empty($u) && empty($g)) { //istenen tek bir entry ise
 			$e = $eid;
 			$baslik = !empty($t) ? $t : null;
@@ -281,11 +282,13 @@ include_once 'funct.php';
 				$es -> bindValue(":eid",$e);
 			}
 		}
+		
 		else if (empty($eid) && !empty($t) && !empty($u) && empty($g)) { //baslik ve nick
 			$es = $link -> prepare("SELECT E_ID,T_ID,U_ID,Girdi,Tarih,Duzenleme,u.Nick,b.Baslik FROM entries NATURAL JOIN (SELECT U_ID,Nick FROM members WHERE Nick = :nick) as u NATURAL JOIN (SELECT T_ID,Baslik FROM titles WHERE Baslik=:baslik) as b WHERE U_ID=u.U_ID AND T_ID=b.T_ID AND Aktif=1 AND Thrash=0 ORDER BY Tarih LIMIT $sayfa,$sayfabasinagirdi");
 			$es -> bindValue(":nick",$u);
 			$es -> bindValue(":baslik",$t);
 		}
+		
 		else if (empty($eid) && !empty($t) && !empty($u) && !empty($g)) { //baslik nick ve tarih
 			if ($g=="dun") 
 				$date_condition = "Tarih BETWEEN ADDDATE(CURDATE(), INTERVAL - 1 DAY) AND CURDATE()";
@@ -298,6 +301,7 @@ include_once 'funct.php';
 			$es -> bindValue(":nick",$u);
 			$es -> bindValue(":baslik",$t);
 		}
+		
 		else if (empty($eid) && !empty($t) && empty($u) && !empty($g)) { //baslik ve tarih
 			if ($g=="dun") 
 				$date_condition = "Tarih BETWEEN ADDDATE(CURDATE(), INTERVAL - 1 DAY) AND CURDATE()";
@@ -309,6 +313,7 @@ include_once 'funct.php';
 			$es = $link -> prepare("SELECT E_ID,T_ID,U_ID,Girdi,Tarih,Duzenleme,u.Nick,b.Baslik FROM ((entries NATURAL JOIN (SELECT T_ID,Baslik FROM titles WHERE Baslik=:baslik) as b) NATURAL JOIN (SELECT U_ID,Nick FROM members) as u) WHERE T_ID=b.T_ID AND Aktif=1 AND Thrash=0 AND $date_condition ORDER BY Tarih LIMIT $sayfa,$sayfabasinagirdi");
 			$es -> bindValue(":baslik",$t);
 		}
+		
 		else if (empty($eid) && !empty($t) && empty($u) && empty($g)) { //sadece baslik
 			$baslik = $t; 
 			$baslikidcek = $link -> prepare("SELECT T_ID FROM titles WHERE Baslik=:tname");
@@ -319,60 +324,72 @@ include_once 'funct.php';
 			$es = $link -> prepare("SELECT E_ID,T_ID,U_ID,Girdi,Tarih,Duzenleme,n.Nick from entries NATURAL JOIN (SELECT U_ID,Nick FROM members) as n WHERE T_ID=:tid AND Aktif=1 AND Thrash=0 ORDER BY Tarih LIMIT $sayfa,$sayfabasinagirdi");
 			$es -> bindValue(":tid",$bi);
 		}
+		
 		else { //T_ID=1 olan başlığı göster -- daha sonra domain name'i içeren başlığı göstericek.
 			$es = $link -> prepare("SELECT E_ID,T_ID,U_ID,Girdi,Tarih,Duzenleme,u.Nick,t.Baslik FROM ((entries NATURAL JOIN (SELECT U_ID,Nick FROM members) as u) NATURAL JOIN (SELECT T_ID,Baslik FROM titles WHERE T_ID=1) as t) WHERE T_ID=1 AND Aktif=1 AND Thrash=0 ORDER BY Tarih LIMIT $sayfa,$sayfabasinagirdi");
 		}
+		
 		$es -> execute();
+		/* /girdi çekme kısmı */
+		
 		if (!$es->rowCount())
 			echo "<i>bütün uğraşlarımıza rağmen bu şartlara uyan entry bulamadık.</i>";
 		else {			
 			$girdi = $es -> fetchAll(PDO::FETCH_ASSOC);
 			
-			//sayfa sayma
+			/* sayfa sayma */
 			if (!empty($eid) && empty($u) && empty($g)) { //tek entry
 				$toplamgirdi=1;
 			}
+			
 			else if (empty($eid) && !empty($t) && !empty($u) && empty($g)) { //başlık ve nick
-				$say = $link -> prepare("SELECT COUNT(E_ID) as ttl FROM entries WHERE T_ID=:tid AND U_ID=:uid AND Aktif = 1 AND Thrash = 0 GROUP BY T_ID");
+				$say = $link -> prepare("SELECT COUNT(E_ID) as ttl FROM entries WHERE T_ID=:tid AND U_ID=:uid AND Aktif = 1 AND Thrash = 0");
 				$say -> bindValue(":tid",$girdi[0]['T_ID']);
 				$say -> bindValue(":uid",$girdi[0]['U_ID']);
 				$say -> execute();
 				$sayf = $say->fetch(PDO::FETCH_ASSOC);
 				$toplamgirdi = $sayf['ttl'];
 			}
+			
 			else if (empty($eid) && !empty($t) && !empty($u) && !empty($g)) { //başlık nick ve gün
-				$say = $link -> prepare("SELECT COUNT(E_ID) as ttl FROM entries WHERE T_ID=:tid AND U_ID=:uid AND $date_condition AND Aktif = 1 AND Thrash = 0 GROUP BY T_ID");
+				$say = $link -> prepare("SELECT COUNT(E_ID) as ttl FROM entries WHERE T_ID=:tid AND U_ID=:uid AND $date_condition AND Aktif = 1 AND Thrash = 0");
 				$say -> bindValue(":tid",$girdi[0]['T_ID']);
 				$say -> bindValue(":uid",$girdi[0]['U_ID']);
 				$say -> execute();
 				$sayf = $say->fetch(PDO::FETCH_ASSOC);
 				$toplamgirdi = $sayf['ttl'];			
 			}
+			
 			else if (empty($eid) && !empty($t) && empty($u) && !empty($g)) { //başlık ve gün
-				$say = $link -> prepare("SELECT COUNT(E_ID) as ttl FROM entries WHERE T_ID=:tid AND $date_condition AND Aktif = 1 AND Thrash = 0 GROUP BY T_ID");
+				$say = $link -> prepare("SELECT COUNT(E_ID) as ttl FROM entries WHERE T_ID=:tid AND $date_condition AND Aktif = 1 AND Thrash = 0");
 				$say -> bindValue(":tid",$girdi[0]['T_ID']);
 				$say -> execute();
 				$sayf = $say->fetch(PDO::FETCH_ASSOC);
 				$toplamgirdi = $sayf['ttl'];
 			}
+			
 			else if (empty($eid) && !empty($t) && empty($u) && empty($g)) { //sadece baslik
-				$say = $link -> prepare("SELECT COUNT(E_ID) as ttl FROM entries WHERE T_ID=:tid AND Aktif=1 AND Thrash=0 GROUP BY T_ID");
+				$say = $link -> prepare("SELECT COUNT(E_ID) as ttl FROM entries WHERE T_ID=:tid AND Aktif=1 AND Thrash=0");
 				$say -> bindValue(":tid",$girdi[0]['T_ID']);
 				$say -> execute();
 				$sayf = $say->fetch(PDO::FETCH_ASSOC);
 				$toplamgirdi = $sayf['ttl'];
 			}
+			
 			else { //T_ID=1
-				$say = $link -> query("SELECT COUNT(E_ID) as ttl FROM entries WHERE T_ID=1 AND Aktif = 1 AND Thrash = 0 GROUP BY T_ID");
+				$say = $link -> prepare("SELECT COUNT(E_ID) as ttl FROM entries WHERE T_ID=1 AND Aktif = 1 AND Thrash = 0");
 				$say -> execute();
 				$sayf = $say->fetch(PDO::FETCH_ASSOC);
 				$toplamgirdi = $sayf['ttl'];
 			}
-						
+			/* /sayfa sayma */
+			
 			$baslikadi = !empty($baslik)?$baslik:$girdi[0]['Baslik'];
 			
 			echo '<h3 style="text-align:left; margin-left:40px;">'.$baslikadi.'</h3><input type="hidden" value="'.$baslikadi.'" id="baslikd" />';
-			if ($toplamgirdi>$sayfabasinagirdi) { //üst kısım sayfalama
+			
+			/* üst kısım sayfalama */
+			if ($toplamgirdi>$sayfabasinagirdi) {
 				$toplamsayfa = ceil($toplamgirdi/$sayfabasinagirdi);
 				if ($toplamsayfa>1) {
 					echo '<div id="sayfalar" style="position:absolute;right:0;top:0;font-size:8pt;">';
@@ -396,9 +413,12 @@ include_once 'funct.php';
 				echo '</div>';
 				}
 			}
+			/* /üst kısım sayfalama */
 			echo'<ol class="girdiler">';
 			
 			for ($i=0;$i<count($girdi);$i++) {
+			
+				/* düzenleme */
 				$duzen = $girdi[$i]['Duzenleme'];
 				if (!$duzen)
 					$duzenleme = "";
@@ -408,33 +428,29 @@ include_once 'funct.php';
 					else
 						$duzenleme = " ~ ".substr($duzen,0,16);
 				}
-				if (!empty($eid) && empty($u) && empty($g)) { //tek entry
-					$sk = $link -> query("SELECT COUNT(E_ID) as listnumber FROM entries WHERE T_ID=".$girdi[$i]['T_ID']." AND E_ID BETWEEN 1 AND ".$girdi[$i]['E_ID']." AND Aktif = 1 AND Thrash = 0 ORDER BY Tarih");
+				/* /düzenleme */
+				
+				/* liste numarası alma */
+				if ((!empty($eid) && empty($u) && empty($g)) || (empty($eid) && !empty($t) && !empty($u) && empty($g)) || (empty($eid) && !empty($t) && !empty($u) && !empty($g)) || (empty($eid) && !empty($t) && empty($u) && !empty($g))) { //entry, başlık ve nick, başlık nick ve gün, başlık gün
+					$sk = $link -> prepare("SELECT COUNT(E_ID) as listnumber FROM entries WHERE T_ID=:tid AND E_ID BETWEEN 1 AND :eid AND Aktif = 1 AND Thrash = 0 ORDER BY Tarih");
+					$sk -> bindValue(":tid",$girdi[$i]['T_ID']);
+					$sk -> bindValue(":eid",$girdi[$i]['E_ID']);
+					$sk -> execute();
 					$s = $sk -> fetch(PDO::FETCH_ASSOC);
 				}
-				else if (empty($eid) && !empty($t) && !empty($u) && empty($g)) { //başlık ve nick
-					$sk = $link -> query("SELECT COUNT(E_ID) as listnumber FROM entries WHERE T_ID=".$girdi[$i]['T_ID']." AND E_ID BETWEEN 1 AND ".$girdi[$i]['E_ID']." AND Aktif = 1 AND Thrash = 0 ORDER BY Tarih");
-					$s = $sk -> fetch(PDO::FETCH_ASSOC);
-				}
-				else if (empty($eid) && !empty($t) && !empty($u) && !empty($g)) { //başlık nick ve gün
-					$sk = $link -> query("SELECT COUNT(E_ID) as listnumber FROM entries WHERE T_ID=".$girdi[$i]['T_ID']." AND E_ID BETWEEN 1 AND ".$girdi[$i]['E_ID']." AND $date_condition AND Aktif = 1 AND Thrash = 0 ORDER BY Tarih");
-					$s = $sk -> fetch(PDO::FETCH_ASSOC);			
-				}
-				else if (empty($eid) && !empty($t) && empty($u) && !empty($g)) { //başlık ve gün
-					$sk = $link -> query("SELECT COUNT(E_ID) as listnumber FROM entries WHERE T_ID=".$girdi[$i]['T_ID']." AND E_ID BETWEEN 1 AND ".$girdi[$i]['E_ID']." AND $date_condition AND Aktif = 1 AND Thrash = 0 ORDER BY Tarih");
-					$s = $sk -> fetch(PDO::FETCH_ASSOC);
-				}
-				else if (empty($eid) && !empty($t) && empty($u) && empty($g)) { //sadece başlık
+				
+				else { //sadece başlık veya T_ID=1 durumu
 					$s = 1;
-				}
-				else { //T_ID=1
-					$s = 1;
-				}
+				}			
+				
 				if ($s!=1) 
 					$no = $s['listnumber'];
 				else {
 					$no = $sayfa + $i + 1;
 				}
+				/* /liste numarası alma */
+				
+				/* görünüm */
 				echo '<li class="girdi" value="'.$no.'">';
 				echo girdiControl($girdi[$i]['Girdi']);
 				echo '<div class="yazarinfo">(<a href="goster.php?t='.yazarBoslukSil($girdi[$i]['Nick']).'" id="yazar" rel="'.$girdi[$i]['U_ID'].'">'.$girdi[$i]['Nick'].'</a>, '.substr($girdi[$i]['Tarih'],0,16).''.$duzenleme.')</div><div class="ymore"><a href="goster.php?e='.$girdi[$i]['E_ID'].'" id="entryid">#'.$girdi[$i]['E_ID'].'</a>';
@@ -453,9 +469,12 @@ include_once 'funct.php';
 				//herkesin gördüğü
 				echo '&nbsp;<button type="button" onClick="location.href=\'yazar.php?y='.yazarBoslukSil($girdi[$i]['Nick']).'\'" id="eyh" class="minib" title="yazar hakkında">?</button>&nbsp;<button type="button" onClick="location.href=\'sikayet.php?e='.$girdi[$i]['E_ID'].'\'" id="esb" class="minib" title="şikayet et">!</button>';
 				echo '&nbsp;</div><div id="yazarmini"></div>';
-				echo '</li><br />';
+				echo '</li><br />';				
 			}
-			if ($toplamgirdi>$sayfabasinagirdi) { //alt kısım sayfalama
+			/* /görünüm */
+			
+			/* alt kısım sayfalama */
+			if ($toplamgirdi>$sayfabasinagirdi) {
 				$toplamsayfa = ceil($toplamgirdi/$sayfabasinagirdi);
 				if ($toplamsayfa>1) {
 					echo '<div id="sayfalar" style="position:absolute;right:0;font-size:8pt;">';
@@ -479,6 +498,8 @@ include_once 'funct.php';
 				echo '</div>';
 				}
 			}
+			/* /alt kısım sayfalama */
+			
 			echo '<br /></ol>';
 		}
 	}
