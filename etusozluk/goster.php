@@ -267,7 +267,6 @@ include_once 'funct.php';
 		}
 		
 		$date_condition="";
-		$bi = ""; //sadece başlık kısmı için. Sonradan implement'in zararları.
 		
 		if (!empty($eid) && empty($u) && empty($g)) { //istenen tek bir entry ise
 			$e = $eid;
