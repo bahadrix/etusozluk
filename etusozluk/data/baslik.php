@@ -20,15 +20,18 @@ try {
 				getCondByDate($gun, 'tarih', $_GET['gun'], $_GET['ay'], $_GET['yil'] ) : 
 				getCondByDate($gun, 'tarih');
 		
-			$titles = $DBO->query("SELECT titles.T_ID as id, titles.Baslik as baslik FROM titles WHERE $date_condition LIMIT $next_start,$per_page");
+			$titles = $DBO->query("SELECT titles.T_ID as id, titles.Baslik as baslik FROM titles WHERE $date_condition ORDER BY Tarih DESC LIMIT $next_start,$per_page");
 
-			$count = $DBO->query("SELECT count(E_ID) as count FROM entries WHERE $date_condition AND Aktif=1 AND Thrash=0 GROUP BY T_ID LIMIT $next_start,$per_page");
+			$count = $DBO->query("SELECT count(E_ID) as count,T_ID FROM entries WHERE $date_condition AND Aktif=1 AND Thrash=0 GROUP BY T_ID LIMIT $next_start,$per_page");
 
 			$t=$titles->fetchAll(PDO::FETCH_ASSOC);
 			$e=$count->fetchAll(PDO::FETCH_ASSOC);
 			
 			for ($i=0;$i<count($t);$i++) {
-				$t[$i]['count'] = $e[$i]['count'];
+				for ($j=0;$j<count($t);$j++) {
+					if ($t[$i]['id'] == $e[$j]['T_ID'])
+						$t[$i]['count'] = $e[$j]['count'];
+				}
 			}
 			
 		} else if (empty($_GET['g']) && !empty($_GET['y']) && empty($_GET['rast'])) { //yazar feed

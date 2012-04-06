@@ -897,7 +897,7 @@ function generateRows(selected, opt) {
 				$("#entrytextarea").tae("spoiler");
 			});
 			
-			$('#top-link').btt({ min:400, fadeSpeed:500 });
+			$('#top-link').btt({ min:300, fadeSpeed:500 });
 			$('#top-link').click(function(e) {
 				e.preventDefault();
 				$.scrollTo(0,300);
