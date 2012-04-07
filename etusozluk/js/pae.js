@@ -485,8 +485,67 @@ function generateRows(selected, opt) {
 
 /* ScrollTo Bitti*/
 
+/*
+* jQuery.ajaxQueue - A queue for ajax requests
+* 
+* (c) 2011 Corey Frang
+* Dual licensed under the MIT and GPL licenses.
+*
+* Requires jQuery 1.5+
+*/ 
+(function($) {
+
+// jQuery on an empty object, we are going to use this as our Queue
+var ajaxQueue = $({});
+
+$.ajaxQueue = function( ajaxOpts ) {
+    var jqXHR,
+        dfd = $.Deferred(),
+        promise = dfd.promise();
+
+    // queue our ajax request
+    ajaxQueue.queue( doRequest );
+
+    // add the abort method
+    promise.abort = function( statusText ) {
+
+        // proxy abort to the jqXHR if it is active
+        if ( jqXHR ) {
+            return jqXHR.abort( statusText );
+        }
+
+        // if there wasn't already a jqXHR we need to remove from queue
+        var queue = ajaxQueue.queue(),
+            index = $.inArray( doRequest, queue );
+
+        if ( index > -1 ) {
+            queue.splice( index, 1 );
+        }
+
+        // and then reject the deferred
+        dfd.rejectWith( ajaxOpts.context || ajaxOpts,
+            [ promise, statusText, "" ] );
+
+        return promise;
+    };
+
+    // run the actual query
+    function doRequest( next ) {
+        jqXHR = $.ajax( ajaxOpts )
+            .then( next, next )
+            .done( dfd.resolve )
+            .fail( dfd.reject );
+    }
+
+    return promise;
+};
+
+})(jQuery);
+
+/* ajaxQueue bitti */
+
 /* ETU SOZLUK KISMI
-* @version 0.3
+* @version 0.4
 */
 
 			/*$.fn.insertAtCaret = function (tagName) {
@@ -534,10 +593,63 @@ function generateRows(selected, opt) {
 			return /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(a)
 		};
 		
+		function ajaxla() {
+			$("#sharebox").remove();
+			$("#yazarminiinfo").remove();
+			$("#fbtw").remove();
+			$("#yi").remove();
+			$("textarea").css({resize: "none"});
+					
+			$(".girdi").hover(function() {
+				$(this).find(".ymore").show();				
+			}, function() {
+				$(this).find(".ymore").hide();
+			});
+			
+			var ytimer;
+			$("li #yazar").mouseenter(function() {
+				$cur = $(this);
+				ytimer = setTimeout(function() {yazarinfo($cur.attr("rel"),$cur.offset().left,$cur.offset().top);},500);
+			}).mouseleave(function() { clearTimeout(ytimer); });
+			
+			$('a[href*="goster.php?"]').click(function(e) {
+				e.preventDefault();
+				eS($(this).attr("href"));
+			});
+			
+			$("li #entryid").click(function(e) {
+				e.preventDefault();
+				e.stopPropagation();
+				sharebox($(this).text().substr(1),$(this).offset().left,$(this).offset().top);
+			});
+			
+			$("#bkz").click(function() {
+				$("#entrytextarea").tae("bkz");
+			});
+			
+			$("#gizlibkz").click(function() {
+				$("#entrytextarea").tae("gizli");
+			});
+			
+			$("#spoiler").click(function() {
+				$("#entrytextarea").tae("spoiler");
+			});
+			
+			$("#ehg").click(function() {
+				sayfa = $(this).attr("rel");
+				eS(sayfa);
+			});
+		};
+		
 		function boslukSil(a) {
 			var baslik = a.replace(/ /g,"+");
 			return baslik;
-		}
+		};
+		
+		function ejf(o) {
+			var a = o.replace(/\\\//g,"/");
+			return a;
+		};
 		
 		function ep( s,w,h ) {
 		if (!h) h = 200;
@@ -599,6 +711,121 @@ function generateRows(selected, opt) {
 				}
 			});
 		};
+		
+		function eS(link) {
+			var loading = 'Başlık yükleniyor... <br/><img src="img/1.gif">';
+			$e = $('#entries');
+			$e.empty().append(loading);
+			$.ajaxQueue({
+				url: link,
+				dataType: "json",
+				async: false,
+				success: function(data) {
+					$e.empty();
+					if (data.code) { //hata döndüyse
+						$e.append("<i>"+data.message+"</i>");
+					}
+					else if (data.log) { //hata yoksa
+						$e.append('<h3 style="text-align:left; margin-left:40px;">'+data.baslik+'</h3><input type="hidden" value="'+data.baslik+'" id="baslikd" />');
+						
+						/* üst kısım sayfalama */
+						if (Number(data.ts)>1) {
+							$e.append('<div id="sayfalar" style="position:absolute;right:0;top:0;font-size:8pt;"></div>');
+							if (Number(data.p)>1) {
+								syf = Number(data.p)-1;
+								$e.find('#sayfalar:first').append('<a href="'+data.url+'&p='+syf+'">&lt;&lt</a>');
+							}
+							$e.find('#sayfalar:first').append('<select class="sayfa" style="font-size:8pt;" onChange="location.href=\''+data.url+'&p=\'+(this.selectedIndex+1)" name="p">');
+							for (i=1;i<=Number(data.ts);i++) {
+								if (i==Number(data.p))
+									ekle = " selected";
+								else
+									ekle = "";
+								$e.find('#sayfalar:first .sayfa:last').append('<option value="'+i+'"'+ekle+'>'+i+'</option>');
+							}
+							$e.find('#sayfalar:first').append('/<a href="'+data.url+'&p='+data.ts+'">'+data.ts+'</a>');
+							if (data.p != data.ts) {
+								syf = Number(data.p)+1;
+								$e.find('#sayfalar:first').append('<a href="'+data.url+'&p='+syf+'">&gt;&gt</a>');
+							}
+						}
+						
+						/* /üst kısım sayfalama*/
+						
+						$e.append('<ol class="girdiler">');
+						/* Entry Göster */
+							$.each(data.girdiler, function(i,g) {
+								$e.find('ol:first').append('<li class="girdi" value="'+g.listnumber+'">');
+								$el = $e.find('li:last');
+								
+								$el.append(ejf(g.girdi));
+								$el.append('<div class="yazarinfo">(<a href="goster.php?t='+boslukSil(g.nick)+'" id="yazar" rel="'+g.id+'">'+g.nick+'</a>, '+g.tarih.substr(0,16)+''+g.duzen+')</div><div class="ymore"><a href="#" id="entryid">#'+g.eid+'</a></div>');
+								
+								$ely = $el.find('.ymore');
+								/* butonlar */
+									if (g.iyuf==1 && g.iih==1) {
+										$ely.append('&nbsp;<button type="button" onClick="ep(\'vote.php?id='+g.eid+'&o=1\')" class="minib" title="olmuş bu" id="+1">iyuf</button>&nbsp;<button type="button" onClick="ep(\'vote.php?id='+g.eid+'&o=-1\')" class="minib" title="böyle olmaz hacı" id="-1">ı ıh</button>');
+									}
+									if (g.duzenle==1) {
+										$ely.append('&nbsp;<button type="button" onClick="ep(\'edit.php?e='+g.eid+'\',\'820\',\'400\')" class="minib" id="eduz">düzelt</button>');
+									}
+									if (g.sil==1) {
+										$ely.append('&nbsp;<button type="button" onClick="ep(\'del.php?e='+g.eid+'\')" class="minib" title="sil" id="esil">X</button>');
+									}
+									if (g.favori==1) {
+										$ely.append('&nbsp;<button type="button" onClick="ep(\'fav.php?e='+g.eid+'\')" class="minib" title="favorilere ekle" id="efav">:D</button>');
+									}
+									if (g.mesaj==1) {
+										$ely.append('&nbsp;<button type="button" onClick="ep(\'mesaj.php?y='+boslukSil(g.nick)+'\',\'600\',\'400\')" class="minib" title="yazara mesaj atiyim" id="eymesaj">msj</button>');
+									}
+									$ely.append('&nbsp;<button type="button" onClick="location.href=\'yazar.php?y='+boslukSil(g.nick)+'\'" id="eyh" class="minib" title="yazar hakkında">?</button>&nbsp;<button type="button" onClick="location.href=\'sikayet.php?e='+g.eid+'\'" id="esb" class="minib" title="şikayet et">!</button>');
+									$el.append('&nbsp;<div id="yazarmini"></div>');
+								/* /butonlar */
+								$el.append('<br />');	
+					
+							});
+						/* /Entry Göster */
+						$e.append('<br />');
+						
+						/* alt kısım sayfalama*/
+						if (Number(data.ts)>1) {
+							$e.append('<div id="sayfalar" style="position:absolute;right:0;font-size:8pt;"></div>');
+							if (Number(data.p)>1) {
+								syf = Number(data.p)-1;
+								$e.find('#sayfalar:last').append('<a href="'+data.url+'&p='+syf+'">&lt;&lt</a>');
+							}
+							$e.find('#sayfalar:last').append('<select class="sayfa" style="font-size:8pt;" onChange="location.href=\''+data.url+'&p=\'+(this.selectedIndex+1)" name="p">');
+							for (i=1;i<=Number(data.ts);i++) {
+								if (i==Number(data.p))
+									ekle = " selected";
+								else
+									ekle = "";
+								$e.find('.sayfa:last').append('<option value="'+i+'"'+ekle+'>'+i+'</option>');
+							}
+							$e.find('#sayfalar:last').append('/<a href="'+data.url+'&p='+data.ts+'">'+data.ts+'</a>');
+							if (data.p != data.ts) {
+								syf = Number(data.p)+1;
+								$e.find('#sayfalar:last').append('<a href="'+data.url+'&p='+syf+'">&gt;&gt</a>');
+							}
+						}
+						/* /alt kısım sayfalama */
+					}
+					$e.append('<div style="text-align:center;" id="hg"></div>');
+					
+					if (Number(data.hgj)==1 && data.baslik!="") {
+						$('#hg').append('<button type="button" rel="goster.php?t='+boslukSil(data.baslik)+'" id="ehg">Hepsi Gelsin</button>');
+					}
+					if (Number(data.log)==1 && data.baslik!="") { 
+						$("#hg").append('<div style="text-align:left; padding-top:10px; padding-left:25px;">"'+data.baslik+'" hakkında söylemek istediklerim var diyorsan hadi durma:	<form action="ekle.php" method="post" id="yenigirdi" name="yenigirdi"><input type="hidden" name="t" value="'+data.baslik+'" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt(\'link: (başında http:// olmalı)\', \'http://\');if(isURL(a))$(\'#entrytextarea\').tae(\'url\',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi"></textarea><input type="submit" value="böyle olur" class="ebut" /><input type="submit" value="bunu sonra gönderirim" class="ebut" name="kaydet" /></form></div>');
+					}
+					ajaxla();
+				},
+				error: function (request, status, error) {
+					//alert(request.responseText);
+					$("#entries").empty().append('Hata oluştu lütfen tekrar deneyin.');
+				}
+			});
+		};
 
 		function gungetir(gun, p,rel) {
 			var loading = 'Başlıklar yükleniyor... <br /><img src="img/1.gif">';
@@ -616,8 +843,12 @@ function generateRows(selected, opt) {
 			  durum="&g="+gun.substr(4)+""+gun.substr(2,2)+""+gun.substr(0,2); //yıl-ay-gün
 			  yazi = gun.substr(0,2)+"."+gun.substr(2,2)+"."+gun.substr(4)+" yazılanlar:";
 			}
-			else if(gun == "yazar")
+			else if(gun == "yazar") {
 			  uza ="y="+rel;
+			  durum = "/@"+boslukSil(rel);
+			  var t = rel.replace(/\+/g," ");
+			  yazi = t + "'in son yazdıkları";
+			}
 			else {
 			  uza = "g=bugun";
 			  durum ="&g=bg";
@@ -625,7 +856,7 @@ function generateRows(selected, opt) {
 			}
 			  
 			$("#basliklar").empty().append(loading);
-			$.ajax({
+			$.ajaxQueue({
 				url: "data/baslik.php",
 				data: uza + "&page=" + p,
 				dataType: "json",
@@ -643,10 +874,10 @@ function generateRows(selected, opt) {
 							var sayi='';
 							if (item.count>1)
 							sayi='('+item.count+')';
-							$("#basliklar").append('<li class="b">-&nbsp;<a href=goster.php?t='+boslukSil(item.baslik)+''+durum+'>'+item.baslik+'</a> '+sayi+'</li>');
+							$("#basliklar").find('ul').append('<li class="b">-&nbsp;<a href=goster.php?t='+boslukSil(item.baslik)+''+durum+'>'+item.baslik+'</a> '+sayi+'</li>');
+							ajaxla();
 						}
 					});
-					$("#basliklar").append('</ul>');
 					if (rel!=null)
 						var c = getcount(gun,rel);
 					else
@@ -670,7 +901,7 @@ function generateRows(selected, opt) {
 			
 			$("#paginator").remove();
 			$("#basliklar").empty().append(loading);
-			$.ajax({
+			$.ajaxQueue({
 				url: "data/baslik.php",
 				data: "rast=1",
 				dataType: "json",
@@ -688,10 +919,10 @@ function generateRows(selected, opt) {
 							var sayi='';
 							if (item.count>1)
 							sayi='('+item.count+')';
-							$("#basliklar").append('<li class="b">-&nbsp;<a href=goster.php?t='+boslukSil(item.baslik)+'>'+item.baslik+'</a> '+sayi+'</li>');
+							$("#basliklar").find('ul').append('<li class="b">-&nbsp;<a href=goster.php?t='+boslukSil(item.baslik)+'>'+item.baslik+'</a> '+sayi+'</li>');
+							ajaxla();
 						}
 					});
-					$("#basliklar").append('</ul>');
 					}
 						
 				},
@@ -714,7 +945,7 @@ function generateRows(selected, opt) {
 			  uza ="?say=yazar&y="+rel;
 			else 
 			  uza = "?say=bugun";
-			$.ajax({
+			$.ajaxQueue({
 			  url: "count.php" +uza,
 			  async: false,
 			  success: function(data) {
@@ -788,12 +1019,12 @@ function generateRows(selected, opt) {
 					}, "json");
 				}
 		};
+		
 	$(document).ready(function() {
 		gungetir(0,1);
 		var c = getcount(0);
 		$("#page_count").val(Math.ceil(c / 50));
 		generateRows(1,0);
-		
 		$("#txt1").maxlength({slider: true, maxCharacters: 255} );
 		
 		$(".aramenu").click(function() {
@@ -806,10 +1037,10 @@ function generateRows(selected, opt) {
 			$(this).toggleClass("active");
 			return false;
 
-			});
-			
-		$("textarea").css({resize: "none"});
+		});
 		
+		ajaxla();
+				
 		$(".sikayetmenu").click(function() {
 
 			if ($(".aramenupanel:visible").length>0) {
@@ -857,24 +1088,6 @@ function generateRows(selected, opt) {
 				rastgetir();
 			});
 			
-			$("li #entryid").click(function(e) {
-				e.preventDefault();
-				e.stopPropagation();
-				sharebox($(this).text().substr(1),$(this).offset().left,$(this).offset().top);
-			});
-			
-			$(".girdi").hover(function() {
-				$(this).find(".ymore").show();				
-			}, function() {
-				$(this).find(".ymore").hide();
-			});
-			
-			var ytimer;
-			$("li #yazar").mouseenter(function() {
-				$cur = $(this);
-				ytimer = setTimeout(function() {yazarinfo($cur.attr("rel"),$cur.offset().left,$cur.offset().top);},500);
-			}).mouseleave(function() { clearTimeout(ytimer); });
-			
 			$("#titlea").click(function() {
 				if ($("#titlea").val() === "" || $("#titlea").val() === "Başlık Getir") 
 					$("#titlea").focus().val("");
@@ -883,18 +1096,6 @@ function generateRows(selected, opt) {
 			$("#titlea").blur(function() {
 				if ($("#titlea").val() === "" || $("#titlea").val() === "Başlık Getir") 
 					$(this).val("Başlık Getir");
-			});
-			
-			$("#bkz").click(function() {
-				$("#entrytextarea").tae("bkz");
-			});
-			
-			$("#gizlibkz").click(function() {
-				$("#entrytextarea").tae("gizli");
-			});
-			
-			$("#spoiler").click(function() {
-				$("#entrytextarea").tae("spoiler");
 			});
 			
 			$('#top-link').btt({ min:300, fadeSpeed:500 });
@@ -917,19 +1118,9 @@ function generateRows(selected, opt) {
 					$("#uyeol").find("span").text('Ben');
 					$("#loginbox").empty();
 					$("#loginbox").append('<p class="lgbaslik">' + data.nick + '</p><hr class="lg"/><p style="text-align:left; padding-left:50px; margin:0;"><a href="hq.php">HQ</a><br /><a href="mesaj.php">Mesajlar</a><br /><a href="getir.php?mode=ark">Arkadaşlar</a><br /><a href="getir.php?mode=kenar">Kenarda Duranlar</a><br /><a href="getir.php?mode=yeni">Yeni</a><br /><a href="login.php?logout">Çıkış</a></p>');
-					if ($("#baslikd").val()) { //tekrar çağırmak kirlilik, ilerde burasını direkt kaldırabilirim.
-						$("#hg").append('<div style="text-align:left; padding-top:10px; padding-left:25px;">"'+$("#baslikd").val()+'" hakkında söylemek istediklerim var diyorsan hadi durma:	<form action="ekle.php" method="post" id="yenigirdi" name="yenigirdi"><input type="hidden" name="t" value="'+$("#baslikd").val()+'" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt(\'link: (başında http:// olmalı)\', \'http://\');if(isURL(a))$(\'#entrytextarea\').tae(\'url\',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi"></textarea><input type="submit" value="böyle olur" class="ebut" /><input type="submit" value="bunu sonra gönderirim" class="ebut" name="kaydet" /></form></div>');
-						$("#bkz").click(function() {
-							$("#entrytextarea").tae("bkz");
-						});
-			
-						$("#gizlibkz").click(function() {
-							$("#entrytextarea").tae("gizli");
-						});
-			
-						$("#spoiler").click(function() {
-							$("#entrytextarea").tae("spoiler");
-						});
+					if ($("#baslikd").val()) { 
+						$("#hg").append('<div style="text-align:left; padding-top:10px; padding-left:25px;">"'+$("#baslikd").val()+'" hakkında söylemek istediklerim var diyorsan durma:	<form action="ekle.php" method="post" id="yenigirdi" name="yenigirdi"><input type="hidden" name="t" value="'+$("#baslikd").val()+'" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt(\'link: (başında http:// olmalı)\', \'http://\');if(isURL(a))$(\'#entrytextarea\').tae(\'url\',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi"></textarea><input type="submit" value="böyle olur" class="ebut" /><input type="submit" value="bunu sonra gönderirim" class="ebut" name="kaydet" /></form></div>');
+						ajaxla();
 					}
 				}
 				else if(data.code) {
@@ -941,7 +1132,6 @@ function generateRows(selected, opt) {
 			});
 			
 			$('#titlea').autocomplete(ac_config);
-			
 			
 	});
 

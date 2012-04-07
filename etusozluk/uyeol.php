@@ -1,5 +1,5 @@
 <?php
-include('common.php');
+include_once 'common.php';
 if (!$MEMBER_LOGGED) {
 try {
 $link = getPDO();
@@ -91,7 +91,7 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 ?>
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="tr-tr" lang="tr-tr" dir="ltr" >
 <head>
 		<title>ETÜ Sözlük</title>
@@ -236,7 +236,7 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 			<li id="iyuf"><a href="javascript:void(0);"><span>İyuf</span></a><div id="gizlimenu">Yok böyle girdi</div></li>
 			<li id="da-ara"><a href="javascript:void(0);" class="aramenu"><span>Ara</span></a></li>
 		</ul>
-		<div id="header"><div id="baslikarama" style="position:relative;left:40%;width:255px;margin:0;padding:0;"><form name="baslikara" action="goster.php"><div id="basara"></div><input type="text" value="Başlık Getir" id="titlea" name="t" size="30" maxlength="70" /><input type="submit" value="ara" /></form></div></div>
+		<div id="header"><div id="baslikarama" style="position:relative;left:40%;width:280px;margin:0;padding:0;"><form name="baslikara" action="goster.php"><div id="basara"></div><input type="text" value="Başlık Getir" id="titlea" name="t" size="30" maxlength="70" style="width:215px;" /><input type="submit" value="ara" /></form></div></div>
 		<div id="main">
 			<table cellspacing=0 cellpadding=0>
 				<tr>

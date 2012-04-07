@@ -6,7 +6,7 @@
 *	TODO: + direkt yazılan linkleri de link haline çevir.
 *		  + eğer domain içinde bir sayfaya link verilirse (bkz: )'a çevir.
 *		  + ek kontroller eklenebilir.
-* @version 0.16
+* @version 0.17
 *
 */
 	function girdiControl($girdi) {
@@ -24,14 +24,14 @@
 		if ($b) {
 			$bkzs = $sonuc[0];
 			for ($i=0;$i<$b;$i++) {
-				$ygirdi = str_replace($bkzs[$i],'(bkz: <a href="goster.php?t='.rawurlencode(trim($sonuc[1][$i])).'" style="color:#fecc00;">'.trim($sonuc[1][$i]).'</a>)',$ygirdi);
+				$ygirdi = str_replace($bkzs[$i],'(bkz: <a href="goster.php?t='.yazarBoslukSil(trim($sonuc[1][$i])).'" style="color:#fecc00;">'.trim($sonuc[1][$i]).'</a>)',$ygirdi);
 			}
 		}
 		$g = preg_match_all('/`\s?([a-z0-9ıüçöğş\^!$#€£~*\-_%!(&amp;)=?\/+(&quot;)(&#39;):;\.@ ]+)\s?`/uS', $ygirdi, $sonuc);
 		if ($g) {
 			$gbkzs = $sonuc[0];
 			for ($i=0;$i<$g;$i++) {
-				$ygirdi = str_replace($gbkzs[$i],'`<a href="goster.php?t='.rawurlencode(trim($sonuc[1][$i])).'" style="color:#fecc00;">'.trim($sonuc[1][$i]).'</a>`',$ygirdi);
+				$ygirdi = str_replace($gbkzs[$i],'`<a href="goster.php?t='.yazarBoslukSil(trim($sonuc[1][$i])).'" style="color:#fecc00;">'.trim($sonuc[1][$i]).'</a>`',$ygirdi);
 			}
 		}
 		//url kontrol, gözden geçirilmesi gerek

@@ -10,7 +10,7 @@
 		$link = getPDO();
 		
 		if (!empty($_POST['duzenle']) && !empty($_POST['ygirdi']) && !empty($_POST['u'])) {
-			if ($_SESSION['member']->U_ID == $_POST['u'] || $_SESSION['membil']->Yetki > 5) { //bilemedim tekrar lazım mı, ekledim :) 
+			if ($_SESSION['member']->U_ID == $_POST['u'] || $_SESSION['membil']->Yetki > 5) { 
 			$entry = strtolower($_POST['ygirdi']);
 			$entry = preg_replace('/(?:\n\s*){2,}/', "\n\n", $entry);
 			$entry = preg_replace('/^(?:\n\s*)*/','',$entry);
@@ -49,6 +49,7 @@
 			$st -> bindValue(":eid",$e);
 			$st -> execute();
 			if ($st->rowCount()==0) {
+				echo "hata bu bro";
 				echo "kardeş kardeşe yapmaz bunu.";
 			}
 			else {
@@ -57,7 +58,11 @@
 				$gb = $link->query("SELECT Baslik FROM titles WHERE T_ID =".$girdi['T_ID']);
 				$bslk = $gb -> fetch(PDO::FETCH_ASSOC);
 				$baslik = $bslk['Baslik'];
-				if ($_SESSION['member']->U_ID == $girdi['U_ID'] || $_SESSION['membil']->Yetki > 5) { //5 ve üstü de düzenleyebilir. 5 değişebilir.
+				
+				$gy = $link->query("SELECT Yetki FROM memberinfo WHERE U_ID = ".$girdi['U_ID']);
+				$yk = $gy -> fetch(PDO::FETCH_ASSOC);
+				$yetki = $yk['Yetki'];
+				if ($_SESSION['member']->U_ID == $girdi['U_ID'] || ($_SESSION['membil']->Yetki > 5 && $_SESSION['membil']->Yetki > $yetki)) { //5 ve üstü de düzenleyebilir. 5 değişebilir.
 					if ($_SESSION['member']->U_ID==$girdi['U_ID']) $ek = "nızı"; else $ek = "yı";
 					echo '"'.$baslik.'" hakkındaki yazı'.$ek.' düzenliyorsunuz: <br /><div style="text-align:left; padding-top:10px; padding-left:25px;"><form action="edit.php?e='.$e.'" method="post" name="girdiduzen"><input type="hidden" name="u" value="'.$girdi['U_ID'].'" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt(\'link: (başında http:// olmalı)\', \'http://\');if(isURL(a))$(\'#entrytextarea\').tae(\'url\',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi">'.$girdi['Girdi'].'</textarea><input type="submit" value="bu daha iyi" name="duzenle" class="ebut" /></form></div>';
 					echo '<br /><br /><button type="button" onClick="window.close()">vazgeçtim böyle kalsın</button>';
