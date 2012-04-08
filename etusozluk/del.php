@@ -49,9 +49,15 @@
 					$sd -> bindValue(":eid",$eid);
 				}
 				if ($sd -> execute()) {				
-				//başlıktaki entry_count'ı azalt
-					$sb = $link -> prepare("UPDATE titles SET Entry_Count = Entry_Count-1 WHERE T_ID = :tid");
+				//başlıktaki entry_count'ı azalt ve Tarih'i bir önceki entry'nin tarihine çek
+					$ged = $link -> prepare("SELECT Tarih FROM entries WHERE T_ID=:tid AND Aktif=1 AND Thrash=0 ORDER BY Tarih DESC");
+					$ged -> bindValue(":tid",$ebilgi['T_ID']);
+					$ged -> execute();
+					$bioncekitarih = $ged->fetch(PDO::FETCH_ASSOC); //ilk veriyi çek
+					
+					$sb = $link -> prepare("UPDATE titles SET Entry_Count = Entry_Count-1, Tarih = :tarih WHERE T_ID = :tid");
 					$sb -> bindValue(":tid",$ebilgi['T_ID']);
+					$sb -> bindValue(":tarih",$bioncekitarih['Tarih']);
 					if($sb -> execute()) {
 						if ($durum) 
 							$mesaj = "entry silindi.";
