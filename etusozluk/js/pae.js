@@ -200,7 +200,7 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 /* /History */
 
 /* ETU SOZLUK KISMI
-* @version 0.4
+* @version 0.5
 */
 
 			/*$.fn.insertAtCaret = function (tagName) {
@@ -350,7 +350,7 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 								syf = Number(data.p)-1;
 								$e.find('#sayfalar:first').append('<a href="'+data.url+'&p='+syf+'">&lt;&lt</a>');
 							}
-							$e.find('#sayfalar:first').append('<select class="sayfa" style="font-size:8pt;" onChange="location.href=\''+data.url+'&p=\'+(this.selectedIndex+1)" name="p">');
+							$e.find('#sayfalar:first').append('<select class="sayfa" style="font-size:8pt;" onChange="location.href=\''+data.url+'&p=\'+(this.selectedIndex+1)" name="p">'); 
 							for (i=1;i<=Number(data.ts);i++) {
 								if (i==Number(data.p))
 									ekle = " selected";
@@ -573,10 +573,7 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 		};
 		
 		function yazarinfo(id,posX,posY) {
-			$("#sharebox").remove();
-			$("#yazarminiinfo").remove();
-			$("#fbtw").remove();
-			$("#yi").remove();
+			fS();
 			var bilgi="";
 			$.post("yazarmini.php", {yid:id}, function(data) {
 				bilgi += '<div id="yazarminiinfo">' + data + '<div class="kapat"></div></div>';
@@ -591,10 +588,7 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 		};
 		
 		function sharebox(eid,posX,posY) {
-			$("#yazarminiinfo").remove();
-			$("#sharebox").remove();
-			$("#fbtw").remove();
-			$("#yi").remove();
+			fS();
 			var bilgi="";
 			bilgi += '<div id="sharebox"><input type="text" name="eadres" id="eadres" value="http://www.etusozluk.com/goster.php?e='+eid+'"/><br /><div style="position:relative; left:50px; top:2px; text-align:left; background-color:#000; width:50px;"><a type="button" name="fb_share" share_url="http://www.etusozluk.com/goster.php?eid='+eid+'">Paylaş</a></div><div style="position:relative; left:50px; top:5px; text-align:left; background-color:#000; width:50px;"><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.etusozluk.com/goster.php?eid='+eid+'" data-via="etusozluk" data-lang="tr" data-count="none"></a><br /></div><div class="kapat"></div></div>';
 			$('body').append('<div id="fbtw"><script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" type="text/javascript"></script><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script></div>');
@@ -643,6 +637,40 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 				}
 		};
 		
+	$(document).on("click",'a[href*="goster.php?"]', function(e) {
+			e.preventDefault();
+			eS($(this).attr("href"));
+	});
+	$(document).on("mouseenter",'.girdi',function() {
+		$(this).find(".ymore").show();
+	});
+	$(document).on("mouseleave",'.girdi',function() {
+		$(this).find(".ymore").hide();
+	});
+	$(document).on("click","li #entryid",function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		sharebox($(this).text().substr(1),$(this).offset().left,$(this).offset().top);
+	});
+	var ytimer;
+	$(document).on("mouseenter","li #yazar",function() {
+		$cur = $(this);
+		ytimer = setTimeout(function() {yazarinfo($cur.attr("rel"),$cur.offset().left,$cur.offset().top);},500);
+	});
+	$(document).on("mouseleave","li #yazar",function() { clearTimeout(ytimer); });
+	$(document).on("click","#ehg",function() {
+			sayfa = $(this).attr("rel");
+			eS(sayfa);
+	});	
+	$(document).on("click","#bkz",function() {
+		$("#entrytextarea").tae("bkz");
+	});
+	$(document).on("click","#gizlibkz",function() {
+		$("#entrytextarea").tae("gizli");
+	});
+	$(document).on("click","#spoiler",function() {
+		$("#entrytextarea").tae("spoiler");
+	});
 	$(document).ready(function() {
 		var c = getcount(0);
 		gungetir(0,1);
@@ -650,44 +678,6 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 		generateRows(1,0);
 		$("#txt1").maxlength({slider: true, maxCharacters: 255} );
 		
-		$(".girdi").live("mouseenter", function() {
-			$(this).find(".ymore").show();
-		}).live("mouseleave", function() { $(this).find(".ymore").hide(); });
-		
-		$('a[href*="goster.php?"]').live("click", function(e) { 
-			e.preventDefault();
-			eS($(this).attr("href"));
-		});
-		
-		var ytimer;
-		$("li #yazar").live("mouseenter", function() {
-			$cur = $(this);
-			ytimer = setTimeout(function() {yazarinfo($cur.attr("rel"),$cur.offset().left,$cur.offset().top);},500);
-		}).live("mouseleave", function() { clearTimeout(ytimer); });
-			
-		$("li #entryid").live("click",function(e) {
-			e.preventDefault();
-			e.stopPropagation();
-			sharebox($(this).text().substr(1),$(this).offset().left,$(this).offset().top);
-		});
-		
-					
-		$("#bkz").live("click",function() {
-			$("#entrytextarea").tae("bkz");
-		});
-			
-		$("#gizlibkz").live("click",function() {
-			$("#entrytextarea").tae("gizli");
-		});
-			
-		$("#spoiler").live("click",function() {
-			$("#entrytextarea").tae("spoiler");
-		});
-			
-		$("#ehg").live("click",function() {
-			sayfa = $(this).attr("rel");
-			eS(sayfa);
-		});		
 		
 		$(".aramenu").click(function() {
 			if ($(".sikayetmenupanel:visible").length>0) {
@@ -776,9 +766,11 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 							$("#uyeol").find("span").text('Ben');
 							$("#loginbox").empty();
 							$("#loginbox").append('<p class="lgbaslik">' + data.nick + '</p><hr class="lg"/><p style="text-align:left; padding-left:50px; margin:0;"><a href="hq.php">HQ</a><br /><a href="mesaj.php">Mesajlar</a><br /><a href="getir.php?mode=ark">Arkadaşlar</a><br /><a href="getir.php?mode=kenar">Kenarda Duranlar</a><br /><a href="getir.php?mode=yeni">Yeni</a><br /><a href="login.php?logout">Çıkış</a></p>');
-							if ($("#baslikd").val()) { 
-								$("#hg").append('<div style="text-align:left; padding-top:10px; padding-left:25px;">"'+$("#baslikd").val()+'" hakkında söylemek istediklerim var diyorsan durma:	<form action="ekle.php" method="post" id="yenigirdi" name="yenigirdi"><input type="hidden" name="t" value="'+$("#baslikd").val()+'" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt(\'link: (başında http:// olmalı)\', \'http://\');if(isURL(a))$(\'#entrytextarea\').tae(\'url\',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi"></textarea><input type="submit" value="böyle olur" class="ebut" /><input type="submit" value="bunu sonra gönderirim" class="ebut" name="kaydet" /></form></div>');
-							}
+							//if (location.pathname.toString().substr(14).match("^goster.php")=="goster.php") //bu daha güvenli gibi şu an localhost ve klasör ismi olduğunda kullanamıyorum.
+							if (location.pathname.toString().indexOf("/goster.php")!=-1)
+								eS(location.pathname+location.search);
+							if (location.pathname.toString().indexOf("/index.php")!=-1 && $('li #entryid').text()!="" )
+								eS("goster.php?e="+$('li #entryid').text().substr(1));
 						}
 						else if(data.code) {
 							$('#hata').remove();
@@ -787,9 +779,7 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 					}
 				});
 			});
-			
 			$('#titlea').autocomplete(ac_config);
-			
 	});
 
 /* ETU SOZLUK KISMI BITIS */
