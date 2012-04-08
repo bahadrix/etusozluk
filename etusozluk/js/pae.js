@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SU AN OLANLAR
  * Pagination version custometumade http://www.myphpetc.com/2009/10/easy-pagination-with-jquery-and-ajax.html
  * Maxlength version 1.0.5 http://www.stjerneman.com/demo/maxlength-with-jquery
@@ -248,52 +248,12 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 			return /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(a)
 		};
 		
-		function ajaxla() {
+		function fS() {
 			$("#sharebox").remove();
 			$("#yazarminiinfo").remove();
 			$("#fbtw").remove();
 			$("#yi").remove();
-			$("textarea").css({resize: "none"});
-					
-			$(".girdi").hover(function() {
-				$(this).find(".ymore").show();				
-			}, function() {
-				$(this).find(".ymore").hide();
-			});
-			
-			var ytimer;
-			$("li #yazar").mouseenter(function() {
-				$cur = $(this);
-				ytimer = setTimeout(function() {yazarinfo($cur.attr("rel"),$cur.offset().left,$cur.offset().top);},500);
-			}).mouseleave(function() { clearTimeout(ytimer); });
-			
-			$('a[href*="goster.php?"]').one("click", function(e) { //burası exponential olarak artıyor başlık kısmında.
-				e.preventDefault();
-				eS($(this).attr("href"));
-			});
-			
-			$("li #entryid").click(function(e) {
-				e.preventDefault();
-				e.stopPropagation();
-				sharebox($(this).text().substr(1),$(this).offset().left,$(this).offset().top);
-			});
-			
-			$("#bkz").click(function() {
-				$("#entrytextarea").tae("bkz");
-			});
-			
-			$("#gizlibkz").click(function() {
-				$("#entrytextarea").tae("gizli");
-			});
-			
-			$("#spoiler").click(function() {
-				$("#entrytextarea").tae("spoiler");
-			});
-			
-			$("#ehg").one("click",function() {
-				sayfa = $(this).attr("rel");
-				eS(sayfa);
-			});
+			$("textarea").css({resize: "none"});	
 		};
 		
 		function boslukSil(a) {
@@ -473,7 +433,7 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 					if (Number(data.log)==1 && data.baslik!="") { 
 						$("#hg").append('<div style="text-align:left; padding-top:10px; padding-left:25px;">"'+data.baslik+'" hakkında söylemek istediklerim var diyorsan hadi durma:	<form action="ekle.php" method="post" id="yenigirdi" name="yenigirdi"><input type="hidden" name="t" value="'+data.baslik+'" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt(\'link: (başında http:// olmalı)\', \'http://\');if(isURL(a))$(\'#entrytextarea\').tae(\'url\',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi"></textarea><input type="submit" value="böyle olur" class="ebut" /><input type="submit" value="bunu sonra gönderirim" class="ebut" name="kaydet" /></form></div>');
 					}
-					ajaxla();
+					fS();
 				},
 				error: function (request, status, error) {
 					//alert(request.responseText);
@@ -540,7 +500,6 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 					$("#page_count").val(Math.ceil(c / 50));
 					generateRows(i,gun);
 					}
-					ajaxla();
 				},
 
 					error: function (request, status, error) {
@@ -579,7 +538,6 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 						}
 					});
 					}
-					ajaxla();
 				},
 
 					error: function (request, status, error) {
@@ -659,10 +617,16 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 				appendTo: '#basara',
 				source: function(request,response) {
 					$.post("ara.php",{t:request.term}, function(data) {
+						var x = false;
 						$('#basara').addClass('basara').empty().show();
 						$.each(data, function(i,item) {
-							$('#basara').append('<a href="goster.php?t='+boslukSil(item.Baslik)+'" id="baslikaraid">'+item.Baslik+'</a><br />');
+							if (item.Baslik!=null) {
+								x = true;
+								$('#basara').append('<a href="goster.php?t='+boslukSil(item.Baslik)+'" id="baslikaraid">'+item.Baslik+'</a><br />');
+							}
 						});
+						if (x)
+							$('#basara').show();
 						$('#baslikaraid').click(function(e) {
 							e.preventDefault();
 							$('#basara').fadeOut(250);
@@ -679,11 +643,50 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 		};
 		
 	$(document).ready(function() {
-		gungetir(0,1);
 		var c = getcount(0);
+		gungetir(0,1);
 		$("#page_count").val(Math.ceil(c / 50));
 		generateRows(1,0);
 		$("#txt1").maxlength({slider: true, maxCharacters: 255} );
+		
+		$(".girdi").live("mouseenter", function() {
+			$(this).find(".ymore").show();
+		}).live("mouseleave", function() { $(this).find(".ymore").hide(); });
+		
+		$('a[href*="goster.php?"]').live("click", function(e) { 
+			e.preventDefault();
+			eS($(this).attr("href"));
+		});
+		
+		var ytimer;
+		$("li #yazar").live("mouseenter", function() {
+			$cur = $(this);
+			ytimer = setTimeout(function() {yazarinfo($cur.attr("rel"),$cur.offset().left,$cur.offset().top);},500);
+		}).live("mouseleave", function() { clearTimeout(ytimer); });
+			
+		$("li #entryid").live("click",function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			sharebox($(this).text().substr(1),$(this).offset().left,$(this).offset().top);
+		});
+		
+					
+		$("#bkz").live("click",function() {
+			$("#entrytextarea").tae("bkz");
+		});
+			
+		$("#gizlibkz").live("click",function() {
+			$("#entrytextarea").tae("gizli");
+		});
+			
+		$("#spoiler").live("click",function() {
+			$("#entrytextarea").tae("spoiler");
+		});
+			
+		$("#ehg").live("click",function() {
+			sayfa = $(this).attr("rel");
+			eS(sayfa);
+		});		
 		
 		$(".aramenu").click(function() {
 			if ($(".sikayetmenupanel:visible").length>0) {
@@ -697,8 +700,6 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 
 		});
 		
-		//ajaxla();
-				
 		$(".sikayetmenu").click(function() {
 
 			if ($(".aramenupanel:visible").length>0) {
@@ -765,26 +766,25 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 				$('input[name="login"]').attr("disabled","disabled");
 				$('input[name="login"]').addClass('disabled');
 				setTimeout('enBu()', 5000);
-				$.ajax({
-				url: "login.php",
-				dataType: "json",
-				data: "login&"+$(this).serialize(),
-				success: function(data) {
-				if (data.durum) {
-					$("#uyeol").find("span").text('Ben');
-					$("#loginbox").empty();
-					$("#loginbox").append('<p class="lgbaslik">' + data.nick + '</p><hr class="lg"/><p style="text-align:left; padding-left:50px; margin:0;"><a href="hq.php">HQ</a><br /><a href="mesaj.php">Mesajlar</a><br /><a href="getir.php?mode=ark">Arkadaşlar</a><br /><a href="getir.php?mode=kenar">Kenarda Duranlar</a><br /><a href="getir.php?mode=yeni">Yeni</a><br /><a href="login.php?logout">Çıkış</a></p>');
-					if ($("#baslikd").val()) { 
-						$("#hg").append('<div style="text-align:left; padding-top:10px; padding-left:25px;">"'+$("#baslikd").val()+'" hakkında söylemek istediklerim var diyorsan durma:	<form action="ekle.php" method="post" id="yenigirdi" name="yenigirdi"><input type="hidden" name="t" value="'+$("#baslikd").val()+'" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt(\'link: (başında http:// olmalı)\', \'http://\');if(isURL(a))$(\'#entrytextarea\').tae(\'url\',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi"></textarea><input type="submit" value="böyle olur" class="ebut" /><input type="submit" value="bunu sonra gönderirim" class="ebut" name="kaydet" /></form></div>');
-						ajaxla();
+				$.ajaxQueue({
+					url: "login.php",
+					dataType: "json",
+					data: "login&"+$(this).serialize(),
+					success: function(data) {
+						if (data.durum) {
+							$("#uyeol").find("span").text('Ben');
+							$("#loginbox").empty();
+							$("#loginbox").append('<p class="lgbaslik">' + data.nick + '</p><hr class="lg"/><p style="text-align:left; padding-left:50px; margin:0;"><a href="hq.php">HQ</a><br /><a href="mesaj.php">Mesajlar</a><br /><a href="getir.php?mode=ark">Arkadaşlar</a><br /><a href="getir.php?mode=kenar">Kenarda Duranlar</a><br /><a href="getir.php?mode=yeni">Yeni</a><br /><a href="login.php?logout">Çıkış</a></p>');
+							if ($("#baslikd").val()) { 
+								$("#hg").append('<div style="text-align:left; padding-top:10px; padding-left:25px;">"'+$("#baslikd").val()+'" hakkında söylemek istediklerim var diyorsan durma:	<form action="ekle.php" method="post" id="yenigirdi" name="yenigirdi"><input type="hidden" name="t" value="'+$("#baslikd").val()+'" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt(\'link: (başında http:// olmalı)\', \'http://\');if(isURL(a))$(\'#entrytextarea\').tae(\'url\',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi"></textarea><input type="submit" value="böyle olur" class="ebut" /><input type="submit" value="bunu sonra gönderirim" class="ebut" name="kaydet" /></form></div>');
+							}
+						}
+						else if(data.code) {
+							$('#hata').remove();
+							$('#loginbox').append('<p id="hata" style="color:#fecc00;"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span><strong>Hata: </strong>'+data.message+'</p>');
+						}
 					}
-				}
-				else if(data.code) {
-					$('#hata').remove();
-					$('#loginbox').append('<p id="hata" style="color:#fecc00;"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span><strong>Hata: </strong>'+data.message+'</p>');
-				}
-			}
-			});
+				});
 			});
 			
 			$('#titlea').autocomplete(ac_config);
