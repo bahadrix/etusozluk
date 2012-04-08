@@ -53,11 +53,21 @@
 					$ged = $link -> prepare("SELECT Tarih FROM entries WHERE T_ID=:tid AND Aktif=1 AND Thrash=0 ORDER BY Tarih DESC");
 					$ged -> bindValue(":tid",$ebilgi['T_ID']);
 					$ged -> execute();
-					$bioncekitarih = $ged->fetch(PDO::FETCH_ASSOC); //ilk veriyi çek
-					
-					$sb = $link -> prepare("UPDATE titles SET Entry_Count = Entry_Count-1, Tarih = :tarih WHERE T_ID = :tid");
-					$sb -> bindValue(":tid",$ebilgi['T_ID']);
-					$sb -> bindValue(":tarih",$bioncekitarih['Tarih']);
+					$bsil = true;
+					$bioncekitarih = array();
+					if ($ged->rowCount()) { //silinen entry ilk entry olabilir.--aktif=0 olan entry varsa onlar ne olacak?
+						$bsil = false;
+						$bioncekitarih = $ged->fetch(PDO::FETCH_ASSOC); //ilk veriyi çek
+					}
+					if ($bsil===true) {
+						$sb = $link -> prepare("DELETE FROM titles WHERE T_ID = :tid LIMIT 1");
+						$sb -> bindValue(":tid",$ebilgi['T_ID']);
+					}
+					else {
+						$sb = $link -> prepare("UPDATE titles SET Entry_Count = Entry_Count-1, Tarih = :tarih WHERE T_ID = :tid");
+						$sb -> bindValue(":tid",$ebilgi['T_ID']);
+						$sb -> bindValue(":tarih",$bioncekitarih['Tarih']);
+					}
 					if($sb -> execute()) {
 						if ($durum) 
 							$mesaj = "entry silindi.";
