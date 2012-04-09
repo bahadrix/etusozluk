@@ -97,6 +97,7 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 		<title>ETÜ Sözlük</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery-ui-1.8.18.custom.min.js"></script>
 		<script type="text/javascript" src="js/jquery.validate.min.js"></script>
 		<script type="text/javascript" src="js/pae.js"></script>
 		<link type="text/css" href="style/jquery-ui-1.8.18.custom.css" rel="stylesheet" />	
@@ -413,32 +414,6 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 					</tr>
 			</table></form>
 		</div>
-		<div class="sikayetmenupanel"><h3 style="text-align:left;">Araman İçin Hata mı Yapmam Gerek</h3><br /><form action="sikayet.php" method="post" name="skyt">
-				<table style="width:270px; text-align:center;">
-					<tr>
-					<td style="text-align:left;">Email:</td>
-					</tr>
-					<tr>
-					<td style="text-align:left;"><input type="text" name="email" maxlength="50" value="" class="sikayet"/></td>
-					</tr>
-					<tr>
-					<td style="text-align:left;">Konu:</td>
-					</tr>
-					<tr>
-					<td style="text-align:left;"><input type="text" name="konu" maxlength="50" value="" class="sikayet"/></td>
-					</tr>
-					<tr>
-					<td style="text-align:left;">İstek-Şikayet: </td>
-					</tr>
-					<tr>
-					<td style="margin-left:0;"><textarea id="txt1" name="sikayet" class="sikayet"></textarea></td>
-					</tr>
-					<tr>
-					<td style="text-align:center;"><input type="submit" name="gonder" value="Gönder" class="login"/></td>
-					</tr>
-			</table></form><font style="font-size:10px; margin-top:0px;">* Hatasız kul olmaz.</font>
-		</div>
-		<a class="sikayetmenu" href="#">İstek</a>
 		<?php include 'footer.php'; ?>
 	</body>
 </html> 

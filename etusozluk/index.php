@@ -64,8 +64,9 @@
 						echo '&nbsp;</div><div id="yazarmini"></div>';
 						echo '</li><br /></ol>';
 						}
+						$baslikadi = preg_replace('/ /','+',$baslikadi); //hepsi gelsin butonu için gerekiyor?
 						?>
-						<br /><div style="text-align:center;" id="hg"><?php if($var) { ?><button type="button" rel="goster.php?t=<?php echo yazarBoslukSil($baslikadi); ?>" id="ehg">Hepsi Gelsin</button>
+						<br /><div style="text-align:center;" id="hg"><?php if($var) { ?><button type="button" rel="goster.php?t=<?php echo $baslikadi; ?>" id="ehg">Hepsi Gelsin</button>
 						<?php if ($MEMBER_LOGGED) { ?>
 						<div style="text-align:left; padding-top:10px; padding-left:25px;">"<?php echo $baslikadi; ?>" hakkında söylemek istediklerim var diyorsan durma:
 						<form action="ekle.php" method="post" id="yenigirdi" name="yenigirdi"><input type="hidden" name="t" value="<?php echo $baslikadi; ?>" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt('link: (başında http:// olmalı)', 'http://');if(isURL(a))$('#entrytextarea').tae('url',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi"></textarea><input type="submit" value="böyle olur" class="ebut" /><input type="submit" value="bunu sonra gönderirim" class="ebut" name="kaydet" /></form></div><?php } } ?></div></div></div>

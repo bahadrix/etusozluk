@@ -9,7 +9,10 @@ include_once 'funct.php';
  
 /* global değişkenler */
 $link = getPDO();
-
+if (!empty($_REQUEST['p']) && is_numeric($_REQUEST['p']))
+	$p = $_REQUEST['p'];
+else								
+	$p = 1;
 /* /global değişkenler */
 if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') { //json 
 	if ($MEMBER_LOGGED) 
@@ -18,12 +21,7 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 		$log=0;
 	if (!empty($_REQUEST['t']) || !empty($_REQUEST['e'])) { //başlık veya entry istenmiş mi?
 		if (!empty($_REQUEST['t']) && empty($_REQUEST['e'])) { //başlık istenmiş mi?
-			$t = $_REQUEST['t'];
-			
-			if (!empty($_REQUEST['p']) && is_numeric($_REQUEST['p']))
-				$p = $_REQUEST['p'];
-			else								
-				$p = 1;
+			$t = $_REQUEST['t'];			
 										
 			$baslikentry = preg_split('/\//',$t);
 			$te = strpos($t,'/'); //t=baslik/bilgi şeklinde gelmiş olabilir.
@@ -110,9 +108,12 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 			else
 				echo '{"code":"1002","message":"bütün uğraşlarımıza rağmen böyle bir entry bulamadık.","baslik":"","hgj":"0","log":"'.$log.'"}';
 			}
-			else { //ne t ne e varsa direkt T_ID=1 olan başlığı göster.
-			entryGoster(null,null,null,null,null,true);
-			}
+		}
+		else { //ne t ne e varsa random başlık göster.
+			$es = $link -> prepare("SELECT T_ID,Baslik FROM titles ORDER BY RAND() LIMIT 1");
+			$es -> execute();
+			$baslikadi = $es -> fetch(PDO::FETCH_ASSOC);
+			entryGoster(null,$baslikadi['Baslik'],null,null,$p);
 		}
 }
 else { //normal görünüm
@@ -129,11 +130,6 @@ else { //normal görünüm
 						if (!empty($_REQUEST['t']) || !empty($_REQUEST['e'])) { //başlık veya entry istenmiş mi?
 							if (!empty($_REQUEST['t']) && empty($_REQUEST['e'])) { //başlık istenmiş mi?
 								$t = $_REQUEST['t'];
-								
-								if (!empty($_REQUEST['p']) && is_numeric($_REQUEST['p']))
-									$p = $_REQUEST['p'];
-								else								
-									$p = 1;
 										
 								$baslikentry = preg_split('/\//',$t);
 								$te = strpos($t,'/'); //t=baslik/bilgi şeklinde gelmiş olabilir.
@@ -226,14 +222,17 @@ else { //normal görünüm
 								}
 								else
 									echo "<i>bütün uğraşlarımıza rağmen böyle bir entry bulamadık.</i>";
-							}
-							else { //ne t ne e varsa direkt T_ID=1 olan başlığı göster.
-							$baslikentry[0]="etüsözlük";
-							entryGoster();
-							}
+							}							
+						}
+						else { //ne t ne e varsa random başlık göster.
+							$es = $link -> prepare("SELECT T_ID,Baslik FROM titles ORDER BY RAND() LIMIT 1");
+							$es -> execute();
+							$baslikadi = $es -> fetch(PDO::FETCH_ASSOC);
+							$baslikentry[0]=$baslikadi['Baslik'];
+							entryGoster(null,$baslikentry[0],null,null,$p);
 						}
 						?>	
-						<br /><div style="text-align:center;" id="hg"><?php if($var) { ?><button type="button" rel="goster.php?t=<?php echo yazarBoslukSil($baslikentry[0]); ?>" id="ehg">Hepsi Gelsin</button><?php } ?>
+						<div style="text-align:center;" id="hg"><?php if($var) { $baslikentry[0] = preg_replace('/ /','+',$baslikentry[0]);?><button type="button" rel="goster.php?t=<?php echo $baslikentry[0]; ?>" id="ehg">Hepsi Gelsin</button><?php } ?>
 						<?php if ($MEMBER_LOGGED) { ?>
 						<div style="text-align:left; padding-top:10px; padding-left:25px;">"<?php echo $baslikentry[0]; ?>" hakkında söylemek istediklerim var diyorsan durma:
 						<form action="ekle.php" method="post" id="yenigirdi" name="yenigirdi"><input type="hidden" name="t" value="<?php echo $baslikentry[0]; ?>" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt('link: (başında http:// olmalı)', 'http://');if(isURL(a))$('#entrytextarea').tae('url',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi"></textarea><input type="submit" value="böyle olur" class="ebut" /><input type="submit" value="bunu sonra gönderirim" class="ebut" name="kaydet" /></form></div><?php } ?></div></div>
@@ -271,6 +270,7 @@ include 'alt.php';
 		
 		$url = $_SERVER['REQUEST_URI'];
 		$url = preg_replace('/\&p(?:=[0-9])*/','',$url);
+		
 		
 		$sayfabasinagirdi = !empty($_SESSION['membil']) ? $_SESSION['membil']->Entry_Per_Page : 10;
 		if (!empty($p)) {			
@@ -341,10 +341,8 @@ include 'alt.php';
 			$bi = $bic['T_ID'];
 			$es = $link -> prepare("SELECT E_ID,T_ID,U_ID,Girdi,Tarih,Duzenleme,n.Nick from entries NATURAL JOIN (SELECT U_ID,Nick FROM members) as n WHERE T_ID=:tid AND Aktif=1 AND Thrash=0 ORDER BY Tarih LIMIT $sayfa,$sayfabasinagirdi");
 			$es -> bindValue(":tid",$bi);
-		}
-		
-		else { //T_ID=1 olan başlığı göster -- daha sonra domain name'i içeren başlığı göstericek.
-			$es = $link -> prepare("SELECT E_ID,T_ID,U_ID,Girdi,Tarih,Duzenleme,u.Nick,t.Baslik FROM ((entries NATURAL JOIN (SELECT U_ID,Nick FROM members) as u) NATURAL JOIN (SELECT T_ID,Baslik FROM titles WHERE T_ID=1) as t) WHERE T_ID=1 AND Aktif=1 AND Thrash=0 ORDER BY Tarih LIMIT $sayfa,$sayfabasinagirdi");
+			if (strpos($url,urlencode($t))===false) //random entry çekme durumu
+				$url = "goster.php?t=".yazarBoslukSil($t);
 		}
 		
 		$es -> execute();
@@ -392,13 +390,6 @@ include 'alt.php';
 			else if (empty($eid) && !empty($t) && empty($u) && empty($g)) { //sadece baslik
 				$say = $link -> prepare("SELECT COUNT(E_ID) as ttl FROM entries WHERE T_ID=:tid AND Aktif=1 AND Thrash=0");
 				$say -> bindValue(":tid",$girdi[0]['T_ID']);
-				$say -> execute();
-				$sayf = $say->fetch(PDO::FETCH_ASSOC);
-				$toplamgirdi = $sayf['ttl'];
-			}
-			
-			else { //T_ID=1
-				$say = $link -> prepare("SELECT COUNT(E_ID) as ttl FROM entries WHERE T_ID=1 AND Aktif = 1 AND Thrash = 0");
 				$say -> execute();
 				$sayf = $say->fetch(PDO::FETCH_ASSOC);
 				$toplamgirdi = $sayf['ttl'];
@@ -538,7 +529,7 @@ include 'alt.php';
 						$s = $sk -> fetch(PDO::FETCH_ASSOC);
 					}
 				
-					else { //sadece başlık veya T_ID=1 durumu
+					else { //sadece başlık durumu
 						$s = 1;
 					}			
 				
