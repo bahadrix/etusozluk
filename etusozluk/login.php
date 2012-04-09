@@ -59,7 +59,7 @@ try {
 		$_SESSION['member'] = $member;
 		$_SESSION['membil'] = $membil;
 		if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-			$JO = array("durum"=>"OK","nick"=>" ".$member->Nick." ");
+			$JO = array("durum"=>"OK","nick"=>"$member->Nick");
 			echo json_encode($JO);
 		}
 		else

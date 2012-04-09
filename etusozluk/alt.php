@@ -29,32 +29,16 @@
 					</tr>
 			</table></form>
 		</div>
-		<div class="sikayetmenupanel"><h3 style="text-align:left;">Araman İçin Hata mı Yapmam Gerek</h3><br /><form action="sikayet.php" method="post" name="skyt">
-				<table style="width:270px; text-align:center;">
-					<tr>
-					<td style="text-align:left;">Email:</td>
-					</tr>
-					<tr>
-					<td style="text-align:left;"><input type="text" name="email" maxlength="50" value="" class="sikayet"/></td>
-					</tr>
-					<tr>
-					<td style="text-align:left;">Konu:</td>
-					</tr>
-					<tr>
-					<td style="text-align:left;"><input type="text" name="konu" maxlength="50" value="" class="sikayet"/></td>
-					</tr>
-					<tr>
-					<td style="text-align:left;">İstek-Şikayet: </td>
-					</tr>
-					<tr>
-					<td style="margin-left:0;"><textarea id="txt1" name="sikayet" class="sikayet"></textarea></td>
-					</tr>
-					<tr>
-					<td style="text-align:center;"><input type="submit" name="gonder" value="Gönder" class="login"></td>
-					</tr>
-			</table></form><font style="font-size:10px; margin-top:0px;">* Hatasız kul olmaz.</font>
+		<?php 
+			//javascript yükünü azaltsın.
+			if ($MEMBER_LOGGED) {
+		?>
+		<div class="sikayetmenupanel"><?php include('gubidik.php');?>
 		</div>
-		<a class="sikayetmenu" href="#">İstek</a>
+		<a class="sikayetmenu" href="#">Gubidik</a>
+		<?php
+		}
+		?>
 		<a href="javascript:void(0);" id="top-link">Başa Zıpla</a>
 		<?php include 'footer.php'; ?>
 	</body>

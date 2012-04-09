@@ -613,10 +613,10 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 				source: function(request,response) {
 					$.post("ara.php",{t:request.term}, function(data) {
 						var x = false;
-						$('#basara').addClass('basara').empty().show();
+						$('#basara').addClass('basara').empty();
 						$.each(data, function(i,item) {
 							if (item.Baslik!=null) {
-								x = true;
+								if (!x) x = true;
 								$('#basara').append('<a href="goster.php?t='+boslukSil(item.Baslik)+'" id="baslikaraid">'+item.Baslik+'</a><br />');
 							}
 						});
@@ -636,6 +636,20 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 					}, "json");
 				}
 		};
+	
+	function getGubi() {
+		if ($(".sikayetmenu").length) return;
+		if ($("#uyeol").text()!=="Ben") return;
+		$.ajaxQueue({
+			url : "gubidik.php",
+			cache : true,
+			success : function(data) {
+				if (!data) return;
+				$("body").append('<div class="sikayetmenupanel"></div><a class="sikayetmenu" href="#">Gubidik</a>');
+				$(".sikayetmenupanel").html(data);
+			}
+		});
+	};
 		
 	$(document).on("click",'a[href*="goster.php?"]', function(e) {
 			e.preventDefault();
@@ -671,14 +685,28 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 	$(document).on("click","#spoiler",function() {
 		$("#entrytextarea").tae("spoiler");
 	});
+	$(document).on("click", ".sikayetmenu",function() {
+		if ($(".aramenupanel:visible").length>0) {
+			$(".aramenupanel").hide();
+			$(".aramenu").toggleClass("active");
+		}
+			
+		$(".sikayetmenupanel").toggle(0);
+		$(this).toggleClass("active");
+		return false;
+	});
+	
+	$(document).on("click",".spoyl",function() {
+		$(this).parent().find("#spoyler").toggle(0);
+	});
 	$(document).ready(function() {
+		if ($("#uyeol").text()==="Ben" && $(".sikayetmenu").length === 0) getGubi(); //ne olur ne olmaz kontrol ediyorum.
 		var c = getcount(0);
 		gungetir(0,1);
 		$("#page_count").val(Math.ceil(c / 50));
 		generateRows(1,0);
 		$("#txt1").maxlength({slider: true, maxCharacters: 255} );
-		
-		
+				
 		$(".aramenu").click(function() {
 			if ($(".sikayetmenupanel:visible").length>0) {
 				$(".sikayetmenupanel").hide();
@@ -689,97 +717,86 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 			$(this).toggleClass("active");
 			return false;
 
+		});			
+		
+		$("#uyeol").click(function() {
+			$("#loginbox").toggle(0).focus();
+			$("#gizlimenu").hide();
+		});
+
+		$("#bugun, #dun, #rastgele, #hot, #yeni, #ark, #iyuf,").hover(function(){
+			if ($("#loginbox:visible").length>0) {
+				$("#gizlimenu").hide();
+			}
+			else {
+				$(this).find("div#gizlimenu").show();
+			}
+		}, function() {
+			$(this).find("div#gizlimenu").hide();
+		});
+			
+		$("#bugun").click(function() {
+			$("#page_count").val(Math.ceil(c / 50));
+			gungetir(0,1);
+			generateRows(1,0);
+		});
+			
+		$("#dun").click(function() {
+			$("#page_count").val(Math.ceil(c / 50));
+			gungetir("dun",1);
+			generateRows(1,"dun");
+		});
+			
+		$("#rastgele").click(function() {
+			rastgetir();
+		});
+			
+		$("#titlea").click(function() {
+			if ($("#titlea").val() === "" || $("#titlea").val() === "Başlık Getir") 
+				$("#titlea").focus().val("");
+		});
+			
+		$("#titlea").blur(function() {
+			if ($("#titlea").val() === "" || $("#titlea").val() === "Başlık Getir") 
+				$(this).val("Başlık Getir");
+		});
+			
+		$('#top-link').btt({ min:300, fadeSpeed:500 });
+		$('#top-link').click(function(e) {
+			e.preventDefault();
+			$.scrollTo(0,300);
+		});
+			
+		$('form[name="loginform"]').submit(function(e) {
+			e.preventDefault();
+			$('input[name="login"]').attr("disabled","disabled");
+			$('input[name="login"]').addClass('disabled');
+			setTimeout('enBu()', 5000);
+			$.ajaxQueue({
+				url: "login.php",
+				dataType: "json",
+				data: "login&"+$(this).serialize(),
+				success: function(data) {
+					if (data.durum) {
+						$("#uyeol").find("span").text('Ben');
+						$("#loginbox").empty();
+						$("#loginbox").append('<p class="lgbaslik">' + data.nick + '</p><hr class="lg"/><p style="text-align:left; padding-left:50px; margin:0;"><a href="hq.php">HQ</a><br /><a href="mesaj.php">Mesajlar</a><br /><a href="getir.php?mode=ark">Arkadaşlar</a><br /><a href="getir.php?mode=kenar">Kenarda Duranlar</a><br /><a href="getir.php?mode=yeni">Yeni</a><br /><a href="login.php?logout">Çıkış</a></p>');
+						getGubi();
+						//if (location.pathname.toString().substr(14).match("^goster.php")=="goster.php") //bu daha güvenli gibi şu an localhost ve klasör ismi olduğunda kullanamıyorum.
+						if (location.pathname.toString().indexOf("/goster.php")!=-1)
+							eS(location.pathname+location.search);
+						if (location.pathname.toString().indexOf("/index.php")!=-1 && $('li #entryid').text()!="" )
+							eS("goster.php?e="+$('li #entryid').text().substr(1));
+					}
+					else if(data.code) {
+						$('#hata').remove();
+						$('#loginbox').append('<p id="hata" style="color:#fecc00;"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span><strong>Hata: </strong>'+data.message+'</p>');
+					}
+				}
+			});
 		});
 		
-		$(".sikayetmenu").click(function() {
-
-			if ($(".aramenupanel:visible").length>0) {
-
-				$(".aramenupanel").hide();
-				$(".aramenu").toggleClass("active");
-			}
-
-			$(".sikayetmenupanel").toggle(0);
-			$(this).toggleClass("active");
-			return false;
-			});
-			
-			$("#uyeol").click(function() {
-				$("#loginbox").toggle(0).focus();
-				$("#gizlimenu").hide();
-			});
-
-			$("#bugun, #dun, #rastgele, #hot, #yeni, #ark, #iyuf,").hover(function(){
-				if ($("#loginbox:visible").length>0) {
-					$("#gizlimenu").hide();
-				}
-				else {
-					$(this).find("div#gizlimenu").show();
-				}
-			}, function() {
-				$(this).find("div#gizlimenu").hide();
-			});
-			
-			$("#bugun").click(function() {
-				$("#page_count").val(Math.ceil(c / 50));
-				gungetir(0,1);
-				generateRows(1,0);
-			});
-			
-			$("#dun").click(function() {
-				$("#page_count").val(Math.ceil(c / 50));
-				gungetir("dun",1);
-				generateRows(1,"dun");
-			});
-			
-			$("#rastgele").click(function() {
-				rastgetir();
-			});
-			
-			$("#titlea").click(function() {
-				if ($("#titlea").val() === "" || $("#titlea").val() === "Başlık Getir") 
-					$("#titlea").focus().val("");
-			});
-			
-			$("#titlea").blur(function() {
-				if ($("#titlea").val() === "" || $("#titlea").val() === "Başlık Getir") 
-					$(this).val("Başlık Getir");
-			});
-			
-			$('#top-link').btt({ min:300, fadeSpeed:500 });
-			$('#top-link').click(function(e) {
-				e.preventDefault();
-				$.scrollTo(0,300);
-			});
-			
-			$('form[name="loginform"]').submit(function(e) {
-				e.preventDefault();
-				$('input[name="login"]').attr("disabled","disabled");
-				$('input[name="login"]').addClass('disabled');
-				setTimeout('enBu()', 5000);
-				$.ajaxQueue({
-					url: "login.php",
-					dataType: "json",
-					data: "login&"+$(this).serialize(),
-					success: function(data) {
-						if (data.durum) {
-							$("#uyeol").find("span").text('Ben');
-							$("#loginbox").empty();
-							$("#loginbox").append('<p class="lgbaslik">' + data.nick + '</p><hr class="lg"/><p style="text-align:left; padding-left:50px; margin:0;"><a href="hq.php">HQ</a><br /><a href="mesaj.php">Mesajlar</a><br /><a href="getir.php?mode=ark">Arkadaşlar</a><br /><a href="getir.php?mode=kenar">Kenarda Duranlar</a><br /><a href="getir.php?mode=yeni">Yeni</a><br /><a href="login.php?logout">Çıkış</a></p>');
-							//if (location.pathname.toString().substr(14).match("^goster.php")=="goster.php") //bu daha güvenli gibi şu an localhost ve klasör ismi olduğunda kullanamıyorum.
-							if (location.pathname.toString().indexOf("/goster.php")!=-1)
-								eS(location.pathname+location.search);
-							if (location.pathname.toString().indexOf("/index.php")!=-1 && $('li #entryid').text()!="" )
-								eS("goster.php?e="+$('li #entryid').text().substr(1));
-						}
-						else if(data.code) {
-							$('#hata').remove();
-							$('#loginbox').append('<p id="hata" style="color:#fecc00;"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span><strong>Hata: </strong>'+data.message+'</p>');
-						}
-					}
-				});
-			});
-			$('#titlea').autocomplete(ac_config);
+		$('#titlea').autocomplete(ac_config);
 	});
 
 /* ETU SOZLUK KISMI BITIS */
