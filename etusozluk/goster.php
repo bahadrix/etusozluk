@@ -2,8 +2,7 @@
 /**
 * goster.php 
 * entry veya başlık gösterme sayfası
-* hala json yok.
-* @version v1.0rc1
+* @version v1.0rc2
 */
 include_once 'common.php';
 include_once 'funct.php';
@@ -27,6 +26,10 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 				$p = 1;
 										
 			$baslikentry = preg_split('/\//',$t);
+			$te = strpos($t,'/'); //t=baslik/bilgi şeklinde gelmiş olabilir.
+			if ($te!==false && substr($baslikentry[1],0,1)!="@" && substr($baslikentry[1],0,1)!="$") {
+				$baslikentry[0]=$baslikentry[0]."/".$baslikentry[1]; //search'e 1/2 yazılırsa 1 yerine 1/2 aransın.
+			}
 			$st = $link -> prepare("SELECT T_ID FROM titles WHERE Baslik = :baslik");
 			$st -> bindValue(":baslik",$baslikentry[0]);
 			$st -> execute();
@@ -39,8 +42,8 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 									
 				$te = strpos($t,'/'); //t=baslik/bilgi şeklinde gelmiş olabilir.
 				if ($te !== false) {										
-					if (is_numeric($baslikentry[1])) { //t=baslik/entrynumarası biçimi
-						$entryno = $baslikentry[1];
+					if (substr($baslikentry[1],0,1)=="$" && is_numeric(substr($baslikentry[1],1))) { //t=baslik/$entrynumarası biçimi
+						$entryno = substr($baslikentry[1],1);
 						$se = $link -> prepare("SELECT E_ID FROM entries WHERE E_ID=:eid AND T_ID=:tid");
 						$se -> bindValue(":eid",$entryno);
 						$se -> bindValue(":tid",$baslikid['T_ID']);
@@ -133,6 +136,10 @@ else { //normal görünüm
 									$p = 1;
 										
 								$baslikentry = preg_split('/\//',$t);
+								$te = strpos($t,'/'); //t=baslik/bilgi şeklinde gelmiş olabilir.
+								if ($te!==false && substr($baslikentry[1],0,1)!="@" && substr($baslikentry[1],0,1)!="$") {
+									$baslikentry[0]=$baslikentry[0]."/".$baslikentry[1]; //search'e 1/2 yazılırsa 1 yerine 1/2 aransın.
+								}
 								$st = $link -> prepare("SELECT T_ID FROM titles WHERE Baslik = :baslik");
 								$st -> bindValue(":baslik",$baslikentry[0]);
 								$st -> execute();
@@ -143,10 +150,10 @@ else { //normal görünüm
 								} else {
 									$baslikid = $st -> fetch(PDO::FETCH_ASSOC);
 									
-									$te = strpos($t,'/'); //t=baslik/bilgi şeklinde gelmiş olabilir.
+									
 									if ($te !== false) {										
-										if (is_numeric($baslikentry[1])) { //t=baslik/entrynumarası biçimi
-											$entryno = $baslikentry[1];
+										if (substr($baslikentry[1],0,1)=="$" && is_numeric(substr($baslikentry[1],1))) { //t=baslik/$entrynumarası biçimi
+											$entryno = substr($baslikentry[1],1);
 											$se = $link -> prepare("SELECT E_ID FROM entries WHERE E_ID=:eid AND T_ID=:tid");
 											$se -> bindValue(":eid",$entryno);
 											$se -> bindValue(":tid",$baslikid['T_ID']);
