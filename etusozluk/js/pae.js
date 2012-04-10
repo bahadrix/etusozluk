@@ -463,6 +463,7 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 			  uza ="y="+rel;
 			  durum = "/@"+boslukSil(rel);
 			  var t = rel.replace(/\+/g," ");
+			  t = unescape(decodeURIComponent(t));
 			  yazi = t + "'in son yazdıkları";
 			}
 			else {
