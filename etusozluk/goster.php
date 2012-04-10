@@ -232,7 +232,7 @@ else { //normal görünüm
 							entryGoster(null,$baslikentry[0],null,null,$p);
 						}
 						?>	
-						<div style="text-align:center;" id="hg"><?php if($var) { $baslikentry[0] = preg_replace('/ /','+',$baslikentry[0]);?><button type="button" rel="goster.php?t=<?php echo $baslikentry[0]; ?>" id="ehg">Hepsi Gelsin</button><?php } ?>
+						<div style="text-align:center;" id="hg"><?php if($var) { $baslikentryhg = preg_replace('/ /','+',$baslikentry[0]);?><button type="button" rel="goster.php?t=<?php echo $baslikentryhg; ?>" id="ehg">Hepsi Gelsin</button><?php } ?>
 						<?php if ($MEMBER_LOGGED) { ?>
 						<div style="text-align:left; padding-top:10px; padding-left:25px;">"<?php echo $baslikentry[0]; ?>" hakkında söylemek istediklerim var diyorsan durma:
 						<form action="ekle.php" method="post" id="yenigirdi" name="yenigirdi"><input type="hidden" name="t" value="<?php echo $baslikentry[0]; ?>" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt('link: (başında http:// olmalı)', 'http://');if(isURL(a))$('#entrytextarea').tae('url',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi"></textarea><input type="submit" value="böyle olur" class="ebut" /><input type="submit" value="bunu sonra gönderirim" class="ebut" name="kaydet" /></form></div><?php } ?></div></div>
