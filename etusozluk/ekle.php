@@ -31,16 +31,22 @@
 				$s = $link->prepare("SELECT T_ID FROM titles WHERE Baslik = :baslik");
 				$s -> bindValue(":baslik",$baslik);
 				$s -> execute();
+				$yokmus = false;
 				//yoksa ekle
 				if (!$s->rowCount()) {
+					$yokmus = true;
 					$baslik = preg_replace('/\s\s+/',' ',$baslik);
 					$baslik = preg_replace('/\t/',' ',$baslik);
-					$baslik = preg_replace('/[^a-z0-9üçöğşı\'#$\.\-\+= ]/', '', $baslik);
+					$baslik = preg_replace('/[^a-z0-9üçöğşı\'#$\.\-\+=\\^\/ ]/', '', $baslik);
 					$se = $link -> prepare("INSERT INTO titles (Baslik,Entry_Count,Tarih) VALUES (:baslik,0,NOW())");
 					$se -> bindValue(":baslik",$baslik);
 					$se -> execute();
 				}
 				//id'yi al
+				if ($yokmus) {
+					$s = $link->prepare("SELECT T_ID FROM titles WHERE Baslik = :baslik"); //başlığı eğer yoksa düzelttiğimiz için bu gerekli.
+					$s -> bindValue(":baslik",$baslik);
+				}
 				$s -> execute();
 				$sonuc = $s -> fetch(PDO::FETCH_ASSOC);
 				$baslikid = $sonuc['T_ID'];

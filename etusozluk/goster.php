@@ -24,9 +24,15 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 			$t = $_REQUEST['t'];			
 										
 			$baslikentry = preg_split('/\//',$t);
-			$te = strpos($t,'/'); //t=baslik/bilgi şeklinde gelmiş olabilir.
-			if ($te!==false && substr($baslikentry[1],0,1)!="@" && substr($baslikentry[1],0,1)!="$") {
-				$baslikentry[0]=$baslikentry[0]."/".$baslikentry[1]; //search'e 1/2 yazılırsa 1 yerine 1/2 aransın.
+			$te = strripos($t,'/'); //t=baslik/bilgi şeklinde gelmiş olabilir.
+			$bec = count($baslikentry);
+			$bec -= 1;
+								
+			if ($te!==false) {
+				for ($i = 1; $i < count($baslikentry); $i++) {
+					if (substr($baslikentry[$i],0,1)!="@" && substr($baslikentry[$i],0,1)!="$")
+						$baslikentry[0] .= "/".$baslikentry[$i];
+				}
 			}
 			$st = $link -> prepare("SELECT T_ID FROM titles WHERE Baslik = :baslik");
 			$st -> bindValue(":baslik",$baslikentry[0]);
@@ -39,9 +45,9 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 				$baslikid = $st -> fetch(PDO::FETCH_ASSOC);
 									
 				$te = strpos($t,'/'); //t=baslik/bilgi şeklinde gelmiş olabilir.
-				if ($te !== false) {										
-					if (substr($baslikentry[1],0,1)=="$" && is_numeric(substr($baslikentry[1],1))) { //t=baslik/$entrynumarası biçimi
-						$entryno = substr($baslikentry[1],1);
+				if ($te!==false && (substr($baslikentry[$bec],0,1)=="@" || substr($baslikentry[$bec],0,1)=="$")) {										
+					if (substr($baslikentry[$bec],0,1)=="$" && is_numeric(substr($baslikentry[$bec],1))) { //t=baslik/$entrynumarası biçimi
+						$entryno = substr($baslikentry[$bec],1);
 						$se = $link -> prepare("SELECT E_ID FROM entries WHERE E_ID=:eid AND T_ID=:tid");
 						$se -> bindValue(":eid",$entryno);
 						$se -> bindValue(":tid",$baslikid['T_ID']);
@@ -53,8 +59,8 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 						else
 							echo '{"code":"1002","message":"bütün uğraşlarımıza rağmen bu başlıkta böyle bir entry bulamadık.","baslik":"'.$t.'","hgj":"1","log":"'.$log.'"}';
 					}
-					else if (substr($baslikentry[1],0,1)==="@") { //@ sonrası kullanıcı adı olucak. t=baslik/@nick biçimi
-						$nick = substr($baslikentry[1],1);
+					else if (substr($baslikentry[$bec],0,1)==="@") { //@ sonrası kullanıcı adı olucak. t=baslik/@nick biçimi
+						$nick = substr($baslikentry[$bec],1);
 						$sn = $link -> prepare("SELECT Nick FROM members WHERE Nick = :nick");
 						$sn -> bindValue(":nick",$nick);
 						$sn -> execute();
@@ -130,11 +136,17 @@ else { //normal görünüm
 						if (!empty($_REQUEST['t']) || !empty($_REQUEST['e'])) { //başlık veya entry istenmiş mi?
 							if (!empty($_REQUEST['t']) && empty($_REQUEST['e'])) { //başlık istenmiş mi?
 								$t = $_REQUEST['t'];
-										
+								
 								$baslikentry = preg_split('/\//',$t);
-								$te = strpos($t,'/'); //t=baslik/bilgi şeklinde gelmiş olabilir.
-								if ($te!==false && substr($baslikentry[1],0,1)!="@" && substr($baslikentry[1],0,1)!="$") {
-									$baslikentry[0]=$baslikentry[0]."/".$baslikentry[1]; //search'e 1/2 yazılırsa 1 yerine 1/2 aransın.
+								$te = strripos($t,'/'); //t=baslik/bilgi şeklinde gelmiş olabilir.
+								$bec = count($baslikentry);
+								$bec -= 1;
+								
+								if ($te!==false) {
+									for ($i = 1; $i < count($baslikentry); $i++) {
+										if (substr($baslikentry[$i],0,1)!="@" && substr($baslikentry[$i],0,1)!="$")
+											$baslikentry[0] .= "/".$baslikentry[$i];
+									}
 								}
 								$st = $link -> prepare("SELECT T_ID FROM titles WHERE Baslik = :baslik");
 								$st -> bindValue(":baslik",$baslikentry[0]);
@@ -146,10 +158,9 @@ else { //normal görünüm
 								} else {
 									$baslikid = $st -> fetch(PDO::FETCH_ASSOC);
 									
-									
-									if ($te !== false) {										
-										if (substr($baslikentry[1],0,1)=="$" && is_numeric(substr($baslikentry[1],1))) { //t=baslik/$entrynumarası biçimi
-											$entryno = substr($baslikentry[1],1);
+									if ($te!==false && (substr($baslikentry[$bec],0,1)=="@" || substr($baslikentry[$bec],0,1)=="$")) {
+										if (substr($baslikentry[$bec],0,1)=="$" && is_numeric(substr($baslikentry[$bec],1))) { //t=baslik/$entrynumarası biçimi
+											$entryno = substr($baslikentry[$bec],1);
 											$se = $link -> prepare("SELECT E_ID FROM entries WHERE E_ID=:eid AND T_ID=:tid");
 											$se -> bindValue(":eid",$entryno);
 											$se -> bindValue(":tid",$baslikid['T_ID']);
@@ -161,8 +172,8 @@ else { //normal görünüm
 											else
 												echo "<i>bütün uğraşlarımıza rağmen bu başlıkta böyle bir entry bulamadık.</i>";
 										}
-										else if (substr($baslikentry[1],0,1)==="@") { //@ sonrası kullanıcı adı olucak. t=baslik/@nick biçimi
-											$nick = substr($baslikentry[1],1);
+										else if (substr($baslikentry[$bec],0,1)==="@") { //@ sonrası kullanıcı adı olucak. t=baslik/@nick biçimi
+											$nick = substr($baslikentry[$bec],1);
 											$sn = $link -> prepare("SELECT Nick FROM members WHERE Nick = :nick");
 											$sn -> bindValue(":nick",$nick);
 											$sn -> execute();
@@ -204,7 +215,7 @@ else { //normal görünüm
 										entryGoster(null,$baslikentry[0],null,$gun,$p);
 									}
 									else { //t=baslik 
-										entryGoster(null,$t,null,null,$p);
+										entryGoster(null,$baslikentry[0],null,null,$p);
 									}
 								}
 							}
@@ -232,7 +243,7 @@ else { //normal görünüm
 							entryGoster(null,$baslikentry[0],null,null,$p);
 						}
 						?>	
-						<div style="text-align:center;" id="hg"><?php if($var) { $baslikentryhg = preg_replace('/ /','+',$baslikentry[0]);?><button type="button" rel="goster.php?t=<?php echo $baslikentryhg; ?>" id="ehg">Hepsi Gelsin</button><?php } ?>
+						<div style="text-align:center;" id="hg"><?php if($var) { ?><button type="button" rel="goster.php?t=<?php echo yazarBoslukSil($baslikentry[0]); ?>" id="ehg">Hepsi Gelsin</button><?php } ?>
 						<?php if ($MEMBER_LOGGED) { ?>
 						<div style="text-align:left; padding-top:10px; padding-left:25px;">"<?php echo $baslikentry[0]; ?>" hakkında söylemek istediklerim var diyorsan durma:
 						<form action="ekle.php" method="post" id="yenigirdi" name="yenigirdi"><input type="hidden" name="t" value="<?php echo $baslikentry[0]; ?>" /><div id="butonlar" style="text-align:left; width:100%; padding-top:10px;"><input type="button" id="bkz" value="(bkz: )" class="ebut" /><input type="button" id="gizlibkz" value="``" class="ebut"/><input type="button" id="spoiler" value="spoiler" class="ebut"/><input type="button" value="link" onclick="var a=prompt('link: (başında http:// olmalı)', 'http://');if(isURL(a))$('#entrytextarea').tae('url',a);" class="ebut"/></div><textarea id="entrytextarea" rows="10" cols="105" class="ygirdi" name="ygirdi"></textarea><input type="submit" value="böyle olur" class="ebut" /><input type="submit" value="bunu sonra gönderirim" class="ebut" name="kaydet" /></form></div><?php } ?></div></div>
