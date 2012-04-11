@@ -2,27 +2,20 @@
  * SU AN OLANLAR
  * Pagination version custometumade http://www.myphpetc.com/2009/10/easy-pagination-with-jquery-and-ajax.html
  * Maxlength version 1.0.5 http://www.stjerneman.com/demo/maxlength-with-jquery
- * ScrollTo version 1.4.2
- * ajaxQueue version ?
+ * ScrollTo version 1.4.2 http://flesler.blogspot.com/2007/10/jqueryscrollto.html
+ * ajaxQueue version 1.0 http://stackoverflow.com/questions/3034874/sequencing-ajax-requests/3035268#3035268
  * History https://github.com/balupton/history.js
+ * SimpleModal 1.4.2 http://simplemodal.com/
  * Daha sonra bak https://gist.github.com/854622
  * back/forward daha sonra
- *
  */
  
 
-/**
- * jQuery Maxlength plugin
- * @version		$Id: jquery.maxlength.js 18 2009-05-16 15:37:08Z emil@anon-design.se $
- * @package		jQuery maxlength 1.0.5
- * @copyright	Copyright (C) 2009 Emil Stjerneman / http://www.anon-design.se
- * @license		GNU/GPL, see LICENSE.txt
- */
- (function(A){A.fn.maxlength=function(B){var C=jQuery.extend({events:[],maxCharacters:10,status:true,statusClass:"status",statusText:"character left",notificationClass:"notification",showAlert:false,alertText:"You have typed too many characters.",slider:false},B);A.merge(C.events,["keyup"]);return this.each(function(){var G=A(this);var J=A(this).val().length;function D(){var K=C.maxCharacters-J;if(K<0){K=0}G.next("div").html(K+" "+C.statusText)}function E(){var K=true;if(J>=C.maxCharacters){K=false;G.addClass(C.notificationClass);G.val(G.val().substr(0,C.maxCharacters));I()}else{if(G.hasClass(C.notificationClass)){G.removeClass(C.notificationClass)}}if(C.status){D()}}function I(){if(C.showAlert){alert(C.alertText)}}function F(){var K=false;if(G.is("textarea")){K=true}else{if(G.filter("input[type=text]")){K=true}else{if(G.filter("input[type=password]")){K=true}}}return K}if(!F()){return false}A.each(C.events,function(K,L){G.bind(L,function(M){J=G.val().length;E()})});if(C.status){G.after(A("<div/>").addClass(C.statusClass).html("-"));D()}if(!C.status){var H=G.next("div."+C.statusClass);if(H){H.remove()}}if(C.slider){G.next().hide();G.focus(function(){G.next().slideDown("fast")});G.blur(function(){G.next().slideUp("fast")})}})}})(jQuery);
+/* jQuery Maxlength plugin */
+(function(A){A.fn.maxlength=function(B){var C=jQuery.extend({events:[],maxCharacters:10,status:true,statusClass:"status",statusText:"character left",notificationClass:"notification",showAlert:false,alertText:"You have typed too many characters.",slider:false},B);A.merge(C.events,["keyup"]);return this.each(function(){var G=A(this);var J=A(this).val().length;function D(){var K=C.maxCharacters-J;if(K<0){K=0}G.next("div").html(K+" "+C.statusText)}function E(){var K=true;if(J>=C.maxCharacters){K=false;G.addClass(C.notificationClass);G.val(G.val().substr(0,C.maxCharacters));I()}else{if(G.hasClass(C.notificationClass)){G.removeClass(C.notificationClass)}}if(C.status){D()}}function I(){if(C.showAlert){alert(C.alertText)}}function F(){var K=false;if(G.is("textarea")){K=true}else{if(G.filter("input[type=text]")){K=true}else{if(G.filter("input[type=password]")){K=true}}}return K}if(!F()){return false}A.each(C.events,function(K,L){G.bind(L,function(M){J=G.val().length;E()})});if(C.status){G.after(A("<div/>").addClass(C.statusClass).html("-"));D()}if(!C.status){var H=G.next("div."+C.statusClass);if(H){H.remove()}}if(C.slider){G.next().hide();G.focus(function(){G.next().slideDown("fast")});G.blur(function(){G.next().slideUp("fast")})}})}})(jQuery);
 /* Maxlength Bitti */
 
 /* Pager */
-	
 function generateRows(selected, opt) {
 	var op;
 	
@@ -120,79 +113,14 @@ function generateRows(selected, opt) {
 		}
 	}
 }
-
 /* Pager bitti */
 
-/**
- * jQuery.ScrollTo - Easy element scrolling using jQuery.
- * Copyright (c) 2007-2009 Ariel Flesler - aflesler(at)gmail(dot)com | http://flesler.blogspot.com
- * Dual licensed under MIT and GPL.
- * Date: 5/25/2009
- * @author Ariel Flesler
- * @version 1.4.2
- *
- * http://flesler.blogspot.com/2007/10/jqueryscrollto.html
- */
-;(function(d){var k=d.scrollTo=function(a,i,e){d(window).scrollTo(a,i,e)};k.defaults={axis:'xy',duration:parseFloat(d.fn.jquery)>=1.3?0:1};k.window=function(a){return d(window)._scrollable()};d.fn._scrollable=function(){return this.map(function(){var a=this,i=!a.nodeName||d.inArray(a.nodeName.toLowerCase(),['iframe','#document','html','body'])!=-1;if(!i)return a;var e=(a.contentWindow||a).document||a.ownerDocument||a;return d.browser.safari||e.compatMode=='BackCompat'?e.body:e.documentElement})};d.fn.scrollTo=function(n,j,b){if(typeof j=='object'){b=j;j=0}if(typeof b=='function')b={onAfter:b};if(n=='max')n=9e9;b=d.extend({},k.defaults,b);j=j||b.speed||b.duration;b.queue=b.queue&&b.axis.length>1;if(b.queue)j/=2;b.offset=p(b.offset);b.over=p(b.over);return this._scrollable().each(function(){var q=this,r=d(q),f=n,s,g={},u=r.is('html,body');switch(typeof f){case'number':case'string':if(/^([+-]=)?\d+(\.\d+)?(px|%)?$/.test(f)){f=p(f);break}f=d(f,this);case'object':if(f.is||f.style)s=(f=d(f)).offset()}d.each(b.axis.split(''),function(a,i){var e=i=='x'?'Left':'Top',h=e.toLowerCase(),c='scroll'+e,l=q[c],m=k.max(q,i);if(s){g[c]=s[h]+(u?0:l-r.offset()[h]);if(b.margin){g[c]-=parseInt(f.css('margin'+e))||0;g[c]-=parseInt(f.css('border'+e+'Width'))||0}g[c]+=b.offset[h]||0;if(b.over[h])g[c]+=f[i=='x'?'width':'height']()*b.over[h]}else{var o=f[h];g[c]=o.slice&&o.slice(-1)=='%'?parseFloat(o)/100*m:o}if(/^\d+$/.test(g[c]))g[c]=g[c]<=0?0:Math.min(g[c],m);if(!a&&b.queue){if(l!=g[c])t(b.onAfterFirst);delete g[c]}});t(b.onAfter);function t(a){r.animate(g,j,b.easing,a&&function(){a.call(this,n,b)})}}).end()};k.max=function(a,i){var e=i=='x'?'Width':'Height',h='scroll'+e;if(!d(a).is('html,body'))return a[h]-d(a)[e.toLowerCase()]();var c='client'+e,l=a.ownerDocument.documentElement,m=a.ownerDocument.body;return Math.max(l[h],m[h])-Math.min(l[c],m[c])};function p(a){return typeof a=='object'?a:{top:a,left:a}}})(jQuery);
+/* jQuery.ScrollTo - Easy element scrolling using jQuery. */
+(function(d){var k=d.scrollTo=function(a,i,e){d(window).scrollTo(a,i,e)};k.defaults={axis:'xy',duration:parseFloat(d.fn.jquery)>=1.3?0:1};k.window=function(a){return d(window)._scrollable()};d.fn._scrollable=function(){return this.map(function(){var a=this,i=!a.nodeName||d.inArray(a.nodeName.toLowerCase(),['iframe','#document','html','body'])!=-1;if(!i)return a;var e=(a.contentWindow||a).document||a.ownerDocument||a;return d.browser.safari||e.compatMode=='BackCompat'?e.body:e.documentElement})};d.fn.scrollTo=function(n,j,b){if(typeof j=='object'){b=j;j=0}if(typeof b=='function')b={onAfter:b};if(n=='max')n=9e9;b=d.extend({},k.defaults,b);j=j||b.speed||b.duration;b.queue=b.queue&&b.axis.length>1;if(b.queue)j/=2;b.offset=p(b.offset);b.over=p(b.over);return this._scrollable().each(function(){var q=this,r=d(q),f=n,s,g={},u=r.is('html,body');switch(typeof f){case'number':case'string':if(/^([+-]=)?\d+(\.\d+)?(px|%)?$/.test(f)){f=p(f);break}f=d(f,this);case'object':if(f.is||f.style)s=(f=d(f)).offset()}d.each(b.axis.split(''),function(a,i){var e=i=='x'?'Left':'Top',h=e.toLowerCase(),c='scroll'+e,l=q[c],m=k.max(q,i);if(s){g[c]=s[h]+(u?0:l-r.offset()[h]);if(b.margin){g[c]-=parseInt(f.css('margin'+e))||0;g[c]-=parseInt(f.css('border'+e+'Width'))||0}g[c]+=b.offset[h]||0;if(b.over[h])g[c]+=f[i=='x'?'width':'height']()*b.over[h]}else{var o=f[h];g[c]=o.slice&&o.slice(-1)=='%'?parseFloat(o)/100*m:o}if(/^\d+$/.test(g[c]))g[c]=g[c]<=0?0:Math.min(g[c],m);if(!a&&b.queue){if(l!=g[c])t(b.onAfterFirst);delete g[c]}});t(b.onAfter);function t(a){r.animate(g,j,b.easing,a&&function(){a.call(this,n,b)})}}).end()};k.max=function(a,i){var e=i=='x'?'Width':'Height',h='scroll'+e;if(!d(a).is('html,body'))return a[h]-d(a)[e.toLowerCase()]();var c='client'+e,l=a.ownerDocument.documentElement,m=a.ownerDocument.body;return Math.max(l[h],m[h])-Math.min(l[c],m[c])};function p(a){return typeof a=='object'?a:{top:a,left:a}}})(jQuery);
 /* ScrollTo Bitti*/
 
-/*
-* jQuery.ajaxQueue - A queue for ajax requests
-* 
-* (c) 2011 Corey Frang
-* Dual licensed under the MIT and GPL licenses.
-*
-* Requires jQuery 1.5+
-*/ 
-(function($) {
-
-// jQuery on an empty object, we are going to use this as our Queue
-var ajaxQueue = $({});
-
-$.ajaxQueue = function( ajaxOpts ) {
-    var jqXHR,
-        dfd = $.Deferred(),
-        promise = dfd.promise();
-
-    // queue our ajax request
-    ajaxQueue.queue( doRequest );
-
-    // add the abort method
-    promise.abort = function( statusText ) {
-
-        // proxy abort to the jqXHR if it is active
-        if ( jqXHR ) {
-            return jqXHR.abort( statusText );
-        }
-
-        // if there wasn't already a jqXHR we need to remove from queue
-        var queue = ajaxQueue.queue(),
-            index = $.inArray( doRequest, queue );
-
-        if ( index > -1 ) {
-            queue.splice( index, 1 );
-        }
-
-        // and then reject the deferred
-        dfd.rejectWith( ajaxOpts.context || ajaxOpts,
-            [ promise, statusText, "" ] );
-
-        return promise;
-    };
-
-    // run the actual query
-    function doRequest( next ) {
-        jqXHR = $.ajax( ajaxOpts )
-            .then( next, next )
-            .done( dfd.resolve )
-            .fail( dfd.reject );
-    }
-
-    return promise;
-};
-
-})(jQuery);
-
+/* jQuery.ajaxQueue - A queue for ajax requests */
+(function($){var ajaxQueue = $({});$.ajaxQueue = function( ajaxOpts ) {var jqXHR,dfd = $.Deferred(),promise = dfd.promise();ajaxQueue.queue( doRequest );promise.abort = function( statusText ) {if ( jqXHR ) {return jqXHR.abort( statusText );}var queue = ajaxQueue.queue(),index = $.inArray( doRequest, queue );if ( index > -1 ) {queue.splice( index, 1 );}dfd.rejectWith( ajaxOpts.context || ajaxOpts,[ promise, statusText, "" ] );return promise;};function doRequest( next ) {jqXHR = $.ajax( ajaxOpts ).then( next, next ).done( dfd.resolve ).fail( dfd.reject );}return promise;};})(jQuery);
 /* ajaxQueue bitti */
 
 /* History */
@@ -335,7 +263,7 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 				url: link,
 				dataType: "json",
 				success: function(data) {
-					History.pushState(null,"etüsözlük " + data.baslik,link);
+					History.pushState(null,"etüsözlük - " + data.baslik,unescape(decodeURIComponent(link)));
 					$e.empty();
 					if (data.code) { //hata döndüyse
 						$e.append("<i>"+data.message+"</i>");
@@ -698,8 +626,10 @@ window.JSON||(window.JSON={}),function(){function f(a){return a<10?"0"+a:a}funct
 	});
 	
 	$(document).on("click",".spoyl",function() {
-		$(this).parent().find("#spoyler").toggle(0);
+		$o = $(this).parent();
+		$o.toggleClass("spylr").find("#spoyler").toggle(0);
 	});
+		
 	$(document).ready(function() {
 		if ($("#uyeol").text()==="Ben" && $(".sikayetmenu").length === 0) getGubi(); //ne olur ne olmaz kontrol ediyorum.
 		var c = getcount(0);

@@ -53,11 +53,11 @@
 					$ygirdi = str_replace($urls[$i],"$url " .trim($sonuc[3][$i])." ",$ygirdi);
 			}
 		}
-		$s = preg_match_all('/\[(spoiler)\](\s|<br \/>)*([a-z0-9ıüçöğş\^!\'\"$#€£~*_%!&=?<>\/+\(\)\[\]\{\}\-(&amp;)(&lt;)(&gt;)(&quot;)(&#39;):;\.`@ ]+)(\s|<br \/>)*\[(\/spoiler)\]/uS',$ygirdi,$sonuc);
+		$s = preg_match_all('/\[(spoiler)\](\s|<br \/>)*([a-z0-9ıüçöğş\^!\'\"$#€£~*_%!&=?<>\/+\(\)\[\]\{\}\-(&amp;)(&lt;)(&gt;)(&quot;)(&#39;):;\.,`@ ]+)(\s|<br \/>)*\[(\/spoiler)\]/uS',$ygirdi,$sonuc);
 		if ($s) {
 			$spoyler = $sonuc[0];
 			for ($i=0;$i<$s;$i++) {
-				$ygirdi = str_replace($spoyler[$i],'<div id="spoyler_container"><button title="şpoyleri göstermek/kapatmak için tıklayın." class="spoyl">spoiler</button><div id="spoyler" style="display:none;">'.trim($sonuc[3][$i]).'</div></div>',$ygirdi);
+				$ygirdi = str_replace($spoyler[$i],'<div id="spoyler_container"><button title="şpoyleri göstermek/kapatmak için tıklayın." class="spoyl">spoiler</button><div id="spoyler" style="display:none; padding:10px; padding-top:3px;">'.trim($sonuc[3][$i]).'</div></div>',$ygirdi);
 			}
 		}
 		$ygirdi = preg_replace('/(?:<br \/>\s*){2,}/', "<br /><br />", $ygirdi);
